@@ -11,7 +11,14 @@ import project
 path = os.path.dirname(__file__)
 path = os.path.join( path, "TestProj")
 
-project.SetCurrentRootDir(path)
+appConfig = project.AppConfig(blender=True, houdini=True, maya = False, c4d = True, usd = True)
+#appConfig = project.AppConfig(blender=False, houdini=False, maya = False, c4d = False, usd = False)
 
-#print(os.getcwd())
+result = project.set_current_root_dir(path)
+if not result:
+    project.create_project(appConfig)
+    project.create_project_folders()
 
+project.update_project_app_config( appConfig )
+project.create_asset_folders("Env_Lab")
+project.create_shot(1,2)
