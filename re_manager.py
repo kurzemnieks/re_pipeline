@@ -22,3 +22,6 @@ if not result:
 project.update_project_app_config( appConfig )
 project.create_asset_folders("Env_Lab")
 project.create_shot(1,2)
+project.create_shot(1,3)
+
+print(project.scan_project_assets())

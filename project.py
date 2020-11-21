@@ -1,6 +1,7 @@
 import json
 import os
 import subprocess
+import re
 from collections import namedtuple
 
 
@@ -11,7 +12,7 @@ _RE_PROJECT_INITIALIZED = False
 _RE_PROJECT_CFG_NAME = '.projcfg'
 
 _RE_PROJECT_VERSION = 1.0
-_RE_PROJECT_ASSET_LIB = 'F:/Drive/Assets'
+_RE_PROJECT_ASSET_LIB = 'F:/Drive/Assets/Textures'
 _RE_PROJECT_DEFAULT_FPS = 30.0
 _RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
 
@@ -50,6 +51,26 @@ def is_project_initialized():
 
     return _RE_PROJECT_INITIALIZED
 
+def get_project_root():
+    assert(_RE_PROJECT_INITIALIZED)
+    return _RE_PROJECT_ROOT
+
+def get_project_app_config():
+    assert(_RE_PROJECT_INITIALIZED)
+    return _RE_PROJECT_APP_CONFIG
+
+def get_project_default_rez():
+    assert(_RE_PROJECT_INITIALIZED)
+    return _RE_PROJECT_DEFAULT_REZ
+
+def get_project_default_fps():
+    assert(_RE_PROJECT_INITIALIZED)
+    return _RE_PROJECT_DEFAULT_FPS
+
+def get_project_ext_asset_lib():
+    assert(_RE_PROJECT_INITIALIZED)
+    return _RE_PROJECT_ASSET_LIB    
+
 #########################################################################################################
 # internals
 #########################################################################################################
@@ -73,6 +94,7 @@ def _try_load_project( path ):
             if _RE_PROJECT_VERSION != project_cfg['version']:
                 raise ValueError('Project version does not match! Need {}, got {}'.format(_RE_PROJECT_VERSION, project_cfg['version']))
 
+            _RE_PROJECT_ASSET_LIB = "" 
             _RE_PROJECT_ASSET_LIB = project_cfg['ext_lib']
             if not os.path.exists(_RE_PROJECT_ASSET_LIB):
                 print('Error: ' + _RE_PROJECT_ASSET_LIB + ' external asset library path does not exist!')
@@ -91,12 +113,16 @@ def _try_load_project( path ):
     
 def _get_project_folder_struct():
 
-    SHARED = [
+    """ Return master project folder structure.
+    """
+
+    #shared assets between shots
+    ASSETS = [
         ['2d',[
             ['artworks', []],
-            ['footage',[],'shared/2d/footage', _RE_PROJECT_HAS_FOOTAGE],
-            ['roto',[],'shared/2d/roto', _RE_PROJECT_HAS_FOOTAGE],
-            ['tracking',[],'shared/2d/roto', _RE_PROJECT_HAS_FOOTAGE],
+            ['footage',[],None, _RE_PROJECT_HAS_FOOTAGE],
+            ['roto',[],None, _RE_PROJECT_HAS_FOOTAGE],
+            ['tracking',[],None, _RE_PROJECT_HAS_FOOTAGE],
             ]            
         ],
         ['3d',[
@@ -109,20 +135,24 @@ def _get_project_folder_struct():
             ['usd',[],None, _RE_PROJECT_APP_CONFIG.usd],
             ]
         ],
-        ['tex',[]
+        ['tex',[
+            ['library',_RE_PROJECT_ASSET_LIB, len(_RE_PROJECT_ASSET_LIB)>0]
+        ]
         ],
         ['lib',[]
         ]        
     ]
 
+    #folder where assets are being built
     BUILD = [
     ]
 
-
+    #shot assembly folder
     SHOTS = [
 
     ]
 
+    #render outputs (sequences)
     RENDER = [
         ['previs',[]
         ],
@@ -130,6 +160,7 @@ def _get_project_folder_struct():
         ]
     ]
 
+    #movies, screenshots, images (valuable and final outputs)
     OUT = [
         ['previs',[]],
         ['review',[]],
@@ -137,14 +168,15 @@ def _get_project_folder_struct():
         ['deliver',[]]
     ]
 
+    #caches, temp sequences - stuff that can be deleted during cleanup/archiving
     TEMP = [
-        ['shared',[]],
+        ['assets',[]],
         ['shots',[]]
     ]
 
     #Combine in one structure
     FOLDERS = [
-        ['shared',SHARED],
+        ['assets',ASSETS],
         ['build',BUILD],
         ['shots',SHOTS],
         ['render',RENDER],
@@ -252,6 +284,7 @@ def update_project_app_config(app_config):
     create_project_folders()
 
 def asset_exists( assetName ):
+    assert(_RE_PROJECT_INITIALIZED)
     assetName = assetName.lower()
     asset_root = os.path.join(_RE_PROJECT_ROOT, 'build')
     asset_folder = os.path.join( asset_root, assetName)
@@ -259,7 +292,7 @@ def asset_exists( assetName ):
     return os.path.exists(asset_folder)
 
 def create_asset_folders( assetName ):
-
+    assert(_RE_PROJECT_INITIALIZED)
     if not _RE_PROJECT_INITIALIZED:
         raise ValueError("Project not initialized")
         return False
@@ -278,17 +311,17 @@ def create_asset_folders( assetName ):
     ASSET_FOLDERS = _get_app_folders( "asset", assetName )
 
     OTHER = [
-        ['tex',[],'shared/tex'],
-        ['fbx',[],'shared/3d/fbx'],
-        ['usd',[],'shared/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
-        ['abc',[],'shared/3d/abc'],
+        ['tex',[],'assets/tex'],
+        ['fbx',[],'assets/3d/fbx'],
+        ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
+        ['abc',[],'assets/3d/abc'],
         ['render',[],'render/assets/' + assetName],
         ['tmp',[],'temp/assets/{}'.format(assetName)],
-        ['lib',[],'shared/lib']
+        ['lib',[],'assets/lib']
     ]
 
     TEXTURES = [
-        ['tex',[],'shared/tex']
+        ['tex',[],'assets/tex']
     ]
 
     ASSET_FOLDERS.append(['other', OTHER])
@@ -298,20 +331,24 @@ def create_asset_folders( assetName ):
 
 
 def get_shot_name( sequence, shot_number ):
+    assert(_RE_PROJECT_INITIALIZED)
     shot_name = "shot_{}{}".format(str(sequence), str(shot_number).zfill(2))
     shot_name = shot_name.lower()
     return shot_name
 
 def get_shot_path(sequence, shot_number):
+    assert(_RE_PROJECT_INITIALIZED)
     shot_path = os.path.join( _RE_PROJECT_ROOT, "shots" )
     shot_path = os.path.join( shot_path, get_shot_name(sequence, shot_number) )
     shot_path = os.path.normpath(shot_path)
     return shot_path
 
 def shot_exists( sequence, shot_number ):
+    assert(_RE_PROJECT_INITIALIZED)
     return os.path.exists( get_shot_path(sequence, shot_number) )
 
-def create_shot( sequence, shot_number):    
+def create_shot( sequence, shot_number):  
+    assert(_RE_PROJECT_INITIALIZED)  
     shot_name = get_shot_name( sequence, shot_number)
     shot_path = get_shot_path(sequence, shot_number)
 
@@ -326,68 +363,92 @@ def create_shot( sequence, shot_number):
         ['previs',[],'render/previs/{}'.format(shot_name)],
         ['render',[],'render/shots/{}'.format(shot_name)],        
         ['out',[],'out'],
-        ['artworks',[],'shared/2d/artworks'],
-        ['footage',[],'shared/2d/footage/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE],
-        ['roto',[],'shared/2d/roto/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE],
-        ['tracking',[],'shared/2d/roto/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE],
+        ['artworks',[],'assets/2d/artworks'],
+        ['footage',[],'assets/2d/footage/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE],
+        ['roto',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE],
+        ['tracking',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE],
     ]
 
     SHOT_FOLDERS.append(['comp', COMP])    
     
     _create_project_folders(shot_path, SHOT_FOLDERS, True)
+############################################################
 
+def scan_project_assets():
+    assert(_RE_PROJECT_INITIALIZED)
+    build_root = os.path.join( _RE_PROJECT_ROOT, "build" )
+    build_root = os.path.normpath(build_root)
+
+    all_dirs = os.listdir(build_root)    
+
+    return all_dirs
+
+def scan_project_shots():
+    assert(_RE_PROJECT_INITIALIZED)
+    shots_root = os.path.join( _RE_PROJECT_ROOT, "shots" )
+    shots_root = os.path.normpath(shots_root)
+
+    all_dirs = os.listdir(shots_root)
+    shot_dirs = [dir for dir in all_dirs if re.match(r"shot_\d{3}d?", dir)] 
+
+    return shot_dirs
+    
 
 ############################################################
 
 def _get_app_folders( category, name ):
+    """ Return folder structures for DCC applications based
+        on project app config.
+        Used in asset and shot structures. 
+    """
 
     HOUDINI = [
         ['geo',[],'temp/{}/{}/geo'.format(category, name)],
-        ['hda',[],'shared/3d/hda'],
-        ['fbx',[],'shared/3d/fbx'],
-        ['usd',[],'shared/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
+        ['hda',[],'assets/3d/hda'],
+        ['fbx',[],'assets/3d/fbx'],
+        ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
         ['sim',[],'temp/{}/{}/sim'.format(category, name)],
-        ['abc',[],'shared/3d/abc'],
-        ['tex',[],'shared/tex'],
+        ['abc',[],'assets/3d/abc'],
+        ['tex',[],'assets/tex'],
 
         ['render',[],'render/{}/{}'.format(category, name)],
         ['flip',[],'temp/{}/{}/flip'.format(category, name)],
 
         ['scripts',[]],
-        ['lib',[],'shared/lib']
+        ['lib',[],'assets/lib']
     ]
 
     BLENDER = [
-        ['tex',[],'shared/tex'],
-        ['fbx',[],'shared/3d/fbx'],
-        ['usd',[],'shared/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
-        ['abc',[],'shared/3d/abc'],
+        ['tex',[],'assets/tex'],
+        ['fbx',[],'assets/3d/fbx'],
+        ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
+        ['abc',[],'assets/3d/abc'],
         ['render',[],'render/{}/{}'.format(category, name)],
         ['tmp',[],'temp/{}/{}'.format(category, name)],
-        ['lib',[],'shared/lib']
+        ['lib',[],'assets/lib']
     ]
 
     C4D = [
-        ['tex',[],'shared/tex'],
-        ['fbx',[],'shared/3d/fbx'],
-        ['usd',[],'shared/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
-        ['abc',[],'shared/3d/abc'],
+        ['tex',[],'assets/tex'],
+        ['fbx',[],'assets/3d/fbx'],
+        ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
+        ['abc',[],'assets/3d/abc'],
         ['render',[],'render/{}/{}'.format(category, name)],
         ['tmp',[],'temp/{}/{}'.format(category, name)],
-        ['lib',[],'shared/lib']
+        ['lib',[],'assets/lib']
     ]
 
     MAYA = [
         ['scenes',[]],
         ['clips',[]],
-        ['sourceimages',[],'shared/tex'],
-        ['fbx',[],'shared/3d/fbx'],
-        ['usd',[],'shared/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
-        ['abc',[],'shared/3d/abc'],
+        ['sourceimages',[],'assets/tex'],
+        ['fbx',[],'assets/3d/fbx'],
+        ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
+        ['abc',[],'assets/3d/abc'],
         ['image',[],'render/{}/{}'.format(category, name)],
         ['movies',[],'render/{}/{}/playblast'.format(category, name)],
         ['data',[],'temp/{}/{}'.format(category, name)],
-        ['lib',[],'shared/lib'],
+        ['lib',[],'assets/lib'],
         ['scripts',[]],
     ]
 
