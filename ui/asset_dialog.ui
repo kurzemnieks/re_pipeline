@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>AssetDialog</class>
+ <widget class="QDialog" name="AssetDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -68,7 +68,7 @@ color: rgb(220, 220, 220);</string>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>AssetDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -84,7 +84,7 @@ color: rgb(220, 220, 220);</string>
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>AssetDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

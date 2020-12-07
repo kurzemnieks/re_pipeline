@@ -3,27 +3,27 @@
 # Form implementation generated from reading ui file 'shot_dialog.ui',
 # licensing of 'shot_dialog.ui' applies.
 #
-# Created: Sun Nov 22 00:15:23 2020
+# Created: Mon Dec  7 22:19:04 2020
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(220, 120)
-        Dialog.setMinimumSize(QtCore.QSize(220, 120))
-        Dialog.setMaximumSize(QtCore.QSize(220, 120))
+class Ui_ShotDialog(object):
+    def setupUi(self, ShotDialog):
+        ShotDialog.setObjectName("ShotDialog")
+        ShotDialog.resize(220, 120)
+        ShotDialog.setMinimumSize(QtCore.QSize(220, 120))
+        ShotDialog.setMaximumSize(QtCore.QSize(220, 120))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        Dialog.setFont(font)
-        Dialog.setStyleSheet("background-color: rgb(53, 53, 53);\n"
+        ShotDialog.setFont(font)
+        ShotDialog.setStyleSheet("background-color: rgb(53, 53, 53);\n"
 "color: rgb(220, 220, 220);")
-        self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
+        self.verticalLayout = QtWidgets.QVBoxLayout(ShotDialog)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.widget = QtWidgets.QWidget(Dialog)
+        self.widget = QtWidgets.QWidget(ShotDialog)
         self.widget.setObjectName("widget")
         self.formLayout = QtWidgets.QFormLayout(self.widget)
         self.formLayout.setContentsMargins(0, 0, 0, 0)
@@ -51,19 +51,19 @@ class Ui_Dialog(object):
         self.spinShot.setObjectName("spinShot")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.spinShot)
         self.verticalLayout.addWidget(self.widget)
-        self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
+        self.buttonBox = QtWidgets.QDialogButtonBox(ShotDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
-        self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.retranslateUi(ShotDialog)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), ShotDialog.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), ShotDialog.reject)
+        QtCore.QMetaObject.connectSlotsByName(ShotDialog)
 
-    def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtWidgets.QApplication.translate("Dialog", "New Shot", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("Dialog", "Sequence number:", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("Dialog", "Shot number:", None, -1))
+    def retranslateUi(self, ShotDialog):
+        ShotDialog.setWindowTitle(QtWidgets.QApplication.translate("ShotDialog", "New Shot", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("ShotDialog", "Sequence number:", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("ShotDialog", "Shot number:", None, -1))
 

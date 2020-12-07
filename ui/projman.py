@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'project_manager.ui',
 # licensing of 'project_manager.ui' applies.
 #
-# Created: Sun Nov 22 00:15:23 2020
+# Created: Mon Dec  7 22:19:03 2020
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!

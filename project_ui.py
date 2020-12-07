@@ -2,7 +2,8 @@ import sys
 import project
 
 from Qt import QtWidgets, QtCore, QtGui
-from ui import projman
+from ui import projman, assetdialog, shotdialog
+
 
 class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def __init__(self):
@@ -11,11 +12,14 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
         self.updateAppConfig()
 
+        self.newAssetDialog = AssetDialogUI(self)
+
         self.editHRes.setValidator( QtGui.QIntValidator(1, 32000))        
         self.editVRes.setValidator( QtGui.QIntValidator(1, 32000))        
         self.editFPS.setValidator( QtGui.QDoubleValidator(1.0, 500.0, 3))
 
         self.setRootButton.clicked.connect(self.setProjectRoot)
+        self.newAssetButton.clicked.connect(self.newAssetDialog.exec_)
 
     def setProjectRoot(self):
 
@@ -34,6 +38,11 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
                 self.projectRootLabel.setText(project.get_project_root())
 
+    def createNewAsset(self):
+        self.newAssetDialog.exec_()
+
+    def onCreateNewAsset(self, name):
+        print("Creating: " + name)
 
     def updateAppConfig(self):
         self.appConfig = project.AppConfig( self.checkBlender.isChecked(),
@@ -58,7 +67,20 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
         self.labelExtTexPath.setText(project.get_project_ext_asset_lib())
         
+class AssetDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
+    def __init__(self, parent=None):
+        super(AssetDialogUI, self).__init__(parent=parent)
+        self.setupUi(self)    
 
+        self.parent = parent
+        self.buttonBox.accepted.connect(self.create_new_asset)
+        self.buttonBox.rejected.connect(self.close)
+
+    def create_new_asset(self):
+        #print(self.editAssetName.text())   
+        self.parent.onCreateNewAsset(self.editAssetName.text())     
+        self.close()
+        
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
