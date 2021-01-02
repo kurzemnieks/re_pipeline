@@ -91,7 +91,7 @@ color: rgb(220, 220, 220);</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_Assets">
        <attribute name="title">
@@ -99,7 +99,7 @@ color: rgb(220, 220, 220);</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QListView" name="assetLIst">
+         <widget class="QListWidget" name="assetList">
           <property name="styleSheet">
            <string notr="true">background-color: rgb(80, 80, 80);</string>
           </property>
@@ -174,7 +174,7 @@ color: rgb(220, 220, 220);</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QListView" name="shotsList">
+         <widget class="QListWidget" name="shotsList">
           <property name="styleSheet">
            <string notr="true">background-color: rgb(80, 80, 80);</string>
           </property>
@@ -569,11 +569,9 @@ color: rgb(220, 220, 220);</string>
  <tabstops>
   <tabstop>setRootButton</tabstop>
   <tabstop>mainTabs</tabstop>
-  <tabstop>assetLIst</tabstop>
   <tabstop>newAssetButton</tabstop>
   <tabstop>updateAssetButton</tabstop>
   <tabstop>loadAssetButton</tabstop>
-  <tabstop>shotsList</tabstop>
   <tabstop>newShotButton</tabstop>
   <tabstop>updateShotButton</tabstop>
   <tabstop>loadShotButton</tabstop>

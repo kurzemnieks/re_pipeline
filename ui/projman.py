@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'project_manager.ui',
 # licensing of 'project_manager.ui' applies.
 #
-# Created: Mon Dec  7 22:19:03 2020
+# Created: Sat Jan  2 19:51:19 2021
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
@@ -54,10 +54,10 @@ class Ui_MainWindow(object):
         self.tab_Assets.setObjectName("tab_Assets")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.tab_Assets)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.assetLIst = QtWidgets.QListView(self.tab_Assets)
-        self.assetLIst.setStyleSheet("background-color: rgb(80, 80, 80);")
-        self.assetLIst.setObjectName("assetLIst")
-        self.verticalLayout.addWidget(self.assetLIst)
+        self.assetList = QtWidgets.QListWidget(self.tab_Assets)
+        self.assetList.setStyleSheet("background-color: rgb(80, 80, 80);")
+        self.assetList.setObjectName("assetList")
+        self.verticalLayout.addWidget(self.assetList)
         self.assetButtonsWidget = QtWidgets.QWidget(self.tab_Assets)
         self.assetButtonsWidget.setObjectName("assetButtonsWidget")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.assetButtonsWidget)
@@ -84,7 +84,7 @@ class Ui_MainWindow(object):
         self.tab_Shots.setObjectName("tab_Shots")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.tab_Shots)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.shotsList = QtWidgets.QListView(self.tab_Shots)
+        self.shotsList = QtWidgets.QListWidget(self.tab_Shots)
         self.shotsList.setStyleSheet("background-color: rgb(80, 80, 80);")
         self.shotsList.setObjectName("shotsList")
         self.verticalLayout_3.addWidget(self.shotsList)
@@ -250,15 +250,13 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusBar)
 
         self.retranslateUi(MainWindow)
-        self.mainTabs.setCurrentIndex(0)
+        self.mainTabs.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.setRootButton, self.mainTabs)
-        MainWindow.setTabOrder(self.mainTabs, self.assetLIst)
-        MainWindow.setTabOrder(self.assetLIst, self.newAssetButton)
+        MainWindow.setTabOrder(self.mainTabs, self.newAssetButton)
         MainWindow.setTabOrder(self.newAssetButton, self.updateAssetButton)
         MainWindow.setTabOrder(self.updateAssetButton, self.loadAssetButton)
-        MainWindow.setTabOrder(self.loadAssetButton, self.shotsList)
-        MainWindow.setTabOrder(self.shotsList, self.newShotButton)
+        MainWindow.setTabOrder(self.loadAssetButton, self.newShotButton)
         MainWindow.setTabOrder(self.newShotButton, self.updateShotButton)
         MainWindow.setTabOrder(self.updateShotButton, self.loadShotButton)
         MainWindow.setTabOrder(self.loadShotButton, self.editHRes)

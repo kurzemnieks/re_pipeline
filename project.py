@@ -327,7 +327,7 @@ def create_asset_folders( assetName ):
     ASSET_FOLDERS.append(['other', OTHER])
     ASSET_FOLDERS.append(['textures',TEXTURES])
     
-    _create_project_folders(asset_folder, ASSET_FOLDERS, True)
+    return _create_project_folders(asset_folder, ASSET_FOLDERS, True)
 
 
 def get_shot_name( sequence, shot_number ):

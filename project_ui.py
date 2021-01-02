@@ -42,7 +42,8 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.newAssetDialog.exec_()
 
     def onCreateNewAsset(self, name):
-        print("Creating: " + name)
+        if project.create_asset_folders(name):
+            self.updateAssetList()        
 
     def updateAppConfig(self):
         self.appConfig = project.AppConfig( self.checkBlender.isChecked(),
@@ -66,6 +67,14 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.editFPS.setText(str(project.get_project_default_fps()))
 
         self.labelExtTexPath.setText(project.get_project_ext_asset_lib())
+
+        self.updateAssetList()
+
+    def updateAssetList(self):
+        self.assetList.clear()
+        all_assets = project.scan_project_assets()
+        for asset_name in all_assets:
+            asset_item = QtWidgets.QListWidgetItem(asset_name, self.assetList)
         
 class AssetDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
     def __init__(self, parent=None):
