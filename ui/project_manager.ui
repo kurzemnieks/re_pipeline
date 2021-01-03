@@ -91,7 +91,7 @@ color: rgb(220, 220, 220);</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_Assets">
        <attribute name="title">
@@ -460,7 +460,7 @@ color: rgb(220, 220, 220);</string>
               <bool>false</bool>
              </property>
              <property name="text">
-              <string>Archive</string>
+              <string>Archive Current Project</string>
              </property>
             </widget>
            </item>
@@ -470,14 +470,21 @@ color: rgb(220, 220, 220);</string>
               <bool>false</bool>
              </property>
              <property name="text">
-              <string>Clean</string>
+              <string>Clean Current Project</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="createProjectButton">
              <property name="text">
-              <string>Create / Update</string>
+              <string>Update Current Project</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="newProjectButton">
+             <property name="text">
+              <string>Create New Project</string>
              </property>
             </widget>
            </item>
@@ -492,7 +499,7 @@ color: rgb(220, 220, 220);</string>
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
          </spacer>

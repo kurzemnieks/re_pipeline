@@ -1,8 +1,12 @@
 import sys
+import os
 import project
 
+from ConfigParser import SafeConfigParser
+#P3 from configparser import ConfigParser 
+
 from Qt import QtWidgets, QtCore, QtGui
-from ui import projman, assetdialog, shotdialog
+from ui import projman, assetdialog, shotdialog, projectdialog
 
 
 class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
@@ -10,9 +14,18 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         super(ProjectManagerUI, self).__init__()
         self.setupUi(self)
 
+        self.configParser = SafeConfigParser()
+        #P3 self.configParser = ConfigParser()
+        
+        self.defaultNewProjectRoot = "C:\\Projects\\"
+
+        self.LoadConfig()
+
         self.updateAppConfig()
 
         self.newAssetDialog = AssetDialogUI(self)
+        self.newShotDialog = ShotDialogUI(self)
+        self.newProjectDialog = ProjectDialogUI(self)
 
         self.editHRes.setValidator( QtGui.QIntValidator(1, 32000))        
         self.editVRes.setValidator( QtGui.QIntValidator(1, 32000))        
@@ -20,30 +33,67 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
         self.setRootButton.clicked.connect(self.setProjectRoot)
         self.newAssetButton.clicked.connect(self.newAssetDialog.exec_)
+        self.newShotButton.clicked.connect(self.newShotDialog.exec_)
+        self.newProjectButton.clicked.connect(self.newProjectDialog.exec_)
 
-    def setProjectRoot(self):
+    def closeEvent(self, event):
+        self.SaveConfig()
+        event.accept()
 
-        dlg = QtWidgets.QFileDialog()
-        dlg.setFileMode( QtWidgets.QFileDialog.Directory )
-        if dlg.exec_():
-            folder = dlg.selectedFiles()
-            if len(folder) > 0:
-                result = project.set_current_root_dir(folder[0])
-                if not result:
-                    self.updateAppConfig()
-                    project.create_project(self.appConfig)
-                    project.create_project_folders()
-                else:
-                    self.onProjectLoaded()
+    def SaveConfig(self):
+        if not self.configParser.has_section("Defaults"):
+            self.configParser.add_section("Defaults")
 
-                self.projectRootLabel.setText(project.get_project_root())
+        if project._RE_PROJECT_INITIALIZED:
+            self.configParser.set("Defaults", "last_project", project.get_project_root())
 
-    def createNewAsset(self):
-        self.newAssetDialog.exec_()
+        self.configParser.set("Defaults", "projectsroot", os.path.normpath(self.defaultNewProjectRoot))
+
+        with open('config.ini', "w") as f:
+            self.configParser.write(f)
+
+    def LoadConfig(self):
+        self.configParser.read('config.ini')
+        if self.configParser.has_section("Defaults"):
+            if self.configParser.has_option("Defaults", "last_project"):
+                defaultProjRootDir = self.configParser.get("Defaults", "last_project")
+                #print("Setting initial default project: " + defaultProjRootDir)
+                self.setProjectRoot(defaultProjRootDir)
+
+            if self.configParser.has_option("Defaults","projectsroot"):
+                self.defaultNewProjectRoot = self.configParser.get("Defaults", "projectsroot")
+
+    def setProjectRoot(self, defaultRootDir=None):
+        
+        if not defaultRootDir:
+            dlg = QtWidgets.QFileDialog()
+            dlg.setFileMode( QtWidgets.QFileDialog.Directory )
+
+            if dlg.exec_():
+                folder = dlg.selectedFiles()
+                if len(folder) > 0:
+                    defaultRootDir = folder[0]
+
+        if defaultRootDir:
+            result = project.set_current_root_dir(defaultRootDir)
+            if not result:
+                self.updateAppConfig()
+                project.create_project(self.appConfig)
+                project.create_project_folders()
+            else:
+                self.onProjectLoaded()
+
+            self.projectRootLabel.setText(project.get_project_root())        
 
     def onCreateNewAsset(self, name):
         if project.create_asset_folders(name):
-            self.updateAssetList()        
+            self.updateAssetList()  
+            self.statusBar.showMessage("New asset created!")
+
+    def onCreateNewShot(self, sequenceNum, shotNum):
+        if project.create_shot(sequenceNum, shotNum):
+            self.updateShotList()
+            self.statusBar.showMessage("New shot created!")
 
     def updateAppConfig(self):
         self.appConfig = project.AppConfig( self.checkBlender.isChecked(),
@@ -55,6 +105,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def onProjectLoaded(self):
 
         self.statusBar.showMessage("Project loaded!")
+
         proj_app_cfg = project.get_project_app_config()
         self.checkBlender.setChecked( proj_app_cfg.blender )
         self.checkHoudini.setChecked( proj_app_cfg.houdini )
@@ -69,12 +120,19 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.labelExtTexPath.setText(project.get_project_ext_asset_lib())
 
         self.updateAssetList()
+        self.updateShotList()
 
     def updateAssetList(self):
         self.assetList.clear()
         all_assets = project.scan_project_assets()
         for asset_name in all_assets:
             asset_item = QtWidgets.QListWidgetItem(asset_name, self.assetList)
+
+    def updateShotList(self):
+        self.shotsList.clear()
+        all_shots = project.scan_project_shots()
+        for shot_name in all_shots:
+            shot_item = QtWidgets.QListWidgetItem(shot_name, self.shotsList)
         
 class AssetDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
     def __init__(self, parent=None):
@@ -89,7 +147,51 @@ class AssetDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
         #print(self.editAssetName.text())   
         self.parent.onCreateNewAsset(self.editAssetName.text())     
         self.close()
+
+
+class ShotDialogUI( QtWidgets.QDialog, shotdialog.Ui_ShotDialog):
+    def __init__(self, parent=None):
+        super(ShotDialogUI, self).__init__(parent=parent)
+        self.setupUi(self)
         
+        self.parent = parent
+        self.buttonBox.accepted.connect(self.create_new_shot)
+        self.buttonBox.rejected.connect(self.close)
+
+    def create_new_shot(self):
+        self.parent.onCreateNewShot(self.spinSequence.value(), self.spinShot.value())
+        self.close() 
+
+class ProjectDialogUI( QtWidgets.QDialog, projectdialog.Ui_ProjectDialog):
+    def __init__(self, parent=None):
+        super(ProjectDialogUI, self).__init__(parent=parent)
+        self.setupUi(self)
+        
+        self.parent = parent
+        self.buttonBox.accepted.connect(self.create_new_project)
+        self.buttonBox.rejected.connect(self.close)
+
+        self.browseButton.clicked.connect(self.browseProjectRoot)
+
+    def showEvent(self, event):
+        super(ProjectDialogUI, self).showEvent(event)
+        self.labelProjectRoot.setText(self.parent.defaultNewProjectRoot)
+
+    def create_new_project(self):
+        #self.parent.onCreateNewShot(self.spinSequence.value(), self.spinShot.value())
+        self.close() 
+
+    def browseProjectRoot(self):
+        dlg = QtWidgets.QFileDialog()
+        dlg.setFileMode( QtWidgets.QFileDialog.Directory )
+        if os.path.exists(self.labelProjectRoot.text()):
+            dlg.setDirectory(self.labelProjectRoot.text())
+
+        if dlg.exec_():
+            folder = dlg.selectedFiles()
+            if len(folder) > 0:
+                self.labelProjectRoot.setText(folder[0])
+                self.parent.defaultNewProjectRoot = self.labelProjectRoot.text()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])

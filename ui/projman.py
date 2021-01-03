@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'project_manager.ui',
 # licensing of 'project_manager.ui' applies.
 #
-# Created: Sat Jan  2 19:51:19 2021
+# Created: Sun Jan  3 21:01:59 2021
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
@@ -206,8 +206,11 @@ class Ui_MainWindow(object):
         self.createProjectButton = QtWidgets.QPushButton(self.widget)
         self.createProjectButton.setObjectName("createProjectButton")
         self.verticalLayout_6.addWidget(self.createProjectButton)
+        self.newProjectButton = QtWidgets.QPushButton(self.widget)
+        self.newProjectButton.setObjectName("newProjectButton")
+        self.verticalLayout_6.addWidget(self.newProjectButton)
         self.verticalLayout_4.addWidget(self.widget)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_4.addItem(spacerItem3)
         self.mainTabs.addTab(self.tab_Project, "")
         self.tab_Apps = QtWidgets.QWidget()
@@ -250,7 +253,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusBar)
 
         self.retranslateUi(MainWindow)
-        self.mainTabs.setCurrentIndex(1)
+        self.mainTabs.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.setRootButton, self.mainTabs)
         MainWindow.setTabOrder(self.mainTabs, self.newAssetButton)
@@ -301,9 +304,10 @@ class Ui_MainWindow(object):
         self.groupBox_3.setTitle(QtWidgets.QApplication.translate("MainWindow", "Additional settings", None, -1))
         self.checkLivePlate.setToolTip(QtWidgets.QApplication.translate("MainWindow", "Generate folders for footage, roto, tracking", None, -1))
         self.checkLivePlate.setText(QtWidgets.QApplication.translate("MainWindow", "Live plate compositing", None, -1))
-        self.archiveProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Archive", None, -1))
-        self.cleanProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Clean", None, -1))
-        self.createProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Create / Update", None, -1))
+        self.archiveProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Archive Current Project", None, -1))
+        self.cleanProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Clean Current Project", None, -1))
+        self.createProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Update Current Project", None, -1))
+        self.newProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Create New Project", None, -1))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Project), QtWidgets.QApplication.translate("MainWindow", "Project", None, -1))
         self.setHoudiniButton.setText(QtWidgets.QApplication.translate("MainWindow", "Set Houdini", None, -1))
         self.setBlenderButton.setText(QtWidgets.QApplication.translate("MainWindow", "Set Blender", None, -1))

@@ -371,7 +371,7 @@ def create_shot( sequence, shot_number):
 
     SHOT_FOLDERS.append(['comp', COMP])    
     
-    _create_project_folders(shot_path, SHOT_FOLDERS, True)
+    return _create_project_folders(shot_path, SHOT_FOLDERS, True)
 ############################################################
 
 def scan_project_assets():
