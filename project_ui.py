@@ -19,6 +19,13 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         
         self.defaultNewProjectRoot = "C:\\Projects\\"
 
+        self.archiveProjectButton.setEnabled(False)
+        self.archiveProjectButton.clicked.connect(self.onArchiveCurrentProject)
+        self.cleanProjectButton.setEnabled(False)
+        self.cleanProjectButton.clicked.connect(self.onCleanCurrentProject)
+        self.updateProjectButton.setEnabled(False)
+        self.updateProjectButton.clicked.connect(self.onUpdateCurrentProject)
+
         self.LoadConfig()
 
         self.updateAppConfig()
@@ -35,6 +42,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.newAssetButton.clicked.connect(self.newAssetDialog.exec_)
         self.newShotButton.clicked.connect(self.newShotDialog.exec_)
         self.newProjectButton.clicked.connect(self.newProjectDialog.exec_)
+        
 
     def closeEvent(self, event):
         self.SaveConfig()
@@ -57,8 +65,9 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         if self.configParser.has_section("Defaults"):
             if self.configParser.has_option("Defaults", "last_project"):
                 defaultProjRootDir = self.configParser.get("Defaults", "last_project")
-                #print("Setting initial default project: " + defaultProjRootDir)
-                self.setProjectRoot(defaultProjRootDir)
+                
+                if os.path.exists(defaultProjRootDir):
+                    self.setProjectRoot(defaultProjRootDir)
 
             if self.configParser.has_option("Defaults","projectsroot"):
                 self.defaultNewProjectRoot = self.configParser.get("Defaults", "projectsroot")
@@ -80,8 +89,9 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
                 self.updateAppConfig()
                 project.create_project(self.appConfig)
                 project.create_project_folders()
-            else:
-                self.onProjectLoaded()
+            
+
+            self.onProjectLoaded()
 
             self.projectRootLabel.setText(project.get_project_root())        
 
@@ -94,6 +104,23 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         if project.create_shot(sequenceNum, shotNum):
             self.updateShotList()
             self.statusBar.showMessage("New shot created!")
+
+    def onUpdateCurrentProject(self):
+        if project.create_project_folders():
+            self.statusBar.showMessage("Project folders updated! Missing ones created!")
+
+    def onCreateNewProject(self, projectPath):
+        self.setProjectRoot(projectPath)
+        #self.updateAppConfig()
+        #project.create_project(self.appConfig)
+        #project.create_project_folders()
+        #self.setProjectRoot(projectPath)
+
+    def onArchiveCurrentProject(self):
+        print("Not implemented")
+
+    def onCleanCurrentProject(self):
+        print("Not implemented")
 
     def updateAppConfig(self):
         self.appConfig = project.AppConfig( self.checkBlender.isChecked(),
@@ -118,6 +145,10 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.editFPS.setText(str(project.get_project_default_fps()))
 
         self.labelExtTexPath.setText(project.get_project_ext_asset_lib())
+
+        self.archiveProjectButton.setEnabled(True)
+        self.cleanProjectButton.setEnabled(True)
+        self.updateProjectButton.setEnabled(True)
 
         self.updateAssetList()
         self.updateShotList()
@@ -178,7 +209,8 @@ class ProjectDialogUI( QtWidgets.QDialog, projectdialog.Ui_ProjectDialog):
         self.labelProjectRoot.setText(self.parent.defaultNewProjectRoot)
 
     def create_new_project(self):
-        #self.parent.onCreateNewShot(self.spinSequence.value(), self.spinShot.value())
+        projPath = os.path.join(self.labelProjectRoot.text(), self.editProjectName.text())
+        self.parent.onCreateNewProject(projPath)
         self.close() 
 
     def browseProjectRoot(self):

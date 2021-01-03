@@ -475,7 +475,7 @@ color: rgb(220, 220, 220);</string>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="createProjectButton">
+            <widget class="QPushButton" name="updateProjectButton">
              <property name="text">
               <string>Update Current Project</string>
              </property>
@@ -593,7 +593,7 @@ color: rgb(220, 220, 220);</string>
   <tabstop>checkLivePlate</tabstop>
   <tabstop>archiveProjectButton</tabstop>
   <tabstop>cleanProjectButton</tabstop>
-  <tabstop>createProjectButton</tabstop>
+  <tabstop>updateProjectButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

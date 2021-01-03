@@ -1,0 +1,16 @@
+{
+    "apps": {
+        "blender": true, 
+        "c4d": false, 
+        "houdini": true, 
+        "maya": false, 
+        "usd": false
+    }, 
+    "ext_lib": "F:/Drive/Assets/Textures", 
+    "fps": 30.0, 
+    "rez": {
+        "x": 1920, 
+        "y": 1080
+    }, 
+    "version": 1.0
+}

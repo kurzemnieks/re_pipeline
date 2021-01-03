@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'project_manager.ui',
 # licensing of 'project_manager.ui' applies.
 #
-# Created: Sun Jan  3 21:01:59 2021
+# Created: Sun Jan  3 21:35:07 2021
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
@@ -203,9 +203,9 @@ class Ui_MainWindow(object):
         self.cleanProjectButton.setEnabled(False)
         self.cleanProjectButton.setObjectName("cleanProjectButton")
         self.verticalLayout_6.addWidget(self.cleanProjectButton)
-        self.createProjectButton = QtWidgets.QPushButton(self.widget)
-        self.createProjectButton.setObjectName("createProjectButton")
-        self.verticalLayout_6.addWidget(self.createProjectButton)
+        self.updateProjectButton = QtWidgets.QPushButton(self.widget)
+        self.updateProjectButton.setObjectName("updateProjectButton")
+        self.verticalLayout_6.addWidget(self.updateProjectButton)
         self.newProjectButton = QtWidgets.QPushButton(self.widget)
         self.newProjectButton.setObjectName("newProjectButton")
         self.verticalLayout_6.addWidget(self.newProjectButton)
@@ -273,7 +273,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.checkUSD, self.checkLivePlate)
         MainWindow.setTabOrder(self.checkLivePlate, self.archiveProjectButton)
         MainWindow.setTabOrder(self.archiveProjectButton, self.cleanProjectButton)
-        MainWindow.setTabOrder(self.cleanProjectButton, self.createProjectButton)
+        MainWindow.setTabOrder(self.cleanProjectButton, self.updateProjectButton)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "Project Manager", None, -1))
@@ -306,7 +306,7 @@ class Ui_MainWindow(object):
         self.checkLivePlate.setText(QtWidgets.QApplication.translate("MainWindow", "Live plate compositing", None, -1))
         self.archiveProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Archive Current Project", None, -1))
         self.cleanProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Clean Current Project", None, -1))
-        self.createProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Update Current Project", None, -1))
+        self.updateProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Update Current Project", None, -1))
         self.newProjectButton.setText(QtWidgets.QApplication.translate("MainWindow", "Create New Project", None, -1))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Project), QtWidgets.QApplication.translate("MainWindow", "Project", None, -1))
         self.setHoudiniButton.setText(QtWidgets.QApplication.translate("MainWindow", "Set Houdini", None, -1))

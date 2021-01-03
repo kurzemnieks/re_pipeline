@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'asset_dialog.ui',
 # licensing of 'asset_dialog.ui' applies.
 #
-# Created: Sun Jan  3 21:01:59 2021
+# Created: Sun Jan  3 21:35:07 2021
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!

@@ -136,7 +136,7 @@ def _get_project_folder_struct():
             ]
         ],
         ['tex',[
-            ['library',_RE_PROJECT_ASSET_LIB, len(_RE_PROJECT_ASSET_LIB)>0]
+            ['library',[],_RE_PROJECT_ASSET_LIB, len(_RE_PROJECT_ASSET_LIB)>0]
         ]
         ],
         ['lib',[]
@@ -206,6 +206,9 @@ def _create_project_folders( path="", template=[], create_missing_links=False ):
             #folder_path = '{}/{}'.format(path, folder_name)
             folder_path = os.path.join(path, folder_name)
 
+            #if isinstance(folder_link_target, bool):
+            #    print(folder)
+
             if folder_link_target and len(folder_link_target)==0:
                 folder_link_target = None
 
@@ -270,7 +273,7 @@ def create_project(app_config):
 def create_project_folders():
     # Create project folder structure based on configuration
     # Use this also to generate new folders if the configuration changes
-    _create_project_folders(_RE_PROJECT_ROOT, _get_project_folder_struct())    
+    return _create_project_folders(_RE_PROJECT_ROOT, _get_project_folder_struct())    
 
 
 def update_project_app_config(app_config):
