@@ -3,6 +3,7 @@ import os
 import subprocess
 import re
 from collections import namedtuple
+from pathlib import Path
 
 
 #########################################################################################################
@@ -218,14 +219,26 @@ def _create_project_folders( path="", template=[], create_missing_links=False ):
                 if not os.path.exists(folder_path):
                     
                     #make sure target folder exists
+                    print(_RE_PROJECT_ROOT)
                     symlink_target = os.path.join(_RE_PROJECT_ROOT, folder_link_target)
                     symlink_target = os.path.normpath(symlink_target.lower())
+                    
+                    #calculate relative path
+                    symlink_rel_target = os.path.relpath(symlink_target, folder_path)
+                    if symlink_rel_target.startswith("..\\"):
+                        symlink_rel_target = symlink_rel_target[3:]
+
+                    print("Link: " + folder_path + " ==> " + symlink_target + " ==> " + symlink_rel_target)
+
                     if not os.path.exists(symlink_target) and create_missing_links:
                         os.makedirs(symlink_target)
                     
-                    if os.path.exists(symlink_target):                                        
+                    if os.path.exists(symlink_target):
+                        old_cwd = os.getcwd()
+                        os.chdir(path)                                        
                         with open(os.devnull, "w") as FNULL:
-                            subprocess.check_call('mklink /D {} {}'.format(folder_path, symlink_target), shell=True, stdout=FNULL)
+                            subprocess.check_call('mklink /D {} {}'.format(folder_name, symlink_rel_target), shell=True, stdout=FNULL)
+                        os.chdir(old_cwd)
                     else:
                         raise ValueError("Can't create symlink. Dest path does not exist: " + symlink_target)
 
@@ -311,7 +324,7 @@ def create_asset_folders( assetName ):
     else:
         os.makedirs(asset_folder)
 
-    ASSET_FOLDERS = _get_app_folders( "asset", assetName )
+    ASSET_FOLDERS = _get_app_folders( "assets", assetName )
 
     OTHER = [
         ['tex',[],'assets/tex'],
@@ -360,7 +373,7 @@ def create_shot( sequence, shot_number):
     else:
         os.makedirs(shot_path)
 
-    SHOT_FOLDERS = _get_app_folders( "shot", shot_name )
+    SHOT_FOLDERS = _get_app_folders( "shots", shot_name )
 
     COMP = [
         ['previs',[],'render/previs/{}'.format(shot_name)],

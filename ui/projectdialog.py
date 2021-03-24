@@ -1,60 +1,78 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'project_dialog.ui',
-# licensing of 'project_dialog.ui' applies.
-#
-# Created: Sun Jan  3 21:35:07 2021
-#      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'project_dialog.ui'
+##
+## Created by: Qt User Interface Compiler version 5.15.2
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+
 
 class Ui_ProjectDialog(object):
     def setupUi(self, ProjectDialog):
-        ProjectDialog.setObjectName("ProjectDialog")
+        if not ProjectDialog.objectName():
+            ProjectDialog.setObjectName(u"ProjectDialog")
         ProjectDialog.resize(400, 120)
-        ProjectDialog.setMinimumSize(QtCore.QSize(400, 120))
-        ProjectDialog.setMaximumSize(QtCore.QSize(400, 120))
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI")
+        ProjectDialog.setMinimumSize(QSize(400, 120))
+        ProjectDialog.setMaximumSize(QSize(400, 120))
+        font = QFont()
+        font.setFamily(u"Segoe UI")
         ProjectDialog.setFont(font)
-        ProjectDialog.setStyleSheet("background-color: rgb(53, 53, 53);\n"
+        ProjectDialog.setStyleSheet(u"background-color: rgb(53, 53, 53);\n"
 "color: rgb(220, 220, 220);")
-        self.verticalLayout = QtWidgets.QVBoxLayout(ProjectDialog)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.widget = QtWidgets.QWidget(ProjectDialog)
-        self.widget.setObjectName("widget")
-        self.formLayout = QtWidgets.QFormLayout(self.widget)
-        self.formLayout.setContentsMargins(0, 0, 0, 0)
-        self.formLayout.setObjectName("formLayout")
-        self.label_2 = QtWidgets.QLabel(self.widget)
-        self.label_2.setObjectName("label_2")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_2)
-        self.editProjectName = QtWidgets.QLineEdit(self.widget)
-        self.editProjectName.setObjectName("editProjectName")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.editProjectName)
-        self.browseButton = QtWidgets.QPushButton(self.widget)
-        self.browseButton.setObjectName("browseButton")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.browseButton)
-        self.labelProjectRoot = QtWidgets.QLabel(self.widget)
-        self.labelProjectRoot.setObjectName("labelProjectRoot")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.labelProjectRoot)
+        self.verticalLayout = QVBoxLayout(ProjectDialog)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.widget = QWidget(ProjectDialog)
+        self.widget.setObjectName(u"widget")
+        self.formLayout = QFormLayout(self.widget)
+        self.formLayout.setObjectName(u"formLayout")
+        self.label_2 = QLabel(self.widget)
+        self.label_2.setObjectName(u"label_2")
+
+        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_2)
+
+        self.editProjectName = QLineEdit(self.widget)
+        self.editProjectName.setObjectName(u"editProjectName")
+
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.editProjectName)
+
+        self.browseButton = QPushButton(self.widget)
+        self.browseButton.setObjectName(u"browseButton")
+
+        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.browseButton)
+
+        self.labelProjectRoot = QLabel(self.widget)
+        self.labelProjectRoot.setObjectName(u"labelProjectRoot")
+
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.labelProjectRoot)
+
+
         self.verticalLayout.addWidget(self.widget)
-        self.buttonBox = QtWidgets.QDialogButtonBox(ProjectDialog)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
+
+        self.buttonBox = QDialogButtonBox(ProjectDialog)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+
         self.verticalLayout.addWidget(self.buttonBox)
 
+
         self.retranslateUi(ProjectDialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), ProjectDialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), ProjectDialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(ProjectDialog)
+        self.buttonBox.accepted.connect(ProjectDialog.accept)
+        self.buttonBox.rejected.connect(ProjectDialog.reject)
+
+        QMetaObject.connectSlotsByName(ProjectDialog)
+    # setupUi
 
     def retranslateUi(self, ProjectDialog):
-        ProjectDialog.setWindowTitle(QtWidgets.QApplication.translate("ProjectDialog", "Create New Project", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("ProjectDialog", "Project name:", None, -1))
-        self.browseButton.setText(QtWidgets.QApplication.translate("ProjectDialog", "Set Location", None, -1))
-        self.labelProjectRoot.setText(QtWidgets.QApplication.translate("ProjectDialog", "F:/Projects/", None, -1))
+        ProjectDialog.setWindowTitle(QCoreApplication.translate("ProjectDialog", u"Create New Project", None))
+        self.label_2.setText(QCoreApplication.translate("ProjectDialog", u"Project name:", None))
+        self.browseButton.setText(QCoreApplication.translate("ProjectDialog", u"Set Location", None))
+        self.labelProjectRoot.setText(QCoreApplication.translate("ProjectDialog", u"F:/Projects/", None))
+    # retranslateUi
 

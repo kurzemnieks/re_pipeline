@@ -1,52 +1,66 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'asset_dialog.ui',
-# licensing of 'asset_dialog.ui' applies.
-#
-# Created: Sun Jan  3 21:35:07 2021
-#      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'asset_dialog.ui'
+##
+## Created by: Qt User Interface Compiler version 5.15.2
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+
 
 class Ui_AssetDialog(object):
     def setupUi(self, AssetDialog):
-        AssetDialog.setObjectName("AssetDialog")
+        if not AssetDialog.objectName():
+            AssetDialog.setObjectName(u"AssetDialog")
         AssetDialog.resize(300, 120)
-        AssetDialog.setMinimumSize(QtCore.QSize(300, 120))
-        AssetDialog.setMaximumSize(QtCore.QSize(300, 120))
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI")
+        AssetDialog.setMinimumSize(QSize(300, 120))
+        AssetDialog.setMaximumSize(QSize(300, 120))
+        font = QFont()
+        font.setFamily(u"Segoe UI")
         AssetDialog.setFont(font)
-        AssetDialog.setStyleSheet("background-color: rgb(53, 53, 53);\n"
+        AssetDialog.setStyleSheet(u"background-color: rgb(53, 53, 53);\n"
 "color: rgb(220, 220, 220);")
-        self.verticalLayout = QtWidgets.QVBoxLayout(AssetDialog)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.widget = QtWidgets.QWidget(AssetDialog)
-        self.widget.setObjectName("widget")
-        self.formLayout = QtWidgets.QFormLayout(self.widget)
-        self.formLayout.setContentsMargins(0, 0, 0, 0)
-        self.formLayout.setObjectName("formLayout")
-        self.label_2 = QtWidgets.QLabel(self.widget)
-        self.label_2.setObjectName("label_2")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_2)
-        self.editAssetName = QtWidgets.QLineEdit(self.widget)
-        self.editAssetName.setObjectName("editAssetName")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.editAssetName)
+        self.verticalLayout = QVBoxLayout(AssetDialog)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.widget = QWidget(AssetDialog)
+        self.widget.setObjectName(u"widget")
+        self.formLayout = QFormLayout(self.widget)
+        self.formLayout.setObjectName(u"formLayout")
+        self.label_2 = QLabel(self.widget)
+        self.label_2.setObjectName(u"label_2")
+
+        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_2)
+
+        self.editAssetName = QLineEdit(self.widget)
+        self.editAssetName.setObjectName(u"editAssetName")
+
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.editAssetName)
+
+
         self.verticalLayout.addWidget(self.widget)
-        self.buttonBox = QtWidgets.QDialogButtonBox(AssetDialog)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
+
+        self.buttonBox = QDialogButtonBox(AssetDialog)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+
         self.verticalLayout.addWidget(self.buttonBox)
 
+
         self.retranslateUi(AssetDialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), AssetDialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), AssetDialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(AssetDialog)
+        self.buttonBox.accepted.connect(AssetDialog.accept)
+        self.buttonBox.rejected.connect(AssetDialog.reject)
+
+        QMetaObject.connectSlotsByName(AssetDialog)
+    # setupUi
 
     def retranslateUi(self, AssetDialog):
-        AssetDialog.setWindowTitle(QtWidgets.QApplication.translate("AssetDialog", "New Asset", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("AssetDialog", "Asset name:", None, -1))
+        AssetDialog.setWindowTitle(QCoreApplication.translate("AssetDialog", u"New Asset", None))
+        self.label_2.setText(QCoreApplication.translate("AssetDialog", u"Asset name:", None))
+    # retranslateUi
 

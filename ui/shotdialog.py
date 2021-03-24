@@ -1,69 +1,87 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'shot_dialog.ui',
-# licensing of 'shot_dialog.ui' applies.
-#
-# Created: Sun Jan  3 21:35:07 2021
-#      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'shot_dialog.ui'
+##
+## Created by: Qt User Interface Compiler version 5.15.2
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+
 
 class Ui_ShotDialog(object):
     def setupUi(self, ShotDialog):
-        ShotDialog.setObjectName("ShotDialog")
+        if not ShotDialog.objectName():
+            ShotDialog.setObjectName(u"ShotDialog")
         ShotDialog.resize(220, 120)
-        ShotDialog.setMinimumSize(QtCore.QSize(220, 120))
-        ShotDialog.setMaximumSize(QtCore.QSize(220, 120))
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI")
+        ShotDialog.setMinimumSize(QSize(220, 120))
+        ShotDialog.setMaximumSize(QSize(220, 120))
+        font = QFont()
+        font.setFamily(u"Segoe UI")
         ShotDialog.setFont(font)
-        ShotDialog.setStyleSheet("background-color: rgb(53, 53, 53);\n"
+        ShotDialog.setStyleSheet(u"background-color: rgb(53, 53, 53);\n"
 "color: rgb(220, 220, 220);")
-        self.verticalLayout = QtWidgets.QVBoxLayout(ShotDialog)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.widget = QtWidgets.QWidget(ShotDialog)
-        self.widget.setObjectName("widget")
-        self.formLayout = QtWidgets.QFormLayout(self.widget)
-        self.formLayout.setContentsMargins(0, 0, 0, 0)
-        self.formLayout.setObjectName("formLayout")
-        self.label = QtWidgets.QLabel(self.widget)
-        self.label.setMinimumSize(QtCore.QSize(120, 0))
-        self.label.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.label.setObjectName("label")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label)
-        self.spinSequence = QtWidgets.QSpinBox(self.widget)
-        self.spinSequence.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.verticalLayout = QVBoxLayout(ShotDialog)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.widget = QWidget(ShotDialog)
+        self.widget.setObjectName(u"widget")
+        self.formLayout = QFormLayout(self.widget)
+        self.formLayout.setObjectName(u"formLayout")
+        self.label = QLabel(self.widget)
+        self.label.setObjectName(u"label")
+        self.label.setMinimumSize(QSize(120, 0))
+        self.label.setMaximumSize(QSize(200, 16777215))
+
+        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label)
+
+        self.spinSequence = QSpinBox(self.widget)
+        self.spinSequence.setObjectName(u"spinSequence")
+        self.spinSequence.setMaximumSize(QSize(50, 16777215))
         self.spinSequence.setMinimum(1)
         self.spinSequence.setMaximum(500)
-        self.spinSequence.setProperty("value", 1)
-        self.spinSequence.setObjectName("spinSequence")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.spinSequence)
-        self.label_2 = QtWidgets.QLabel(self.widget)
-        self.label_2.setObjectName("label_2")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_2)
-        self.spinShot = QtWidgets.QSpinBox(self.widget)
-        self.spinShot.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.spinSequence.setValue(1)
+
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.spinSequence)
+
+        self.label_2 = QLabel(self.widget)
+        self.label_2.setObjectName(u"label_2")
+
+        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_2)
+
+        self.spinShot = QSpinBox(self.widget)
+        self.spinShot.setObjectName(u"spinShot")
+        self.spinShot.setMaximumSize(QSize(50, 16777215))
         self.spinShot.setMinimum(1)
         self.spinShot.setMaximum(500)
-        self.spinShot.setProperty("value", 1)
-        self.spinShot.setObjectName("spinShot")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.spinShot)
+        self.spinShot.setValue(1)
+
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.spinShot)
+
+
         self.verticalLayout.addWidget(self.widget)
-        self.buttonBox = QtWidgets.QDialogButtonBox(ShotDialog)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
+
+        self.buttonBox = QDialogButtonBox(ShotDialog)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+
         self.verticalLayout.addWidget(self.buttonBox)
 
+
         self.retranslateUi(ShotDialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), ShotDialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), ShotDialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(ShotDialog)
+        self.buttonBox.accepted.connect(ShotDialog.accept)
+        self.buttonBox.rejected.connect(ShotDialog.reject)
+
+        QMetaObject.connectSlotsByName(ShotDialog)
+    # setupUi
 
     def retranslateUi(self, ShotDialog):
-        ShotDialog.setWindowTitle(QtWidgets.QApplication.translate("ShotDialog", "New Shot", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("ShotDialog", "Sequence number:", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("ShotDialog", "Shot number:", None, -1))
+        ShotDialog.setWindowTitle(QCoreApplication.translate("ShotDialog", u"New Shot", None))
+        self.label.setText(QCoreApplication.translate("ShotDialog", u"Sequence number:", None))
+        self.label_2.setText(QCoreApplication.translate("ShotDialog", u"Shot number:", None))
+    # retranslateUi
 

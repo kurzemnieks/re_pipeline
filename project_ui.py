@@ -2,10 +2,9 @@ import sys
 import os
 import project
 
-from ConfigParser import SafeConfigParser
-#P3 from configparser import ConfigParser 
+from configparser import ConfigParser 
 
-from Qt import QtWidgets, QtCore, QtGui
+from PySide2 import QtWidgets, QtCore, QtGui
 from ui import projman, assetdialog, shotdialog, projectdialog
 
 
@@ -13,9 +12,8 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def __init__(self):
         super(ProjectManagerUI, self).__init__()
         self.setupUi(self)
-
-        self.configParser = SafeConfigParser()
-        #P3 self.configParser = ConfigParser()
+        
+        self.configParser = ConfigParser()
         
         self.defaultNewProjectRoot = "C:\\Projects\\"
 
@@ -38,7 +36,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.editVRes.setValidator( QtGui.QIntValidator(1, 32000))        
         self.editFPS.setValidator( QtGui.QDoubleValidator(1.0, 500.0, 3))
 
-        self.setRootButton.clicked.connect(self.setProjectRoot)
+        self.setRootButton.clicked.connect(self.setProjectRootOrCreate)
         self.newAssetButton.clicked.connect(self.newAssetDialog.exec_)
         self.newShotButton.clicked.connect(self.newShotDialog.exec_)
         self.newProjectButton.clicked.connect(self.newProjectDialog.exec_)
@@ -67,12 +65,12 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
                 defaultProjRootDir = self.configParser.get("Defaults", "last_project")
                 
                 if os.path.exists(defaultProjRootDir):
-                    self.setProjectRoot(defaultProjRootDir)
+                    self.setProjectRootOrCreate(defaultProjRootDir)
 
             if self.configParser.has_option("Defaults","projectsroot"):
                 self.defaultNewProjectRoot = self.configParser.get("Defaults", "projectsroot")
 
-    def setProjectRoot(self, defaultRootDir=None):
+    def setProjectRootOrCreate(self, defaultRootDir=None):
         
         if not defaultRootDir:
             dlg = QtWidgets.QFileDialog()
@@ -110,7 +108,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             self.statusBar.showMessage("Project folders updated! Missing ones created!")
 
     def onCreateNewProject(self, projectPath):
-        self.setProjectRoot(projectPath)
+        self.setProjectRootOrCreate(projectPath)
         #self.updateAppConfig()
         #project.create_project(self.appConfig)
         #project.create_project_folders()
