@@ -231,7 +231,7 @@ def _create_project_folders( path="", template=[], create_missing_links=False ):
                     print("Link: " + folder_path + " ==> " + symlink_target + " ==> " + symlink_rel_target)
 
                     if not os.path.exists(symlink_target) and create_missing_links:
-                        os.makedirs(symlink_target)
+                        os.makedirs(symlink_target)                        
                     
                     if os.path.exists(symlink_target):
                         old_cwd = os.getcwd()
