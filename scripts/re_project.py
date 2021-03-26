@@ -19,8 +19,8 @@ _RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
 
 #########################################################################################################
 
-AppConfig = namedtuple('AppConfig',['blender','houdini','c4d','maya','usd'])
-_RE_PROJECT_APP_CONFIG = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False)
+AppConfig = namedtuple('AppConfig',['blender','houdini','c4d','maya','usd','other'])
+_RE_PROJECT_APP_CONFIG = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
 
 _RE_PROJECT_HAS_FOOTAGE = False #Project has footage, uses roto, tracking for comp
 
@@ -37,7 +37,7 @@ def set_current_root_dir( path ):
         print('Info: Project not found at location: ' + _RE_PROJECT_ROOT)
         return False
     else:
-        print('Info: Project found at current location')
+        print('Info: Project found at: ' + _RE_PROJECT_ROOT)
         return True
 
 def is_project_initialized():
@@ -71,6 +71,11 @@ def get_project_default_fps():
 def get_project_ext_asset_lib():
     assert(_RE_PROJECT_INITIALIZED)
     return _RE_PROJECT_ASSET_LIB    
+
+def is_in_houdini():
+    if os.getenv("HOUDINI_PATH") is not None:
+        return True
+    return False
 
 #########################################################################################################
 # internals
@@ -219,7 +224,6 @@ def _create_project_folders( path="", template=[], create_missing_links=False ):
                 if not os.path.exists(folder_path):
                     
                     #make sure target folder exists
-                    print(_RE_PROJECT_ROOT)
                     symlink_target = os.path.join(_RE_PROJECT_ROOT, folder_link_target)
                     symlink_target = os.path.normpath(symlink_target.lower())
                     
@@ -228,7 +232,7 @@ def _create_project_folders( path="", template=[], create_missing_links=False ):
                     if symlink_rel_target.startswith("..\\"):
                         symlink_rel_target = symlink_rel_target[3:]
 
-                    print("Link: " + folder_path + " ==> " + symlink_target + " ==> " + symlink_rel_target)
+                    #print("Link: " + folder_path + " ==> " + symlink_target + " ==> " + symlink_rel_target)
 
                     if not os.path.exists(symlink_target) and create_missing_links:
                         os.makedirs(symlink_target)                        
@@ -326,6 +330,7 @@ def create_asset_folders( assetName ):
 
     ASSET_FOLDERS = _get_app_folders( "assets", assetName )
 
+    # Any other 3d app work files goes there.  
     OTHER = [
         ['tex',[],'assets/tex'],
         ['fbx',[],'assets/3d/fbx'],
@@ -340,7 +345,8 @@ def create_asset_folders( assetName ):
         ['tex',[],'assets/tex']
     ]
 
-    ASSET_FOLDERS.append(['other', OTHER])
+    if _RE_PROJECT_APP_CONFIG.other:
+        ASSET_FOLDERS.append(['other', OTHER])
     ASSET_FOLDERS.append(['textures',TEXTURES])
     
     return _create_project_folders(asset_folder, ASSET_FOLDERS, True)

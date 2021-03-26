@@ -1,1 +1,4 @@
-python.exe %cd%\project_ui.py
+set PYTHONPATH=%cd%\scripts
+set RE_ROOT=%cd%
+
+python.exe %cd%\scripts\re_project_manager.py

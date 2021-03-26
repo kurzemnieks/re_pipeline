@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>363</width>
-    <height>617</height>
+    <height>660</height>
    </rect>
   </property>
   <property name="font">
@@ -37,37 +37,57 @@ color: rgb(220, 220, 220);</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="bottomMargin">
-       <number>6</number>
+     <widget class="QWidget" name="top_stuff" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <item>
-       <widget class="QPushButton" name="setRootButton">
-        <property name="maximumSize">
-         <size>
-          <width>40</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Set</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="projectRootLabel">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>C:/Projects/ProjectRoot</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="bottomMargin">
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="setRootButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>120</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Set Project</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="projectRootLabel">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>C:/Projects/ProjectRoot</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
     <item>
      <spacer name="verticalSpacer">
@@ -91,7 +111,7 @@ color: rgb(220, 220, 220);</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_Assets">
        <attribute name="title">
@@ -106,16 +126,10 @@ color: rgb(220, 220, 220);</string>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="assetButtonsWidget" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <widget class="QWidget" name="assetActions" native="true">
+          <layout class="QHBoxLayout" name="assetActionLayout">
            <item>
             <widget class="QPushButton" name="newAssetButton">
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>16777215</height>
-              </size>
-             </property>
              <property name="text">
               <string>Create New Asset</string>
              </property>
@@ -123,12 +137,6 @@ color: rgb(220, 220, 220);</string>
            </item>
            <item>
             <widget class="QPushButton" name="updateAssetButton">
-             <property name="maximumSize">
-              <size>
-               <width>80</width>
-               <height>16777215</height>
-              </size>
-             </property>
              <property name="text">
               <string>Update</string>
              </property>
@@ -137,16 +145,10 @@ color: rgb(220, 220, 220);</string>
            <item>
             <widget class="QPushButton" name="loadAssetButton">
              <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>80</width>
-               <height>16777215</height>
-              </size>
+              <bool>true</bool>
              </property>
              <property name="text">
-              <string>Load</string>
+              <string>Set Active</string>
              </property>
             </widget>
            </item>
@@ -181,16 +183,10 @@ color: rgb(220, 220, 220);</string>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="assetButtonsWidget_2" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <widget class="QWidget" name="shotActions" native="true">
+          <layout class="QHBoxLayout" name="shotActionLayout">
            <item>
             <widget class="QPushButton" name="newShotButton">
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>16777215</height>
-              </size>
-             </property>
              <property name="text">
               <string>Create New Shot</string>
              </property>
@@ -198,12 +194,6 @@ color: rgb(220, 220, 220);</string>
            </item>
            <item>
             <widget class="QPushButton" name="updateShotButton">
-             <property name="maximumSize">
-              <size>
-               <width>80</width>
-               <height>16777215</height>
-              </size>
-             </property>
              <property name="text">
               <string>Update</string>
              </property>
@@ -212,16 +202,10 @@ color: rgb(220, 220, 220);</string>
            <item>
             <widget class="QPushButton" name="loadShotButton">
              <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>80</width>
-               <height>16777215</height>
-              </size>
+              <bool>true</bool>
              </property>
              <property name="text">
-              <string>Load</string>
+              <string>Set Active</string>
              </property>
             </widget>
            </item>
@@ -360,11 +344,30 @@ color: rgb(220, 220, 220);</string>
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Used Applications</string>
+          <property name="toolTip">
+           <string>Create work folders for these apps</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout">
+          <property name="title">
+           <string>App Folders</string>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <layout class="QFormLayout" name="formLayout_3">
            <item row="0" column="0">
+            <widget class="QCheckBox" name="checkBlender">
+             <property name="text">
+              <string>Blender</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
             <widget class="QCheckBox" name="checkHoudini">
              <property name="maximumSize">
               <size>
@@ -380,17 +383,14 @@ color: rgb(220, 220, 220);</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="checkBlender">
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="checkC4D">
              <property name="text">
-              <string>Blender</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
+              <string>Cinema 4D</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="1" column="1">
             <widget class="QCheckBox" name="checkMaya">
              <property name="maximumSize">
               <size>
@@ -403,14 +403,7 @@ color: rgb(220, 220, 220);</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="checkC4D">
-             <property name="text">
-              <string>Cinema 4D</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
+           <item row="2" column="1">
             <widget class="QCheckBox" name="checkUSD">
              <property name="maximumSize">
               <size>
@@ -423,13 +416,26 @@ color: rgb(220, 220, 220);</string>
              </property>
             </widget>
            </item>
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="checkOther">
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Other</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox_3">
           <property name="title">
-           <string>Additional settings</string>
+           <string>Additional folders</string>
           </property>
           <layout class="QFormLayout" name="formLayout_2">
            <item row="0" column="0">
@@ -450,7 +456,7 @@ color: rgb(220, 220, 220);</string>
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>100</height>
+            <height>120</height>
            </size>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -458,6 +464,18 @@ color: rgb(220, 220, 220);</string>
             <widget class="QPushButton" name="archiveProjectButton">
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
              </property>
              <property name="text">
               <string>Archive Current Project</string>
@@ -469,6 +487,12 @@ color: rgb(220, 220, 220);</string>
              <property name="enabled">
               <bool>false</bool>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
              <property name="text">
               <string>Clean Current Project</string>
              </property>
@@ -476,6 +500,12 @@ color: rgb(220, 220, 220);</string>
            </item>
            <item>
             <widget class="QPushButton" name="updateProjectButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
              <property name="text">
               <string>Update Current Project</string>
              </property>
@@ -483,6 +513,12 @@ color: rgb(220, 220, 220);</string>
            </item>
            <item>
             <widget class="QPushButton" name="newProjectButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
              <property name="text">
               <string>Create New Project</string>
              </property>
@@ -499,7 +535,7 @@ color: rgb(220, 220, 220);</string>
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>10</height>
+            <height>5</height>
            </size>
           </property>
          </spacer>
@@ -510,60 +546,81 @@ color: rgb(220, 220, 220);</string>
        <attribute name="title">
         <string>App Config</string>
        </attribute>
-       <layout class="QFormLayout" name="formLayout_3">
-        <item row="0" column="0">
-         <widget class="QPushButton" name="setHoudiniButton">
-          <property name="text">
-           <string>Set Houdini</string>
-          </property>
-         </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_20">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="setHoudiniButton">
+            <property name="text">
+             <string>Set Houdini</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="houdiniPathEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="runHoudiniButton">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Run</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="editHoudiniPath"/>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_21">
+          <item>
+           <widget class="QPushButton" name="setBlenderButton">
+            <property name="text">
+             <string>Set Blender</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="blenderPathEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="runBlenderButton">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Run</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="setBlenderButton">
-          <property name="text">
-           <string>Set Blender</string>
+        <item>
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="editBlenderPath"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QPushButton" name="setC4DButton">
-          <property name="enabled">
-           <bool>false</bool>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
           </property>
-          <property name="text">
-           <string>Set C4D</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QPushButton" name="setMayaButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Set Maya</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="editC4DPath">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="editMayaPath">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-         </widget>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -585,11 +642,6 @@ color: rgb(220, 220, 220);</string>
   <tabstop>editHRes</tabstop>
   <tabstop>editVRes</tabstop>
   <tabstop>editFPS</tabstop>
-  <tabstop>checkHoudini</tabstop>
-  <tabstop>checkBlender</tabstop>
-  <tabstop>checkMaya</tabstop>
-  <tabstop>checkC4D</tabstop>
-  <tabstop>checkUSD</tabstop>
   <tabstop>checkLivePlate</tabstop>
   <tabstop>archiveProjectButton</tabstop>
   <tabstop>cleanProjectButton</tabstop>

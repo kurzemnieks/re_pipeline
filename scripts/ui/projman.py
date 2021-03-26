@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(363, 617)
+        MainWindow.resize(363, 660)
         font = QFont()
         font.setFamily(u"Segoe UI")
         MainWindow.setFont(font)
@@ -34,16 +34,29 @@ class Ui_MainWindow(object):
         self.centralwidget.setSizePolicy(sizePolicy)
         self.verticalLayout_2 = QVBoxLayout(self.centralwidget)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.horizontalLayout = QHBoxLayout()
+        self.top_stuff = QWidget(self.centralwidget)
+        self.top_stuff.setObjectName(u"top_stuff")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.top_stuff.sizePolicy().hasHeightForWidth())
+        self.top_stuff.setSizePolicy(sizePolicy1)
+        self.horizontalLayout = QHBoxLayout(self.top_stuff)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(-1, -1, -1, 6)
-        self.setRootButton = QPushButton(self.centralwidget)
+        self.setRootButton = QPushButton(self.top_stuff)
         self.setRootButton.setObjectName(u"setRootButton")
-        self.setRootButton.setMaximumSize(QSize(40, 16777215))
+        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.setRootButton.sizePolicy().hasHeightForWidth())
+        self.setRootButton.setSizePolicy(sizePolicy2)
+        self.setRootButton.setMinimumSize(QSize(80, 0))
+        self.setRootButton.setMaximumSize(QSize(120, 16777215))
 
         self.horizontalLayout.addWidget(self.setRootButton)
 
-        self.projectRootLabel = QLabel(self.centralwidget)
+        self.projectRootLabel = QLabel(self.top_stuff)
         self.projectRootLabel.setObjectName(u"projectRootLabel")
         font1 = QFont()
         font1.setBold(True)
@@ -53,7 +66,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.projectRootLabel)
 
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout)
+        self.verticalLayout_2.addWidget(self.top_stuff)
 
         self.verticalSpacer = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Maximum)
 
@@ -72,35 +85,32 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.assetList)
 
-        self.assetButtonsWidget = QWidget(self.tab_Assets)
-        self.assetButtonsWidget.setObjectName(u"assetButtonsWidget")
-        self.horizontalLayout_2 = QHBoxLayout(self.assetButtonsWidget)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.newAssetButton = QPushButton(self.assetButtonsWidget)
+        self.assetActions = QWidget(self.tab_Assets)
+        self.assetActions.setObjectName(u"assetActions")
+        self.assetActionLayout = QHBoxLayout(self.assetActions)
+        self.assetActionLayout.setObjectName(u"assetActionLayout")
+        self.newAssetButton = QPushButton(self.assetActions)
         self.newAssetButton.setObjectName(u"newAssetButton")
-        self.newAssetButton.setMaximumSize(QSize(120, 16777215))
 
-        self.horizontalLayout_2.addWidget(self.newAssetButton)
+        self.assetActionLayout.addWidget(self.newAssetButton)
 
-        self.updateAssetButton = QPushButton(self.assetButtonsWidget)
+        self.updateAssetButton = QPushButton(self.assetActions)
         self.updateAssetButton.setObjectName(u"updateAssetButton")
-        self.updateAssetButton.setMaximumSize(QSize(80, 16777215))
 
-        self.horizontalLayout_2.addWidget(self.updateAssetButton)
+        self.assetActionLayout.addWidget(self.updateAssetButton)
 
-        self.loadAssetButton = QPushButton(self.assetButtonsWidget)
+        self.loadAssetButton = QPushButton(self.assetActions)
         self.loadAssetButton.setObjectName(u"loadAssetButton")
-        self.loadAssetButton.setEnabled(False)
-        self.loadAssetButton.setMaximumSize(QSize(80, 16777215))
+        self.loadAssetButton.setEnabled(True)
 
-        self.horizontalLayout_2.addWidget(self.loadAssetButton)
+        self.assetActionLayout.addWidget(self.loadAssetButton)
 
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+        self.assetActionLayout.addItem(self.horizontalSpacer)
 
 
-        self.verticalLayout.addWidget(self.assetButtonsWidget)
+        self.verticalLayout.addWidget(self.assetActions)
 
         self.mainTabs.addTab(self.tab_Assets, "")
         self.tab_Shots = QWidget()
@@ -113,35 +123,32 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.shotsList)
 
-        self.assetButtonsWidget_2 = QWidget(self.tab_Shots)
-        self.assetButtonsWidget_2.setObjectName(u"assetButtonsWidget_2")
-        self.horizontalLayout_3 = QHBoxLayout(self.assetButtonsWidget_2)
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.newShotButton = QPushButton(self.assetButtonsWidget_2)
+        self.shotActions = QWidget(self.tab_Shots)
+        self.shotActions.setObjectName(u"shotActions")
+        self.shotActionLayout = QHBoxLayout(self.shotActions)
+        self.shotActionLayout.setObjectName(u"shotActionLayout")
+        self.newShotButton = QPushButton(self.shotActions)
         self.newShotButton.setObjectName(u"newShotButton")
-        self.newShotButton.setMaximumSize(QSize(120, 16777215))
 
-        self.horizontalLayout_3.addWidget(self.newShotButton)
+        self.shotActionLayout.addWidget(self.newShotButton)
 
-        self.updateShotButton = QPushButton(self.assetButtonsWidget_2)
+        self.updateShotButton = QPushButton(self.shotActions)
         self.updateShotButton.setObjectName(u"updateShotButton")
-        self.updateShotButton.setMaximumSize(QSize(80, 16777215))
 
-        self.horizontalLayout_3.addWidget(self.updateShotButton)
+        self.shotActionLayout.addWidget(self.updateShotButton)
 
-        self.loadShotButton = QPushButton(self.assetButtonsWidget_2)
+        self.loadShotButton = QPushButton(self.shotActions)
         self.loadShotButton.setObjectName(u"loadShotButton")
-        self.loadShotButton.setEnabled(False)
-        self.loadShotButton.setMaximumSize(QSize(80, 16777215))
+        self.loadShotButton.setEnabled(True)
 
-        self.horizontalLayout_3.addWidget(self.loadShotButton)
+        self.shotActionLayout.addWidget(self.loadShotButton)
 
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
+        self.shotActionLayout.addItem(self.horizontalSpacer_2)
 
 
-        self.verticalLayout_3.addWidget(self.assetButtonsWidget_2)
+        self.verticalLayout_3.addWidget(self.shotActions)
 
         self.mainTabs.addTab(self.tab_Shots, "")
         self.tab_Project = QWidget()
@@ -206,37 +213,45 @@ class Ui_MainWindow(object):
 
         self.groupBox = QGroupBox(self.tab_Project)
         self.groupBox.setObjectName(u"groupBox")
-        self.gridLayout = QGridLayout(self.groupBox)
-        self.gridLayout.setObjectName(u"gridLayout")
+        self.groupBox.setFlat(False)
+        self.groupBox.setCheckable(False)
+        self.formLayout_3 = QFormLayout(self.groupBox)
+        self.formLayout_3.setObjectName(u"formLayout_3")
+        self.checkBlender = QCheckBox(self.groupBox)
+        self.checkBlender.setObjectName(u"checkBlender")
+        self.checkBlender.setChecked(True)
+
+        self.formLayout_3.setWidget(0, QFormLayout.LabelRole, self.checkBlender)
+
         self.checkHoudini = QCheckBox(self.groupBox)
         self.checkHoudini.setObjectName(u"checkHoudini")
         self.checkHoudini.setMaximumSize(QSize(70, 16777215))
         self.checkHoudini.setChecked(True)
 
-        self.gridLayout.addWidget(self.checkHoudini, 0, 0, 1, 1)
+        self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.checkHoudini)
 
-        self.checkBlender = QCheckBox(self.groupBox)
-        self.checkBlender.setObjectName(u"checkBlender")
-        self.checkBlender.setChecked(True)
+        self.checkC4D = QCheckBox(self.groupBox)
+        self.checkC4D.setObjectName(u"checkC4D")
 
-        self.gridLayout.addWidget(self.checkBlender, 0, 1, 1, 1)
+        self.formLayout_3.setWidget(1, QFormLayout.LabelRole, self.checkC4D)
 
         self.checkMaya = QCheckBox(self.groupBox)
         self.checkMaya.setObjectName(u"checkMaya")
         self.checkMaya.setMaximumSize(QSize(70, 16777215))
 
-        self.gridLayout.addWidget(self.checkMaya, 1, 0, 1, 1)
-
-        self.checkC4D = QCheckBox(self.groupBox)
-        self.checkC4D.setObjectName(u"checkC4D")
-
-        self.gridLayout.addWidget(self.checkC4D, 1, 1, 1, 1)
+        self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.checkMaya)
 
         self.checkUSD = QCheckBox(self.groupBox)
         self.checkUSD.setObjectName(u"checkUSD")
         self.checkUSD.setMaximumSize(QSize(70, 16777215))
 
-        self.gridLayout.addWidget(self.checkUSD, 2, 0, 1, 1)
+        self.formLayout_3.setWidget(2, QFormLayout.FieldRole, self.checkUSD)
+
+        self.checkOther = QCheckBox(self.groupBox)
+        self.checkOther.setObjectName(u"checkOther")
+        self.checkOther.setMaximumSize(QSize(70, 16777215))
+
+        self.formLayout_3.setWidget(2, QFormLayout.LabelRole, self.checkOther)
 
 
         self.verticalLayout_4.addWidget(self.groupBox)
@@ -255,86 +270,99 @@ class Ui_MainWindow(object):
 
         self.widget = QWidget(self.tab_Project)
         self.widget.setObjectName(u"widget")
-        self.widget.setMaximumSize(QSize(16777215, 100))
+        self.widget.setMaximumSize(QSize(16777215, 120))
         self.verticalLayout_6 = QVBoxLayout(self.widget)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.archiveProjectButton = QPushButton(self.widget)
         self.archiveProjectButton.setObjectName(u"archiveProjectButton")
         self.archiveProjectButton.setEnabled(False)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.archiveProjectButton.sizePolicy().hasHeightForWidth())
+        self.archiveProjectButton.setSizePolicy(sizePolicy3)
+        self.archiveProjectButton.setMinimumSize(QSize(0, 24))
 
         self.verticalLayout_6.addWidget(self.archiveProjectButton)
 
         self.cleanProjectButton = QPushButton(self.widget)
         self.cleanProjectButton.setObjectName(u"cleanProjectButton")
         self.cleanProjectButton.setEnabled(False)
+        self.cleanProjectButton.setMinimumSize(QSize(0, 24))
 
         self.verticalLayout_6.addWidget(self.cleanProjectButton)
 
         self.updateProjectButton = QPushButton(self.widget)
         self.updateProjectButton.setObjectName(u"updateProjectButton")
+        self.updateProjectButton.setMinimumSize(QSize(0, 24))
 
         self.verticalLayout_6.addWidget(self.updateProjectButton)
 
         self.newProjectButton = QPushButton(self.widget)
         self.newProjectButton.setObjectName(u"newProjectButton")
+        self.newProjectButton.setMinimumSize(QSize(0, 24))
 
         self.verticalLayout_6.addWidget(self.newProjectButton)
 
 
         self.verticalLayout_4.addWidget(self.widget)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(20, 5, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_4.addItem(self.verticalSpacer_2)
 
         self.mainTabs.addTab(self.tab_Project, "")
         self.tab_Apps = QWidget()
         self.tab_Apps.setObjectName(u"tab_Apps")
-        self.formLayout_3 = QFormLayout(self.tab_Apps)
-        self.formLayout_3.setObjectName(u"formLayout_3")
+        self.verticalLayout_20 = QVBoxLayout(self.tab_Apps)
+        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.setHoudiniButton = QPushButton(self.tab_Apps)
         self.setHoudiniButton.setObjectName(u"setHoudiniButton")
 
-        self.formLayout_3.setWidget(0, QFormLayout.LabelRole, self.setHoudiniButton)
+        self.horizontalLayout_4.addWidget(self.setHoudiniButton)
 
-        self.editHoudiniPath = QLineEdit(self.tab_Apps)
-        self.editHoudiniPath.setObjectName(u"editHoudiniPath")
+        self.houdiniPathEdit = QLineEdit(self.tab_Apps)
+        self.houdiniPathEdit.setObjectName(u"houdiniPathEdit")
+        self.houdiniPathEdit.setReadOnly(True)
 
-        self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.editHoudiniPath)
+        self.horizontalLayout_4.addWidget(self.houdiniPathEdit)
 
+        self.runHoudiniButton = QPushButton(self.tab_Apps)
+        self.runHoudiniButton.setObjectName(u"runHoudiniButton")
+        self.runHoudiniButton.setFont(font1)
+
+        self.horizontalLayout_4.addWidget(self.runHoudiniButton)
+
+
+        self.verticalLayout_20.addLayout(self.horizontalLayout_4)
+
+        self.horizontalLayout_21 = QHBoxLayout()
+        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
         self.setBlenderButton = QPushButton(self.tab_Apps)
         self.setBlenderButton.setObjectName(u"setBlenderButton")
 
-        self.formLayout_3.setWidget(1, QFormLayout.LabelRole, self.setBlenderButton)
+        self.horizontalLayout_21.addWidget(self.setBlenderButton)
 
-        self.editBlenderPath = QLineEdit(self.tab_Apps)
-        self.editBlenderPath.setObjectName(u"editBlenderPath")
+        self.blenderPathEdit = QLineEdit(self.tab_Apps)
+        self.blenderPathEdit.setObjectName(u"blenderPathEdit")
+        self.blenderPathEdit.setReadOnly(True)
 
-        self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.editBlenderPath)
+        self.horizontalLayout_21.addWidget(self.blenderPathEdit)
 
-        self.setC4DButton = QPushButton(self.tab_Apps)
-        self.setC4DButton.setObjectName(u"setC4DButton")
-        self.setC4DButton.setEnabled(False)
+        self.runBlenderButton = QPushButton(self.tab_Apps)
+        self.runBlenderButton.setObjectName(u"runBlenderButton")
+        self.runBlenderButton.setFont(font1)
 
-        self.formLayout_3.setWidget(2, QFormLayout.LabelRole, self.setC4DButton)
+        self.horizontalLayout_21.addWidget(self.runBlenderButton)
 
-        self.setMayaButton = QPushButton(self.tab_Apps)
-        self.setMayaButton.setObjectName(u"setMayaButton")
-        self.setMayaButton.setEnabled(False)
 
-        self.formLayout_3.setWidget(3, QFormLayout.LabelRole, self.setMayaButton)
+        self.verticalLayout_20.addLayout(self.horizontalLayout_21)
 
-        self.editC4DPath = QLineEdit(self.tab_Apps)
-        self.editC4DPath.setObjectName(u"editC4DPath")
-        self.editC4DPath.setEnabled(False)
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.formLayout_3.setWidget(2, QFormLayout.FieldRole, self.editC4DPath)
-
-        self.editMayaPath = QLineEdit(self.tab_Apps)
-        self.editMayaPath.setObjectName(u"editMayaPath")
-        self.editMayaPath.setEnabled(False)
-
-        self.formLayout_3.setWidget(3, QFormLayout.FieldRole, self.editMayaPath)
+        self.verticalLayout_20.addItem(self.verticalSpacer_3)
 
         self.mainTabs.addTab(self.tab_Apps, "")
 
@@ -354,19 +382,14 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.loadShotButton, self.editHRes)
         QWidget.setTabOrder(self.editHRes, self.editVRes)
         QWidget.setTabOrder(self.editVRes, self.editFPS)
-        QWidget.setTabOrder(self.editFPS, self.checkHoudini)
-        QWidget.setTabOrder(self.checkHoudini, self.checkBlender)
-        QWidget.setTabOrder(self.checkBlender, self.checkMaya)
-        QWidget.setTabOrder(self.checkMaya, self.checkC4D)
-        QWidget.setTabOrder(self.checkC4D, self.checkUSD)
-        QWidget.setTabOrder(self.checkUSD, self.checkLivePlate)
+        QWidget.setTabOrder(self.editFPS, self.checkLivePlate)
         QWidget.setTabOrder(self.checkLivePlate, self.archiveProjectButton)
         QWidget.setTabOrder(self.archiveProjectButton, self.cleanProjectButton)
         QWidget.setTabOrder(self.cleanProjectButton, self.updateProjectButton)
 
         self.retranslateUi(MainWindow)
 
-        self.mainTabs.setCurrentIndex(2)
+        self.mainTabs.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -374,15 +397,15 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Project Manager", None))
-        self.setRootButton.setText(QCoreApplication.translate("MainWindow", u"Set", None))
+        self.setRootButton.setText(QCoreApplication.translate("MainWindow", u"Set Project", None))
         self.projectRootLabel.setText(QCoreApplication.translate("MainWindow", u"C:/Projects/ProjectRoot", None))
         self.newAssetButton.setText(QCoreApplication.translate("MainWindow", u"Create New Asset", None))
         self.updateAssetButton.setText(QCoreApplication.translate("MainWindow", u"Update", None))
-        self.loadAssetButton.setText(QCoreApplication.translate("MainWindow", u"Load", None))
+        self.loadAssetButton.setText(QCoreApplication.translate("MainWindow", u"Set Active", None))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Assets), QCoreApplication.translate("MainWindow", u"Assets", None))
         self.newShotButton.setText(QCoreApplication.translate("MainWindow", u"Create New Shot", None))
         self.updateShotButton.setText(QCoreApplication.translate("MainWindow", u"Update", None))
-        self.loadShotButton.setText(QCoreApplication.translate("MainWindow", u"Load", None))
+        self.loadShotButton.setText(QCoreApplication.translate("MainWindow", u"Set Active", None))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Shots), QCoreApplication.translate("MainWindow", u"Shots", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Defaults", None))
         self.labelResolution.setText(QCoreApplication.translate("MainWindow", u"Resolution", None))
@@ -395,13 +418,17 @@ class Ui_MainWindow(object):
         self.editFPS.setText(QCoreApplication.translate("MainWindow", u"30", None))
         self.labelExtTexPath.setText(QCoreApplication.translate("MainWindow", u"C:/Drive/Assets/Textures", None))
         self.buttonExtTextures.setText(QCoreApplication.translate("MainWindow", u"External Texture Lib", None))
-        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Used Applications", None))
-        self.checkHoudini.setText(QCoreApplication.translate("MainWindow", u"Houdini", None))
+#if QT_CONFIG(tooltip)
+        self.groupBox.setToolTip(QCoreApplication.translate("MainWindow", u"Create work folders for these apps", None))
+#endif // QT_CONFIG(tooltip)
+        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"App Folders", None))
         self.checkBlender.setText(QCoreApplication.translate("MainWindow", u"Blender", None))
-        self.checkMaya.setText(QCoreApplication.translate("MainWindow", u"Maya", None))
+        self.checkHoudini.setText(QCoreApplication.translate("MainWindow", u"Houdini", None))
         self.checkC4D.setText(QCoreApplication.translate("MainWindow", u"Cinema 4D", None))
+        self.checkMaya.setText(QCoreApplication.translate("MainWindow", u"Maya", None))
         self.checkUSD.setText(QCoreApplication.translate("MainWindow", u"USD", None))
-        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Additional settings", None))
+        self.checkOther.setText(QCoreApplication.translate("MainWindow", u"Other", None))
+        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Additional folders", None))
 #if QT_CONFIG(tooltip)
         self.checkLivePlate.setToolTip(QCoreApplication.translate("MainWindow", u"Generate folders for footage, roto, tracking", None))
 #endif // QT_CONFIG(tooltip)
@@ -412,9 +439,9 @@ class Ui_MainWindow(object):
         self.newProjectButton.setText(QCoreApplication.translate("MainWindow", u"Create New Project", None))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Project), QCoreApplication.translate("MainWindow", u"Project", None))
         self.setHoudiniButton.setText(QCoreApplication.translate("MainWindow", u"Set Houdini", None))
+        self.runHoudiniButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
         self.setBlenderButton.setText(QCoreApplication.translate("MainWindow", u"Set Blender", None))
-        self.setC4DButton.setText(QCoreApplication.translate("MainWindow", u"Set C4D", None))
-        self.setMayaButton.setText(QCoreApplication.translate("MainWindow", u"Set Maya", None))
+        self.runBlenderButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Apps), QCoreApplication.translate("MainWindow", u"App Config", None))
     # retranslateUi
 

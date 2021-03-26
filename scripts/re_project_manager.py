@@ -1,6 +1,8 @@
 import sys
 import os
-import project
+import winreg
+import re_project
+import re_houdini_launcher
 
 from configparser import ConfigParser 
 
@@ -26,6 +28,11 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
         self.LoadConfig()
 
+        if len(self.houdiniPathEdit.text()) == 0:
+            houdini_path = self.TryGetDefaultHoudiniPath()
+            if houdini_path is not None:
+                self.houdiniPathEdit.setText(houdini_path)
+
         self.updateAppConfig()
 
         self.newAssetDialog = AssetDialogUI(self)
@@ -40,8 +47,18 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.newAssetButton.clicked.connect(self.newAssetDialog.exec_)
         self.newShotButton.clicked.connect(self.newShotDialog.exec_)
         self.newProjectButton.clicked.connect(self.newProjectDialog.exec_)
-        
 
+        self.setHoudiniButton.clicked.connect(self.onClickSetHoudini)
+        self.setBlenderButton.clicked.connect(self.onClickSetBlender)
+
+        self.runHoudiniButton.clicked.connect(self.onRunHoudini)
+        
+        if re_project.is_in_houdini():
+            self.mainTabs.removeTab(self.mainTabs.indexOf(self.tab_Apps))
+        else:
+            self.loadShotButton.hide()
+            self.loadAssetButton.hide()
+              
     def closeEvent(self, event):
         self.SaveConfig()
         event.accept()
@@ -50,10 +67,15 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         if not self.configParser.has_section("Defaults"):
             self.configParser.add_section("Defaults")
 
-        if project._RE_PROJECT_INITIALIZED:
-            self.configParser.set("Defaults", "last_project", project.get_project_root())
+        if re_project._RE_PROJECT_INITIALIZED:
+            self.configParser.set("Defaults", "last_project", re_project.get_project_root())
 
         self.configParser.set("Defaults", "projectsroot", os.path.normpath(self.defaultNewProjectRoot))
+
+        if len(self.houdiniPathEdit.text()) > 0:
+            self.configParser.set("Defaults", "houdini_path", self.houdiniPathEdit.text())
+        if len(self.blenderPathEdit.text()) > 0:
+            self.configParser.set("Defaults", "blender_path", self.blenderPathEdit.text())
 
         with open('config.ini', "w") as f:
             self.configParser.write(f)
@@ -70,6 +92,24 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             if self.configParser.has_option("Defaults","projectsroot"):
                 self.defaultNewProjectRoot = self.configParser.get("Defaults", "projectsroot")
 
+            if self.configParser.has_option("Defaults", "houdini_path"):
+                self.houdiniPathEdit.setText( self.configParser.get("Defaults","houdini_path"))
+
+            if self.configParser.has_option("Defaults", "blender_path"):
+                self.blenderPathEdit.setText( self.configParser.get("Defaults","blender_path"))
+
+    def TryGetDefaultHoudiniPath(self):
+        try:
+            reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)        
+            hkey = winreg.OpenKey(reg, r"SOFTWARE\Side Effects Software\Houdini")
+            key_value = winreg.EnumValue(hkey, 0)
+            houdini_path = key_value[1] + r"bin\houdini.exe"
+            houdini_path = os.path.normpath(houdini_path)
+            return houdini_path
+        except OSError:
+            return None
+
+
     def setProjectRootOrCreate(self, defaultRootDir=None):
         
         if not defaultRootDir:
@@ -82,36 +122,36 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
                     defaultRootDir = folder[0]
 
         if defaultRootDir:
-            result = project.set_current_root_dir(defaultRootDir)
+            result = re_project.set_current_root_dir(defaultRootDir)
             if not result:
                 self.updateAppConfig()
-                project.create_project(self.appConfig)
-                project.create_project_folders()
+                re_project.create_project(self.appConfig)
+                re_project.create_project_folders()
             
 
             self.onProjectLoaded()
 
-            self.projectRootLabel.setText(project.get_project_root())        
+            self.projectRootLabel.setText(re_project.get_project_root())        
 
     def onCreateNewAsset(self, name):
-        if project.create_asset_folders(name):
+        if re_project.create_asset_folders(name):
             self.updateAssetList()  
             self.statusBar.showMessage("New asset created!")
 
     def onCreateNewShot(self, sequenceNum, shotNum):
-        if project.create_shot(sequenceNum, shotNum):
+        if re_project.create_shot(sequenceNum, shotNum):
             self.updateShotList()
             self.statusBar.showMessage("New shot created!")
 
     def onUpdateCurrentProject(self):
-        if project.create_project_folders():
+        if re_project.create_project_folders():
             self.statusBar.showMessage("Project folders updated! Missing ones created!")
 
     def onCreateNewProject(self, projectPath):
         self.setProjectRootOrCreate(projectPath)
         #self.updateAppConfig()
-        #project.create_project(self.appConfig)
-        #project.create_project_folders()
+        #re_project.create_project(self.appConfig)
+        #re_project.create_project_folders()
         #self.setProjectRoot(projectPath)
 
     def onArchiveCurrentProject(self):
@@ -120,29 +160,66 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def onCleanCurrentProject(self):
         print("Not implemented")
 
+    def onClickSetHoudini(self):
+        dlg = QtWidgets.QFileDialog()
+        dlg.setFileMode( QtWidgets.QFileDialog.ExistingFile )
+        dlg.setDefaultSuffix("exe")
+        dlg.setNameFilter("houdini.exe")
+        if os.path.exists("C:\\Program Files\\Side Effects Software\\"):
+            dlg.setDirectory("C:\\Program Files\\Side Effects Software\\")
+        else:
+            dlg.setDirectory("C:\\Program Files\\")
+
+        if dlg.exec_():
+            houdini_path = dlg.selectedFiles()
+            if len(houdini_path) > 0:
+                self.houdiniPathEdit.setText(os.path.normpath(houdini_path[0]))
+
+    def onRunHoudini(self):
+        houdini_path = self.houdiniPathEdit.text()
+        re_root = os.getenv("RE_ROOT")
+        re_houdini_launcher.run_houdini(houdini_path, re_root , re_project._RE_PROJECT_ROOT)                
+
+    def onClickSetBlender(self):
+        dlg = QtWidgets.QFileDialog()
+        dlg.setFileMode( QtWidgets.QFileDialog.ExistingFile )
+        dlg.setDefaultSuffix("exe")
+        dlg.setNameFilter("blender.exe")
+        if os.path.exists("C:\\Program Files\\Blender Foundation\\"):
+            dlg.setDirectory("C:\\Program Files\\Blender Foundation\\")
+        else:
+            dlg.setDirectory("C:\\Program Files\\")
+
+        if dlg.exec_():
+            blender_path = dlg.selectedFiles()
+            if len(blender_path) > 0:
+                self.blenderPathEdit.setText(os.path.normpath(blender_path[0]))
+
     def updateAppConfig(self):
-        self.appConfig = project.AppConfig( self.checkBlender.isChecked(),
+        self.appConfig = re_project.AppConfig( self.checkBlender.isChecked(),
                                             self.checkHoudini.isChecked(),
                                             self.checkMaya.isChecked(),
                                             self.checkC4D.isChecked(),
-                                            self.checkUSD.isChecked())
+                                            self.checkUSD.isChecked(),
+                                            self.checkOther.isChecked())
 
     def onProjectLoaded(self):
 
         self.statusBar.showMessage("Project loaded!")
 
-        proj_app_cfg = project.get_project_app_config()
+        proj_app_cfg = re_project.get_project_app_config()
         self.checkBlender.setChecked( proj_app_cfg.blender )
         self.checkHoudini.setChecked( proj_app_cfg.houdini )
         self.checkMaya.setChecked( proj_app_cfg.maya )
         self.checkC4D.setChecked( proj_app_cfg.c4d )
         self.checkUSD.setChecked( proj_app_cfg.usd )
+        self.checkOther.setChecked( proj_app_cfg.other )
 
-        self.editHRes.setText(str(project.get_project_default_rez()['x']))
-        self.editVRes.setText(str(project.get_project_default_rez()['y']))
-        self.editFPS.setText(str(project.get_project_default_fps()))
+        self.editHRes.setText(str(re_project.get_project_default_rez()['x']))
+        self.editVRes.setText(str(re_project.get_project_default_rez()['y']))
+        self.editFPS.setText(str(re_project.get_project_default_fps()))
 
-        self.labelExtTexPath.setText(project.get_project_ext_asset_lib())
+        self.labelExtTexPath.setText(re_project.get_project_ext_asset_lib())
 
         self.archiveProjectButton.setEnabled(True)
         self.cleanProjectButton.setEnabled(True)
@@ -153,13 +230,13 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
     def updateAssetList(self):
         self.assetList.clear()
-        all_assets = project.scan_project_assets()
+        all_assets = re_project.scan_project_assets()
         for asset_name in all_assets:
             asset_item = QtWidgets.QListWidgetItem(asset_name, self.assetList)
 
     def updateShotList(self):
         self.shotsList.clear()
-        all_shots = project.scan_project_shots()
+        all_shots = re_project.scan_project_shots()
         for shot_name in all_shots:
             shot_item = QtWidgets.QListWidgetItem(shot_name, self.shotsList)
         
@@ -222,6 +299,10 @@ class ProjectDialogUI( QtWidgets.QDialog, projectdialog.Ui_ProjectDialog):
             if len(folder) > 0:
                 self.labelProjectRoot.setText(folder[0])
                 self.parent.defaultNewProjectRoot = self.labelProjectRoot.text()
+
+def _getProjectManagerWidget():
+    pmUI = ProjectManagerUI()
+    return pmUI
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
