@@ -214,7 +214,6 @@ def _get_project_folder_struct():
 
     return FOLDERS
 
-
 def _create_project_folders( path="", template=[], create_missing_links=False, update_symlinks=True ):    
     if not template:
         return False
@@ -290,7 +289,6 @@ def _create_project_folders( path="", template=[], create_missing_links=False, u
 
     return True
 
-
 ################################################################################
 def create_project(app_config):
     # Try creating new project at current root location
@@ -343,7 +341,7 @@ def update_all_asset_folders():
 
 def update_all_shot_folders():
     all_shots = scan_project_shots()
-    
+
     for shot_name in all_shots:
         shot_id = get_shot_data_from_name(shot_name)
         if not create_shot(shot_id[0], shot_id[1]):

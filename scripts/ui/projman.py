@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(363, 660)
+        MainWindow.resize(363, 715)
         font = QFont()
         font.setFamily(u"Segoe UI")
         MainWindow.setFont(font)
@@ -94,11 +94,6 @@ class Ui_MainWindow(object):
 
         self.assetActionLayout.addWidget(self.newAssetButton)
 
-        self.updateAssetButton = QPushButton(self.assetActions)
-        self.updateAssetButton.setObjectName(u"updateAssetButton")
-
-        self.assetActionLayout.addWidget(self.updateAssetButton)
-
         self.loadAssetButton = QPushButton(self.assetActions)
         self.loadAssetButton.setObjectName(u"loadAssetButton")
         self.loadAssetButton.setEnabled(True)
@@ -131,11 +126,6 @@ class Ui_MainWindow(object):
         self.newShotButton.setObjectName(u"newShotButton")
 
         self.shotActionLayout.addWidget(self.newShotButton)
-
-        self.updateShotButton = QPushButton(self.shotActions)
-        self.updateShotButton.setObjectName(u"updateShotButton")
-
-        self.shotActionLayout.addWidget(self.updateShotButton)
 
         self.loadShotButton = QPushButton(self.shotActions)
         self.loadShotButton.setObjectName(u"loadShotButton")
@@ -270,9 +260,19 @@ class Ui_MainWindow(object):
 
         self.widget = QWidget(self.tab_Project)
         self.widget.setObjectName(u"widget")
-        self.widget.setMaximumSize(QSize(16777215, 120))
         self.verticalLayout_6 = QVBoxLayout(self.widget)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.newProjectButton = QPushButton(self.widget)
+        self.newProjectButton.setObjectName(u"newProjectButton")
+
+        self.verticalLayout_6.addWidget(self.newProjectButton)
+
+        self.dropProjectButton = QPushButton(self.widget)
+        self.dropProjectButton.setObjectName(u"dropProjectButton")
+        self.dropProjectButton.setEnabled(False)
+
+        self.verticalLayout_6.addWidget(self.dropProjectButton)
+
         self.archiveProjectButton = QPushButton(self.widget)
         self.archiveProjectButton.setObjectName(u"archiveProjectButton")
         self.archiveProjectButton.setEnabled(False)
@@ -281,28 +281,14 @@ class Ui_MainWindow(object):
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.archiveProjectButton.sizePolicy().hasHeightForWidth())
         self.archiveProjectButton.setSizePolicy(sizePolicy3)
-        self.archiveProjectButton.setMinimumSize(QSize(0, 24))
 
         self.verticalLayout_6.addWidget(self.archiveProjectButton)
 
-        self.cleanProjectButton = QPushButton(self.widget)
-        self.cleanProjectButton.setObjectName(u"cleanProjectButton")
-        self.cleanProjectButton.setEnabled(False)
-        self.cleanProjectButton.setMinimumSize(QSize(0, 24))
-
-        self.verticalLayout_6.addWidget(self.cleanProjectButton)
-
         self.updateProjectButton = QPushButton(self.widget)
         self.updateProjectButton.setObjectName(u"updateProjectButton")
-        self.updateProjectButton.setMinimumSize(QSize(0, 24))
+        self.updateProjectButton.setEnabled(False)
 
         self.verticalLayout_6.addWidget(self.updateProjectButton)
-
-        self.newProjectButton = QPushButton(self.widget)
-        self.newProjectButton.setObjectName(u"newProjectButton")
-        self.newProjectButton.setMinimumSize(QSize(0, 24))
-
-        self.verticalLayout_6.addWidget(self.newProjectButton)
 
 
         self.verticalLayout_4.addWidget(self.widget)
@@ -374,22 +360,19 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusBar)
         QWidget.setTabOrder(self.setRootButton, self.mainTabs)
         QWidget.setTabOrder(self.mainTabs, self.newAssetButton)
-        QWidget.setTabOrder(self.newAssetButton, self.updateAssetButton)
-        QWidget.setTabOrder(self.updateAssetButton, self.loadAssetButton)
+        QWidget.setTabOrder(self.newAssetButton, self.loadAssetButton)
         QWidget.setTabOrder(self.loadAssetButton, self.newShotButton)
-        QWidget.setTabOrder(self.newShotButton, self.updateShotButton)
-        QWidget.setTabOrder(self.updateShotButton, self.loadShotButton)
+        QWidget.setTabOrder(self.newShotButton, self.loadShotButton)
         QWidget.setTabOrder(self.loadShotButton, self.editHRes)
         QWidget.setTabOrder(self.editHRes, self.editVRes)
         QWidget.setTabOrder(self.editVRes, self.editFPS)
         QWidget.setTabOrder(self.editFPS, self.checkLivePlate)
         QWidget.setTabOrder(self.checkLivePlate, self.archiveProjectButton)
-        QWidget.setTabOrder(self.archiveProjectButton, self.cleanProjectButton)
-        QWidget.setTabOrder(self.cleanProjectButton, self.updateProjectButton)
+        QWidget.setTabOrder(self.archiveProjectButton, self.updateProjectButton)
 
         self.retranslateUi(MainWindow)
 
-        self.mainTabs.setCurrentIndex(0)
+        self.mainTabs.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -400,11 +383,9 @@ class Ui_MainWindow(object):
         self.setRootButton.setText(QCoreApplication.translate("MainWindow", u"Set Project", None))
         self.projectRootLabel.setText(QCoreApplication.translate("MainWindow", u"C:/Projects/ProjectRoot", None))
         self.newAssetButton.setText(QCoreApplication.translate("MainWindow", u"Create New Asset", None))
-        self.updateAssetButton.setText(QCoreApplication.translate("MainWindow", u"Update", None))
         self.loadAssetButton.setText(QCoreApplication.translate("MainWindow", u"Set Active", None))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Assets), QCoreApplication.translate("MainWindow", u"Assets", None))
         self.newShotButton.setText(QCoreApplication.translate("MainWindow", u"Create New Shot", None))
-        self.updateShotButton.setText(QCoreApplication.translate("MainWindow", u"Update", None))
         self.loadShotButton.setText(QCoreApplication.translate("MainWindow", u"Set Active", None))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Shots), QCoreApplication.translate("MainWindow", u"Shots", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Defaults", None))
@@ -433,10 +414,22 @@ class Ui_MainWindow(object):
         self.checkLivePlate.setToolTip(QCoreApplication.translate("MainWindow", u"Generate folders for footage, roto, tracking", None))
 #endif // QT_CONFIG(tooltip)
         self.checkLivePlate.setText(QCoreApplication.translate("MainWindow", u"Live plate compositing", None))
-        self.archiveProjectButton.setText(QCoreApplication.translate("MainWindow", u"Archive Current Project", None))
-        self.cleanProjectButton.setText(QCoreApplication.translate("MainWindow", u"Clean Current Project", None))
-        self.updateProjectButton.setText(QCoreApplication.translate("MainWindow", u"Update Current Project", None))
+#if QT_CONFIG(tooltip)
+        self.newProjectButton.setToolTip(QCoreApplication.translate("MainWindow", u"Create new project and make it active", None))
+#endif // QT_CONFIG(tooltip)
         self.newProjectButton.setText(QCoreApplication.translate("MainWindow", u"Create New Project", None))
+#if QT_CONFIG(tooltip)
+        self.dropProjectButton.setToolTip(QCoreApplication.translate("MainWindow", u"Sets current project to None", None))
+#endif // QT_CONFIG(tooltip)
+        self.dropProjectButton.setText(QCoreApplication.translate("MainWindow", u"Drop Project", None))
+#if QT_CONFIG(tooltip)
+        self.archiveProjectButton.setToolTip(QCoreApplication.translate("MainWindow", u"Remove temporary files and empty folders. Prepares for archiving", None))
+#endif // QT_CONFIG(tooltip)
+        self.archiveProjectButton.setText(QCoreApplication.translate("MainWindow", u"Clean and Archive", None))
+#if QT_CONFIG(tooltip)
+        self.updateProjectButton.setToolTip(QCoreApplication.translate("MainWindow", u"Update project configuration and create new folders if necessary", None))
+#endif // QT_CONFIG(tooltip)
+        self.updateProjectButton.setText(QCoreApplication.translate("MainWindow", u"Update Current Project", None))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Project), QCoreApplication.translate("MainWindow", u"Project", None))
         self.setHoudiniButton.setText(QCoreApplication.translate("MainWindow", u"Set Houdini", None))
         self.runHoudiniButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))

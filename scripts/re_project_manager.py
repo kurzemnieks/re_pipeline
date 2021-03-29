@@ -19,12 +19,17 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         
         self.defaultNewProjectRoot = "C:\\Projects\\"
 
-        self.archiveProjectButton.setEnabled(False)
-        self.archiveProjectButton.clicked.connect(self.onArchiveCurrentProject)
-        self.cleanProjectButton.setEnabled(False)
-        self.cleanProjectButton.clicked.connect(self.onCleanCurrentProject)
-        self.updateProjectButton.setEnabled(False)
+        self._resetPMUI()
+
+        self.newAssetDialog = AssetDialogUI(self)
+        self.newShotDialog = ShotDialogUI(self)
+        self.newProjectDialog = ProjectDialogUI(self)
+
+
+        self.newProjectButton.clicked.connect(self.newProjectDialog.exec_)
+        self.archiveProjectButton.clicked.connect(self.onArchiveCurrentProject)        
         self.updateProjectButton.clicked.connect(self.onUpdateCurrentProject)
+        self.dropProjectButton.clicked.connect(self.dropCurrentProject)
 
         self.loadPMConfig()
 
@@ -35,9 +40,6 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
         self.getAppConfigFromUI()
 
-        self.newAssetDialog = AssetDialogUI(self)
-        self.newShotDialog = ShotDialogUI(self)
-        self.newProjectDialog = ProjectDialogUI(self)
 
         self.editHRes.setValidator( QtGui.QIntValidator(1, 32000))        
         self.editVRes.setValidator( QtGui.QIntValidator(1, 32000))        
@@ -46,11 +48,10 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.setRootButton.clicked.connect(self.setProjectRootOrCreate)
         self.newAssetButton.clicked.connect(self.newAssetDialog.exec_)
         self.newShotButton.clicked.connect(self.newShotDialog.exec_)
-        self.newProjectButton.clicked.connect(self.newProjectDialog.exec_)
 
-        self.assetList.itemClicked.connect(self.onAssetItemClick)      
-        self.updateAssetButton.setEnabled(False)  
-        self.loadAssetButton.setEnabled(False)
+        self.assetList.itemClicked.connect(self.onAssetItemClick)              
+
+        self.shotsList.itemClicked.connect(self.onShotItemClick)
 
         self.setHoudiniButton.clicked.connect(self.onClickSetHoudini)
         self.setBlenderButton.clicked.connect(self.onClickSetBlender)
@@ -77,6 +78,25 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         else:
             self.loadShotButton.hide()
             self.loadAssetButton.hide()
+
+    def _resetPMUI(self):
+        self.assetList.clear()
+        self.shotsList.clear() 
+        self.loadAssetButton.setEnabled(False)
+        self.loadShotButton.setEnabled(False)
+        self.newAssetButton.setEnabled(False)
+        self.newShotButton.setEnabled(False)
+
+        self.updateProjectSettingsUI()
+
+        self.archiveProjectButton.setEnabled(False)
+        self.updateProjectButton.setEnabled(False)
+        self.dropProjectButton.setEnabled(False)
+
+        self.projectRootLabel.setText("")
+
+        self.statusBar.showMessage("No project selected!")
+
               
     def closeEvent(self, event):
         self.savePMConfig()
@@ -165,7 +185,11 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         if re_project.create_project_folders() and re_project.update_all_asset_folders() and re_project.update_all_shot_folders():
             self.statusBar.showMessage("Project updated!")
         re_project.save_project_config()
-        
+
+    def dropCurrentProject(self):
+        re_project.drop_project()
+        self._resetPMUI()    
+   
     def onCreateNewProject(self, projectPath):
         self.setProjectRootOrCreate(projectPath)
         #self.updateAppConfig()
@@ -230,42 +254,49 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.updateProjectSettingsUI()
 
         self.archiveProjectButton.setEnabled(True)
-        self.cleanProjectButton.setEnabled(True)
         self.updateProjectButton.setEnabled(True)
+        self.dropProjectButton.setEnabled(True)
+        self.newAssetButton.setEnabled(True)
+        self.newShotButton.setEnabled(True)
 
         self.updateAssetList()
         self.updateShotList()
     
     def updateProjectSettingsUI(self):
-        proj_app_cfg = re_project.get_project_app_config()
-        self.checkBlender.setChecked( proj_app_cfg.blender )
-        self.checkHoudini.setChecked( proj_app_cfg.houdini )
-        self.checkMaya.setChecked( proj_app_cfg.maya )
-        self.checkC4D.setChecked( proj_app_cfg.c4d )
-        self.checkUSD.setChecked( proj_app_cfg.usd )
-        self.checkOther.setChecked( proj_app_cfg.other )
+        if re_project.is_project_initialized():
+            proj_app_cfg = re_project.get_project_app_config()
+            self.checkBlender.setChecked( proj_app_cfg.blender )
+            self.checkHoudini.setChecked( proj_app_cfg.houdini )
+            self.checkMaya.setChecked( proj_app_cfg.maya )
+            self.checkC4D.setChecked( proj_app_cfg.c4d )
+            self.checkUSD.setChecked( proj_app_cfg.usd )
+            self.checkOther.setChecked( proj_app_cfg.other )
 
-        self.editHRes.setText(str(re_project.get_project_default_rez()['x']))
-        self.editVRes.setText(str(re_project.get_project_default_rez()['y']))
-        self.editFPS.setText(str(re_project.get_project_default_fps()))
+            self.editHRes.setText(str(re_project.get_project_default_rez()['x']))
+            self.editVRes.setText(str(re_project.get_project_default_rez()['y']))
+            self.editFPS.setText(str(re_project.get_project_default_fps()))
 
-        self.labelExtTexPath.setText(re_project.get_project_ext_asset_lib())
+            self.labelExtTexPath.setText(re_project.get_project_ext_asset_lib())
 
     def onModifyProjectConfig(self, value=None):
-        newAppConfig = self.getAppConfigFromUI()
-        re_project.update_project_app_config(newAppConfig, False)
+        if re_project.is_project_initialized():
+            newAppConfig = self.getAppConfigFromUI()
+            re_project.update_project_app_config(newAppConfig, False)
 
-        fps = float(self.editFPS.text())
-        re_project._RE_PROJECT_DEFAULT_FPS = fps;
+            fps = float(self.editFPS.text())
+            re_project._RE_PROJECT_DEFAULT_FPS = fps;
 
-        hres = int(self.editHRes.text())
-        vres = int(self.editVRes.text())
-        re_project._RE_PROJECT_DEFAULT_REZ['x'] = hres
-        re_project._RE_PROJECT_DEFAULT_REZ['y'] = vres
+            hres = int(self.editHRes.text())
+            vres = int(self.editVRes.text())
+            re_project._RE_PROJECT_DEFAULT_REZ['x'] = hres
+            re_project._RE_PROJECT_DEFAULT_REZ['y'] = vres
 
-        re_project.save_project_config()
+            re_project.save_project_config()
 
     def updateAssetList(self):
+        if not re_project.is_project_initialized():
+            return
+
         old_item = self.assetList.currentItem()
         old_item_name = None if old_item is None else old_item.text()
         
@@ -280,6 +311,9 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
                 self.assetList.setCurrentItem(items[0])
 
     def updateShotList(self):
+        if not re_project.is_project_initialized():
+            return
+
         self.shotsList.clear()
         all_shots = re_project.scan_project_shots()
         for shot_name in all_shots:
@@ -287,11 +321,14 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
     def onAssetItemClick(self, item):
         if item is not None:
-            self.updateAssetButton.setEnabled(True)  
             self.loadAssetButton.setEnabled(True)
 
+    def onShotItemClick(self, item):
+        if item is not None:
+            self.loadShotButton.setEnabled(True)
+
     def onClickLoadAsset(self):
-        print("ON CLICK LOAD ASSET")
+        print("NOT SUPPOSED TO BE CALLED")
 
     def onClickExtTextLink(self):
         dlg = QtWidgets.QFileDialog()
@@ -322,7 +359,6 @@ class AssetDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
         #print(self.editAssetName.text())   
         self.parent.onCreateNewAsset(self.editAssetName.text())     
         self.close()
-
 
 class ShotDialogUI( QtWidgets.QDialog, shotdialog.Ui_ShotDialog):
     def __init__(self, parent=None):
