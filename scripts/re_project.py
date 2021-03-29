@@ -13,7 +13,7 @@ _RE_PROJECT_INITIALIZED = False
 _RE_PROJECT_CFG_NAME = '.projcfg'
 
 _RE_PROJECT_VERSION = 1.0
-_RE_PROJECT_ASSET_LIB = 'F:/Drive/Assets/Textures'
+_RE_PROJECT_EXT_TEX_LIB = 'F:/Drive/Assets/Textures'
 _RE_PROJECT_DEFAULT_FPS = 30.0
 _RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
 
@@ -70,20 +70,41 @@ def get_project_default_fps():
 
 def get_project_ext_asset_lib():
     assert(_RE_PROJECT_INITIALIZED)
-    return _RE_PROJECT_ASSET_LIB    
+    return _RE_PROJECT_EXT_TEX_LIB    
 
 def is_in_houdini():
     if os.getenv("HOUDINI_PATH") is not None:
         return True
     return False
 
+#unitiailize current project
+def drop_project():
+    global _RE_PROJECT_EXT_TEX_LIB
+    global _RE_PROJECT_APP_CONFIG
+    global _RE_PROJECT_DEFAULT_FPS
+    global _RE_PROJECT_DEFAULT_REZ
+    global _RE_PROJECT_INITIALIZED
+    global _RE_PROJECT_VERSION
+    global _RE_PROJECT_ROOT
+    global _RE_PROJECT_HAS_FOOTAGE
+    
+    #set defaults
+    _RE_PROJECT_ROOT = ''
+    _RE_PROJECT_INITIALIZED = False
+    _RE_PROJECT_VERSION = 1.0
+    _RE_PROJECT_EXT_TEX_LIB = 'F:/Drive/Assets/Textures'
+    _RE_PROJECT_DEFAULT_FPS = 30.0
+    _RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
+    _RE_PROJECT_APP_CONFIG = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
+    _RE_PROJECT_HAS_FOOTAGE = False #Project has footage, uses roto, tracking for comp
+    
 #########################################################################################################
 # internals
 #########################################################################################################
 
 def _try_load_project( path ):
     
-    global _RE_PROJECT_ASSET_LIB
+    global _RE_PROJECT_EXT_TEX_LIB
     global _RE_PROJECT_APP_CONFIG
     global _RE_PROJECT_DEFAULT_FPS
     global _RE_PROJECT_DEFAULT_REZ
@@ -100,10 +121,10 @@ def _try_load_project( path ):
             if _RE_PROJECT_VERSION != project_cfg['version']:
                 raise ValueError('Project version does not match! Need {}, got {}'.format(_RE_PROJECT_VERSION, project_cfg['version']))
 
-            _RE_PROJECT_ASSET_LIB = "" 
-            _RE_PROJECT_ASSET_LIB = project_cfg['ext_lib']
-            if not os.path.exists(_RE_PROJECT_ASSET_LIB):
-                print('Error: ' + _RE_PROJECT_ASSET_LIB + ' external asset library path does not exist!')
+            _RE_PROJECT_EXT_TEX_LIB = "" 
+            _RE_PROJECT_EXT_TEX_LIB = project_cfg['ext_lib']
+            if not os.path.exists(_RE_PROJECT_EXT_TEX_LIB):
+                print('Error: ' + _RE_PROJECT_EXT_TEX_LIB + ' external asset library path does not exist!')
 
             _RE_PROJECT_DEFAULT_FPS = project_cfg['fps']
             _RE_PROJECT_DEFAULT_REZ = project_cfg['rez']
@@ -120,7 +141,8 @@ def _try_load_project( path ):
 def _get_project_folder_struct():
 
     """ Return master project folder structure.
-    """
+    [ folder_name, [list_child_templates], symlink_path, bool_create_this, use_absolute_symlink_path]
+    """ 
 
     #shared assets between shots
     ASSETS = [
@@ -142,7 +164,7 @@ def _get_project_folder_struct():
             ]
         ],
         ['tex',[
-            ['library',[],_RE_PROJECT_ASSET_LIB, len(_RE_PROJECT_ASSET_LIB)>0]
+            ['library',[],_RE_PROJECT_EXT_TEX_LIB, len(_RE_PROJECT_EXT_TEX_LIB)>0, True]
         ]
         ],
         ['lib',[]
@@ -193,65 +215,78 @@ def _get_project_folder_struct():
     return FOLDERS
 
 
-def _create_project_folders( path="", template=[], create_missing_links=False ):    
+def _create_project_folders( path="", template=[], create_missing_links=False, update_symlinks=True ):    
     if not template:
         return False
 
-    for folder in template:
-        folder_name = folder[0]
+    for template_item in template:
+        folder_name = template_item[0]
 
         folder_link_target = None
-        folder_bool = True
+        create_this_folder = True
+        absolute_link_paths = False
 
-        if len(folder)>2:
-            folder_link_target = folder[2] #if this is valid string, this will be a symlink to this path
-        if len(folder)>3:
-            folder_bool = folder[3] #use 4th param as optional bool - so we can create some folders based on configuration
+        if len(template_item)>2:
+            folder_link_target = template_item[2] #if this is valid string, this will be a symlink to this path
+        if len(template_item)>3:
+            create_this_folder = template_item[3] #use 4th param as optional bool - so we can create some folders based on configuration
+        if len(template_item)>4:
+            absolute_link_paths = template_item[4] #5th param indicates if symlink path should be absolue or relative 
 
-        if folder_bool:
-            #folder_path = '{}/{}'.format(path, folder_name)
-            folder_path = os.path.join(path, folder_name)
-
-            #if isinstance(folder_link_target, bool):
-            #    print(folder)
+        if create_this_folder:            
+            
+            new_folder_path = os.path.join(path, folder_name)
 
             if folder_link_target and len(folder_link_target)==0:
                 folder_link_target = None
 
             if folder_link_target:
 
-                #create symlink 
-                if not os.path.exists(folder_path):
-                    
-                    #make sure target folder exists
+                symlink_target = os.path.normpath(folder_link_target)
+                symlink_rel_target = symlink_target    
+
+                if not absolute_link_paths:
                     symlink_target = os.path.join(_RE_PROJECT_ROOT, folder_link_target)
                     symlink_target = os.path.normpath(symlink_target.lower())
-                    
+                        
                     #calculate relative path
-                    symlink_rel_target = os.path.relpath(symlink_target, folder_path)
-                    if symlink_rel_target.startswith("..\\"):
-                        symlink_rel_target = symlink_rel_target[3:]
+                    try:
+                        symlink_rel_target = os.path.relpath(symlink_target, new_folder_path)
+                        if symlink_rel_target.startswith("..\\"):
+                            symlink_rel_target = symlink_rel_target[3:]
+                    except ValueError:
+                        symlink_rel_target = symlink_target
 
                     #print("Link: " + folder_path + " ==> " + symlink_target + " ==> " + symlink_rel_target)
 
+                if update_symlinks and os.path.exists(new_folder_path):
+                    old_symlink_target = os.readlink(new_folder_path)
+                    if old_symlink_target != symlink_rel_target:
+                        print("Re-creating symlink: " + new_folder_path + ": " + old_symlink_target + " ==> " + symlink_rel_target)
+                        os.rmdir(new_folder_path)
+
+                #create symlink 
+                if not os.path.exists(new_folder_path):
                     if not os.path.exists(symlink_target) and create_missing_links:
                         os.makedirs(symlink_target)                        
                     
-                    if os.path.exists(symlink_target):
-                        old_cwd = os.getcwd()
+                    old_cwd = os.getcwd()
+                    
+                    if os.path.exists(symlink_target):                        
                         os.chdir(path)                                        
                         with open(os.devnull, "w") as FNULL:
                             subprocess.check_call('mklink /D {} {}'.format(folder_name, symlink_rel_target), shell=True, stdout=FNULL)
-                        os.chdir(old_cwd)
                     else:
                         raise ValueError("Can't create symlink. Dest path does not exist: " + symlink_target)
 
+                    os.chdir(old_cwd)
+
             else:
                 #create regular folder
-                if not os.path.exists(folder_path):
-                    os.makedirs(folder_path)
+                if not os.path.exists(new_folder_path):
+                    os.makedirs(new_folder_path)
             
-            _create_project_folders(folder_path, folder[1], create_missing_links)
+            _create_project_folders(new_folder_path, template_item[1], create_missing_links)
 
     return True
 
@@ -269,31 +304,47 @@ def create_project(app_config):
     if not os.path.exists(_RE_PROJECT_ROOT):
         os.makedirs(_RE_PROJECT_ROOT)
 
-    project_cfg = {}
-    project_cfg['version'] = _RE_PROJECT_VERSION
-    project_cfg['ext_lib'] = _RE_PROJECT_ASSET_LIB
-    project_cfg['apps'] = _RE_PROJECT_APP_CONFIG._asdict()
-    project_cfg['fps'] = _RE_PROJECT_DEFAULT_FPS
-    project_cfg['rez'] = _RE_PROJECT_DEFAULT_REZ
-
     if os.path.exists(_RE_PROJECT_ROOT):
-        cfg_file_path = os.path.join( _RE_PROJECT_ROOT, _RE_PROJECT_CFG_NAME)
-        with open(cfg_file_path, 'w') as outCfgFile:
-            json.dump(project_cfg, outCfgFile, indent=4, sort_keys=True)
-
-        print('Project config created..')
+        save_project_config()
         _RE_PROJECT_INITIALIZED = True
         return True
     else:
         return False
+
+def save_project_config():
+    global _RE_PROJECT_APP_CONFIG
+    project_cfg = {}
+    project_cfg['version'] = _RE_PROJECT_VERSION
+    project_cfg['ext_lib'] = _RE_PROJECT_EXT_TEX_LIB
+    project_cfg['apps'] = _RE_PROJECT_APP_CONFIG._asdict()
+    project_cfg['fps'] = _RE_PROJECT_DEFAULT_FPS
+    project_cfg['rez'] = _RE_PROJECT_DEFAULT_REZ
+
+    try:
+        cfg_file_path = os.path.join( _RE_PROJECT_ROOT, _RE_PROJECT_CFG_NAME)
+        with open(cfg_file_path, 'w') as outCfgFile:
+            json.dump(project_cfg, outCfgFile, indent=4, sort_keys=True)
+    except IOError:
+        print("RE Pipeline error: Can't write project config file to: " + cfg_file_path)
 
 def create_project_folders():
     # Create project folder structure based on configuration
     # Use this also to generate new folders if the configuration changes
     return _create_project_folders(_RE_PROJECT_ROOT, _get_project_folder_struct())    
 
+def change_external_texture_lib( lib_path ):
+    global _RE_PROJECT_EXT_TEX_LIB
+    if not os.path.exists(lib_path):
+        print("Error: Can't set external tex lib path to non-existing folder:" + lib_path)
+        return
+    
+    _RE_PROJECT_EXT_TEX_LIB = lib_path
 
-def update_project_app_config(app_config):
+    #remove old PROJECT_ROOT/assets/tex/library symlink and create new symlink
+    if _create_project_folders(_RE_PROJECT_ROOT, _get_project_folder_struct(), False, True):
+        save_project_config()
+
+def update_project_app_config(app_config, generate_folders=False):
     if not _RE_PROJECT_INITIALIZED:
         raise ValueError("Project not initialized")
         return
@@ -301,7 +352,8 @@ def update_project_app_config(app_config):
     global _RE_PROJECT_APP_CONFIG
     _RE_PROJECT_APP_CONFIG = app_config    
 
-    create_project_folders()
+    if generate_folders:
+        create_project_folders()
 
 def asset_exists( assetName ):
     assert(_RE_PROJECT_INITIALIZED)
@@ -350,7 +402,6 @@ def create_asset_folders( assetName ):
     ASSET_FOLDERS.append(['textures',TEXTURES])
     
     return _create_project_folders(asset_folder, ASSET_FOLDERS, True)
-
 
 def get_shot_name( sequence, shot_number ):
     assert(_RE_PROJECT_INITIALIZED)
@@ -483,3 +534,7 @@ def _get_app_folders( category, name ):
 
     return FOLDERS
 
+
+
+if __name__ != "__main__":
+    drop_project()
