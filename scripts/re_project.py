@@ -332,6 +332,25 @@ def create_project_folders():
     # Use this also to generate new folders if the configuration changes
     return _create_project_folders(_RE_PROJECT_ROOT, _get_project_folder_struct())    
 
+def update_all_asset_folders():
+    all_assets = scan_project_assets()
+
+    for asset_name in all_assets:
+        if not create_asset_folders(asset_name):
+            return False
+
+    return True    
+
+def update_all_shot_folders():
+    all_shots = scan_project_shots()
+    
+    for shot_name in all_shots:
+        shot_id = get_shot_data_from_name(shot_name)
+        if not create_shot(shot_id[0], shot_id[1]):
+            return False
+
+    return True
+
 def change_external_texture_lib( lib_path ):
     global _RE_PROJECT_EXT_TEX_LIB
     if not os.path.exists(lib_path):
@@ -415,6 +434,12 @@ def get_shot_path(sequence, shot_number):
     shot_path = os.path.join( shot_path, get_shot_name(sequence, shot_number) )
     shot_path = os.path.normpath(shot_path)
     return shot_path
+
+def get_shot_data_from_name( shot_name ):
+    last_part = shot_name[shot_name.rfind('_')+1:]
+    shot_num_str = last_part[-2:]
+    seq_num_str = last_part[:-2] 
+    return (int(seq_num_str),int(shot_num_str))
 
 def shot_exists( sequence, shot_number ):
     assert(_RE_PROJECT_INITIALIZED)

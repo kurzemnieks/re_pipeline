@@ -162,9 +162,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             self.statusBar.showMessage("New shot created!")
 
     def onUpdateCurrentProject(self):
-        #self.SaveConfig()
-        #         
-        if re_project.create_project_folders():
+        if re_project.create_project_folders() and re_project.update_all_asset_folders() and re_project.update_all_shot_folders():
             self.statusBar.showMessage("Project updated!")
         re_project.save_project_config()
         
@@ -256,6 +254,15 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def onModifyProjectConfig(self, value=None):
         newAppConfig = self.getAppConfigFromUI()
         re_project.update_project_app_config(newAppConfig, False)
+
+        fps = float(self.editFPS.text())
+        re_project._RE_PROJECT_DEFAULT_FPS = fps;
+
+        hres = int(self.editHRes.text())
+        vres = int(self.editVRes.text())
+        re_project._RE_PROJECT_DEFAULT_REZ['x'] = hres
+        re_project._RE_PROJECT_DEFAULT_REZ['y'] = vres
+
         re_project.save_project_config()
 
     def updateAssetList(self):
