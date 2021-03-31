@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>363</width>
-    <height>715</height>
+    <width>555</width>
+    <height>977</height>
    </rect>
   </property>
   <property name="font">
@@ -304,24 +304,31 @@ color: rgb(220, 220, 220);</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="0" colspan="2">
-            <widget class="QLabel" name="labelExtTexPath">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-               <kerning>true</kerning>
-              </font>
-             </property>
-             <property name="text">
-              <string>C:/Drive/Assets/Textures</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
+           <item row="7" column="0">
             <widget class="QPushButton" name="buttonExtTextures">
              <property name="text">
               <string>External Texture Lib</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QPushButton" name="buttonExtModels">
+             <property name="text">
+              <string>External Models Lib</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QLineEdit" name="editExternalTexPath">
+             <property name="text">
+              <string>D:\Assets\Textures</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QLineEdit" name="editExternalModelsPath">
+             <property name="text">
+              <string>D:\Assets\Meshes</string>
              </property>
             </widget>
            </item>

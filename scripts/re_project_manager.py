@@ -276,7 +276,9 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             self.editVRes.setText(str(re_project.get_project_default_rez()['y']))
             self.editFPS.setText(str(re_project.get_project_default_fps()))
 
-            self.labelExtTexPath.setText(re_project.get_project_ext_asset_lib())
+            #self.labelExtTexPath.setText(re_project.get_project_ext_asset_lib())
+            #TODO: external textures lib
+
 
     def onModifyProjectConfig(self, value=None):
         if re_project.is_project_initialized():

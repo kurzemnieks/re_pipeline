@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(363, 715)
+        MainWindow.resize(555, 977)
         font = QFont()
         font.setFamily(u"Segoe UI")
         MainWindow.setFont(font)
@@ -183,20 +183,25 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(2, QFormLayout.FieldRole, self.editFPS)
 
-        self.labelExtTexPath = QLabel(self.groupBox_2)
-        self.labelExtTexPath.setObjectName(u"labelExtTexPath")
-        font2 = QFont()
-        font2.setBold(True)
-        font2.setWeight(75)
-        font2.setKerning(True)
-        self.labelExtTexPath.setFont(font2)
-
-        self.formLayout.setWidget(5, QFormLayout.SpanningRole, self.labelExtTexPath)
-
         self.buttonExtTextures = QPushButton(self.groupBox_2)
         self.buttonExtTextures.setObjectName(u"buttonExtTextures")
 
-        self.formLayout.setWidget(6, QFormLayout.LabelRole, self.buttonExtTextures)
+        self.formLayout.setWidget(7, QFormLayout.LabelRole, self.buttonExtTextures)
+
+        self.buttonExtModels = QPushButton(self.groupBox_2)
+        self.buttonExtModels.setObjectName(u"buttonExtModels")
+
+        self.formLayout.setWidget(8, QFormLayout.LabelRole, self.buttonExtModels)
+
+        self.editExternalTexPath = QLineEdit(self.groupBox_2)
+        self.editExternalTexPath.setObjectName(u"editExternalTexPath")
+
+        self.formLayout.setWidget(7, QFormLayout.FieldRole, self.editExternalTexPath)
+
+        self.editExternalModelsPath = QLineEdit(self.groupBox_2)
+        self.editExternalModelsPath.setObjectName(u"editExternalModelsPath")
+
+        self.formLayout.setWidget(8, QFormLayout.FieldRole, self.editExternalModelsPath)
 
 
         self.verticalLayout_4.addWidget(self.groupBox_2)
@@ -397,8 +402,10 @@ class Ui_MainWindow(object):
         self.labelFps.setText(QCoreApplication.translate("MainWindow", u"FPS", None))
         self.editFPS.setInputMask("")
         self.editFPS.setText(QCoreApplication.translate("MainWindow", u"30", None))
-        self.labelExtTexPath.setText(QCoreApplication.translate("MainWindow", u"C:/Drive/Assets/Textures", None))
         self.buttonExtTextures.setText(QCoreApplication.translate("MainWindow", u"External Texture Lib", None))
+        self.buttonExtModels.setText(QCoreApplication.translate("MainWindow", u"External Models Lib", None))
+        self.editExternalTexPath.setText(QCoreApplication.translate("MainWindow", u"D:\\Assets\\Textures", None))
+        self.editExternalModelsPath.setText(QCoreApplication.translate("MainWindow", u"D:\\Assets\\Meshes", None))
 #if QT_CONFIG(tooltip)
         self.groupBox.setToolTip(QCoreApplication.translate("MainWindow", u"Create work folders for these apps", None))
 #endif // QT_CONFIG(tooltip)

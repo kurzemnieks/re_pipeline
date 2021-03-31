@@ -17,6 +17,8 @@ _RE_PROJECT_EXT_TEX_LIB = 'F:/Drive/Assets/Textures'
 _RE_PROJECT_DEFAULT_FPS = 30.0
 _RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
 
+_RE_PROJECT_EXTERNAL_LIBS = []
+
 #########################################################################################################
 
 AppConfig = namedtuple('AppConfig',['blender','houdini','c4d','maya','usd','other'])
@@ -38,6 +40,7 @@ def set_current_root_dir( path ):
         return False
     else:
         print('Info: Project found at: ' + _RE_PROJECT_ROOT)
+        save_project_config()
         return True
 
 def is_project_initialized():
@@ -109,6 +112,7 @@ def _try_load_project( path ):
     global _RE_PROJECT_DEFAULT_FPS
     global _RE_PROJECT_DEFAULT_REZ
     global _RE_PROJECT_INITIALIZED
+    global _RE_PROJECT_EXTERNAL_LIBS
 
     cfg_file_path = os.path.join(path, _RE_PROJECT_CFG_NAME)
 
@@ -130,6 +134,10 @@ def _try_load_project( path ):
             _RE_PROJECT_DEFAULT_REZ = project_cfg['rez']
 
             apps_cfg = project_cfg['apps']
+
+            _RE_PROJECT_EXTERNAL_LIBS = project_cfg['ext_libs']
+            create_external_lib_folders(_RE_PROJECT_EXTERNAL_LIBS)            
+
             _RE_PROJECT_APP_CONFIG = AppConfig( **apps_cfg )
 
             _RE_PROJECT_INITIALIZED = True
@@ -317,6 +325,7 @@ def save_project_config():
     project_cfg['apps'] = _RE_PROJECT_APP_CONFIG._asdict()
     project_cfg['fps'] = _RE_PROJECT_DEFAULT_FPS
     project_cfg['rez'] = _RE_PROJECT_DEFAULT_REZ
+    project_cfg['ext_libs'] = _RE_PROJECT_EXTERNAL_LIBS
 
     try:
         cfg_file_path = os.path.join( _RE_PROJECT_ROOT, _RE_PROJECT_CFG_NAME)
@@ -371,6 +380,34 @@ def update_project_app_config(app_config, generate_folders=False):
 
     if generate_folders:
         create_project_folders()
+
+def add_external_lib_folder( name, base_path, target ):
+    base_folder_path = os.path.join(_RE_PROJECT_ROOT, base_path)
+    base_folder_path = os.path.normpath(base_folder_path.lower())
+
+    target_path = os.path.normpath(target)
+
+    i = is_external_lib(name, base_path, target)
+    if i is not None:
+        if _RE_PROJECT_EXTERNAL_LIBS[i][2] != target_path:
+            print("REPLACING EXTERNAL LIB: " + _RE_PROJECT_EXTERNAL_LIBS[i][2] + " with: " + target_path)
+            _RE_PROJECT_EXTERNAL_LIBS[i][2] = target_path
+    else:
+        print("Adding new external lib!")
+        _RE_PROJECT_EXTERNAL_LIBS.append([name,base_path,target_path])
+    
+    _create_project_folders(base_folder_path, [[name, [], target_path, True, True]]) 
+    
+        
+def is_external_lib( name, base_path, target):    
+    for lib in _RE_PROJECT_EXTERNAL_LIBS:
+        if lib[0] == name.lower() and lib[1] == base_path.lower():
+            return _RE_PROJECT_EXTERNAL_LIBS.index(lib)
+    return None
+
+def create_external_lib_folders( ext_libs ):
+    for lib in ext_libs:
+        add_external_lib_folder(lib[0], lib[1], lib[2])
 
 def asset_exists( assetName ):
     assert(_RE_PROJECT_INITIALIZED)
@@ -500,8 +537,9 @@ def _get_app_folders( category, name ):
 
     HOUDINI = [
         ['geo',[],'temp/{}/{}/geo'.format(category, name)],
-        ['hda',[],'assets/3d/hda'],
+        ['hda',[],'assets/3d/hda', _RE_PROJECT_APP_CONFIG.houdini],
         ['fbx',[],'assets/3d/fbx'],
+        ['obj',[],'assets/3d/obj'],
         ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
         ['sim',[],'temp/{}/{}/sim'.format(category, name)],
         ['abc',[],'assets/3d/abc'],
@@ -517,6 +555,8 @@ def _get_app_folders( category, name ):
     BLENDER = [
         ['tex',[],'assets/tex'],
         ['fbx',[],'assets/3d/fbx'],
+        ['obj',[],'assets/3d/obj'],
+        ['blend',[],'assets/3d/blend', _RE_PROJECT_APP_CONFIG.blender],
         ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
         ['abc',[],'assets/3d/abc'],
         ['render',[],'render/{}/{}'.format(category, name)],
@@ -527,6 +567,8 @@ def _get_app_folders( category, name ):
     C4D = [
         ['tex',[],'assets/tex'],
         ['fbx',[],'assets/3d/fbx'],
+        ['obj',[],'assets/3d/obj'],
+        ['c4d',[],'assets/3d/c4d', _RE_PROJECT_APP_CONFIG.c4d],
         ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
         ['abc',[],'assets/3d/abc'],
         ['render',[],'render/{}/{}'.format(category, name)],
@@ -539,6 +581,7 @@ def _get_app_folders( category, name ):
         ['clips',[]],
         ['sourceimages',[],'assets/tex'],
         ['fbx',[],'assets/3d/fbx'],
+        ['obj',[],'assets/3d/obj'],
         ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
         ['abc',[],'assets/3d/abc'],
         ['image',[],'render/{}/{}'.format(category, name)],
