@@ -60,7 +60,9 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
         self.loadAssetButton.clicked.connect(self.onClickLoadAsset)
 
-        self.buttonExtTextures.clicked.connect(self.onClickExtTextLink)
+        #self.buttonExtTextures.clicked.connect(self.onClickExtTextLink)
+        self.addNewExtLibButton.clicked.connect(self.onClickAddExtLib)
+        self.browseExtLibTargetButton.clicked.connect(self.onClickBrowseExtLibTarget)
 
         self.editHRes.editingFinished.connect(self.onModifyProjectConfig)
         self.editVRes.editingFinished.connect(self.onModifyProjectConfig)
@@ -93,7 +95,11 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.updateProjectButton.setEnabled(False)
         self.dropProjectButton.setEnabled(False)
 
+        self.extLibBaseDropdown.setEnabled(False)
+        self.extLibBaseDropdown.clear()
+
         self.projectRootLabel.setText("")
+        self.extLibsList.clear()
 
         self.statusBar.showMessage("No project selected!")
 
@@ -256,6 +262,18 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.newAssetButton.setEnabled(True)
         self.newShotButton.setEnabled(True)
 
+        self.extLibBaseDropdown.setEnabled(True)        
+        base_folder_scruct = re_project._get_project_folder_struct()
+        asset_folders = base_folder_scruct[0]
+        folder_list = []
+        re_project._list_folder_template_items(asset_folders, folder_list)
+        folder_list.remove("assets")
+        self.extLibBaseDropdown.addItems(folder_list)
+
+        ext_libs_list = re_project.get_project_external_libs()
+        for ext_lib in ext_libs_list:
+             self.extLibsList.addTopLevelItem(QtWidgets.QTreeWidgetItem( [ext_lib[0], ext_lib[1], ext_lib[2]] ))
+
         self.updateAssetList()
         self.updateShotList()
     
@@ -275,7 +293,6 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
             #self.labelExtTexPath.setText(re_project.get_project_ext_asset_lib())
             #TODO: external textures lib
-
 
     def onModifyProjectConfig(self, value=None):
         if re_project.is_project_initialized():
@@ -343,8 +360,31 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         #print("Setting external texture lib to: " + texFolder)
         re_project.change_external_texture_lib(texFolder)
         self.updateProjectSettingsUI()
+
+    def onClickAddExtLib(self):
+        folder_name = self.extLibFolderName.text()
+        base_folder = self.extLibBaseDropdown.currentText()
+        target_path = self.extLibTargetPath.text()
+
+        if len(folder_name) == 0 or len(base_folder)==0 or len(target_path)==0:
+            print("Error: Can't add external asset library. You must fill all fields!")
+            return
+
+        if re_project.add_external_lib_folder(folder_name, base_folder, target_path):
+            self.extLibsList.addTopLevelItem(QtWidgets.QTreeWidgetItem([folder_name, base_folder, target_path]))
+
+    def onClickBrowseExtLibTarget(self):
+        dlg = QtWidgets.QFileDialog()
+        dlg.setFileMode( QtWidgets.QFileDialog.Directory )
+
+        libTargetFolder = ''
+        folders = None
+        if dlg.exec_():
+            folders = dlg.selectedFiles()
+            if len(folders) > 0:
+                libTargetFolder = folders[0]
         
-        
+        self.extLibTargetPath.setText( Path(libTargetFolder).as_posix())
 class AssetDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
     def __init__(self, parent=None):
         super(AssetDialogUI, self).__init__(parent=parent)

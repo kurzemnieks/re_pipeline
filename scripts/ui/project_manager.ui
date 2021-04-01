@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>555</width>
-    <height>977</height>
+    <width>461</width>
+    <height>881</height>
    </rect>
   </property>
   <property name="font">
@@ -304,33 +304,105 @@ color: rgb(220, 220, 220);</string>
              </property>
             </widget>
            </item>
-           <item row="7" column="0">
-            <widget class="QPushButton" name="buttonExtTextures">
-             <property name="text">
-              <string>External Texture Lib</string>
-             </property>
-            </widget>
-           </item>
            <item row="8" column="0">
-            <widget class="QPushButton" name="buttonExtModels">
+            <widget class="QPushButton" name="addNewExtLibButton">
              <property name="text">
-              <string>External Models Lib</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="1">
-            <widget class="QLineEdit" name="editExternalTexPath">
-             <property name="text">
-              <string>D:\Assets\Textures</string>
+              <string>Add New Library</string>
              </property>
             </widget>
            </item>
            <item row="8" column="1">
-            <widget class="QLineEdit" name="editExternalModelsPath">
-             <property name="text">
-              <string>D:\Assets\Meshes</string>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLineEdit" name="extLibFolderName">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>library</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="extLibBaseDropdown">
+               <item>
+                <property name="text">
+                 <string>assets/textures</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>assets/3d/fbx</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="9" column="1">
+            <layout class="QHBoxLayout" name="hlayout_20">
+             <item>
+              <widget class="QLineEdit" name="extLibTargetPath">
+               <property name="text">
+                <string>F:/Drive/Assets/Textures</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="browseExtLibTargetButton">
+               <property name="text">
+                <string>Browse</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="7" column="0" colspan="2">
+            <widget class="QTreeWidget" name="extLibsList">
+             <property name="itemsExpandable">
+              <bool>false</bool>
              </property>
+             <property name="expandsOnDoubleClick">
+              <bool>false</bool>
+             </property>
+             <column>
+              <property name="text">
+               <string>Folder Name</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Base Folder</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Target</string>
+              </property>
+             </column>
             </widget>
+           </item>
+           <item row="3" column="1">
+            <spacer name="verticalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>

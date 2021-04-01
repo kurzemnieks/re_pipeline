@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(555, 977)
+        MainWindow.resize(461, 881)
         font = QFont()
         font.setFamily(u"Segoe UI")
         MainWindow.setFont(font)
@@ -183,25 +183,56 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(2, QFormLayout.FieldRole, self.editFPS)
 
-        self.buttonExtTextures = QPushButton(self.groupBox_2)
-        self.buttonExtTextures.setObjectName(u"buttonExtTextures")
+        self.addNewExtLibButton = QPushButton(self.groupBox_2)
+        self.addNewExtLibButton.setObjectName(u"addNewExtLibButton")
 
-        self.formLayout.setWidget(7, QFormLayout.LabelRole, self.buttonExtTextures)
+        self.formLayout.setWidget(8, QFormLayout.LabelRole, self.addNewExtLibButton)
 
-        self.buttonExtModels = QPushButton(self.groupBox_2)
-        self.buttonExtModels.setObjectName(u"buttonExtModels")
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.extLibFolderName = QLineEdit(self.groupBox_2)
+        self.extLibFolderName.setObjectName(u"extLibFolderName")
+        sizePolicy2.setHeightForWidth(self.extLibFolderName.sizePolicy().hasHeightForWidth())
+        self.extLibFolderName.setSizePolicy(sizePolicy2)
+        self.extLibFolderName.setMaximumSize(QSize(120, 16777215))
 
-        self.formLayout.setWidget(8, QFormLayout.LabelRole, self.buttonExtModels)
+        self.horizontalLayout_2.addWidget(self.extLibFolderName)
 
-        self.editExternalTexPath = QLineEdit(self.groupBox_2)
-        self.editExternalTexPath.setObjectName(u"editExternalTexPath")
+        self.extLibBaseDropdown = QComboBox(self.groupBox_2)
+        self.extLibBaseDropdown.addItem("")
+        self.extLibBaseDropdown.addItem("")
+        self.extLibBaseDropdown.setObjectName(u"extLibBaseDropdown")
 
-        self.formLayout.setWidget(7, QFormLayout.FieldRole, self.editExternalTexPath)
+        self.horizontalLayout_2.addWidget(self.extLibBaseDropdown)
 
-        self.editExternalModelsPath = QLineEdit(self.groupBox_2)
-        self.editExternalModelsPath.setObjectName(u"editExternalModelsPath")
 
-        self.formLayout.setWidget(8, QFormLayout.FieldRole, self.editExternalModelsPath)
+        self.formLayout.setLayout(8, QFormLayout.FieldRole, self.horizontalLayout_2)
+
+        self.hlayout_20 = QHBoxLayout()
+        self.hlayout_20.setObjectName(u"hlayout_20")
+        self.extLibTargetPath = QLineEdit(self.groupBox_2)
+        self.extLibTargetPath.setObjectName(u"extLibTargetPath")
+
+        self.hlayout_20.addWidget(self.extLibTargetPath)
+
+        self.browseExtLibTargetButton = QPushButton(self.groupBox_2)
+        self.browseExtLibTargetButton.setObjectName(u"browseExtLibTargetButton")
+
+        self.hlayout_20.addWidget(self.browseExtLibTargetButton)
+
+
+        self.formLayout.setLayout(9, QFormLayout.FieldRole, self.hlayout_20)
+
+        self.extLibsList = QTreeWidget(self.groupBox_2)
+        self.extLibsList.setObjectName(u"extLibsList")
+        self.extLibsList.setItemsExpandable(False)
+        self.extLibsList.setExpandsOnDoubleClick(False)
+
+        self.formLayout.setWidget(7, QFormLayout.SpanningRole, self.extLibsList)
+
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.formLayout.setItem(3, QFormLayout.FieldRole, self.verticalSpacer_4)
 
 
         self.verticalLayout_4.addWidget(self.groupBox_2)
@@ -402,10 +433,17 @@ class Ui_MainWindow(object):
         self.labelFps.setText(QCoreApplication.translate("MainWindow", u"FPS", None))
         self.editFPS.setInputMask("")
         self.editFPS.setText(QCoreApplication.translate("MainWindow", u"30", None))
-        self.buttonExtTextures.setText(QCoreApplication.translate("MainWindow", u"External Texture Lib", None))
-        self.buttonExtModels.setText(QCoreApplication.translate("MainWindow", u"External Models Lib", None))
-        self.editExternalTexPath.setText(QCoreApplication.translate("MainWindow", u"D:\\Assets\\Textures", None))
-        self.editExternalModelsPath.setText(QCoreApplication.translate("MainWindow", u"D:\\Assets\\Meshes", None))
+        self.addNewExtLibButton.setText(QCoreApplication.translate("MainWindow", u"Add New Library", None))
+        self.extLibFolderName.setText(QCoreApplication.translate("MainWindow", u"library", None))
+        self.extLibBaseDropdown.setItemText(0, QCoreApplication.translate("MainWindow", u"assets/textures", None))
+        self.extLibBaseDropdown.setItemText(1, QCoreApplication.translate("MainWindow", u"assets/3d/fbx", None))
+
+        self.extLibTargetPath.setText(QCoreApplication.translate("MainWindow", u"F:/Drive/Assets/Textures", None))
+        self.browseExtLibTargetButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
+        ___qtreewidgetitem = self.extLibsList.headerItem()
+        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Target", None));
+        ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Base Folder", None));
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Folder Name", None));
 #if QT_CONFIG(tooltip)
         self.groupBox.setToolTip(QCoreApplication.translate("MainWindow", u"Create work folders for these apps", None))
 #endif // QT_CONFIG(tooltip)

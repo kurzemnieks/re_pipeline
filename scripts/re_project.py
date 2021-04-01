@@ -68,9 +68,8 @@ def get_project_default_fps():
     assert(_RE_PROJECT_INITIALIZED)
     return _RE_PROJECT_DEFAULT_FPS
 
-def get_project_ext_asset_lib():
-    assert(_RE_PROJECT_INITIALIZED)
-    return _RE_PROJECT_EXT_TEX_LIB    
+def get_project_external_libs():
+    return _RE_PROJECT_EXTERNAL_LIBS
 
 def is_in_houdini():
     if os.getenv("HOUDINI_PATH") is not None:
@@ -79,7 +78,7 @@ def is_in_houdini():
 
 #unitiailize current project
 def drop_project():
-    global _RE_PROJECT_EXT_TEX_LIB
+    global _RE_PROJECT_EXTERNAL_LIBS
     global _RE_PROJECT_APP_CONFIG
     global _RE_PROJECT_DEFAULT_FPS
     global _RE_PROJECT_DEFAULT_REZ
@@ -92,7 +91,7 @@ def drop_project():
     _RE_PROJECT_ROOT = None
     _RE_PROJECT_INITIALIZED = False
     _RE_PROJECT_VERSION = 1.0
-    _RE_PROJECT_EXT_TEX_LIB = 'F:/Drive/Assets/Textures'
+    _RE_PROJECT_EXTERNAL_LIBS = []
     _RE_PROJECT_DEFAULT_FPS = 30.0
     _RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
     _RE_PROJECT_APP_CONFIG = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
@@ -104,12 +103,11 @@ def drop_project():
 
 def _try_load_project( path ):
     
-    global _RE_PROJECT_EXT_TEX_LIB
+    global _RE_PROJECT_EXTERNAL_LIBS
     global _RE_PROJECT_APP_CONFIG
     global _RE_PROJECT_DEFAULT_FPS
     global _RE_PROJECT_DEFAULT_REZ
     global _RE_PROJECT_INITIALIZED
-    global _RE_PROJECT_EXTERNAL_LIBS
 
     if path is None:
         return False
@@ -127,14 +125,7 @@ def _try_load_project( path ):
 
             if _RE_PROJECT_VERSION != project_cfg['version']:
                 raise ValueError('Project version does not match! Need {}, got {}'.format(_RE_PROJECT_VERSION, project_cfg['version']))
-
-            #TODO: remove this
-            _RE_PROJECT_EXT_TEX_LIB = "" 
-            _RE_PROJECT_EXT_TEX_LIB = project_cfg['ext_lib']
-                        
-            if not os.path.exists(_RE_PROJECT_EXT_TEX_LIB):
-                print('Error: ' + _RE_PROJECT_EXT_TEX_LIB + ' external asset library path does not exist!')
-
+            
             _RE_PROJECT_DEFAULT_FPS = project_cfg['fps']
             _RE_PROJECT_DEFAULT_REZ = project_cfg['rez']
 
@@ -177,12 +168,8 @@ def _get_project_folder_struct():
             ['usd',[],None, _RE_PROJECT_APP_CONFIG.usd],
             ]
         ],
-        ['tex',[
-            ['library',[],_RE_PROJECT_EXT_TEX_LIB, len(_RE_PROJECT_EXT_TEX_LIB)>0, True]
-        ]
-        ],
-        ['lib',[]
-        ]        
+        ['tex',[]],
+        ['lib',[]]        
     ]
 
     #folder where assets are being built
@@ -227,6 +214,26 @@ def _get_project_folder_struct():
     ]
 
     return FOLDERS
+
+def _list_folder_template_items( template, list, parent=None ):
+    if list is None:
+        return
+
+    enabled = True
+    if len(template)>3:
+        enabled = template[3]
+
+    folder_name = template[0]    
+    if parent is not None:        
+        folder_name = parent + "/" + folder_name
+
+    if enabled:
+        list.append(folder_name)
+
+    if len(template) > 1 and len(template[1])>0:
+        for e in template[1]:
+            _list_folder_template_items( e, list, folder_name )
+        
 
 def _create_project_folders( base_path_str="", template=[], create_missing_links=False, update_symlinks=True ):    
     if not template:
@@ -330,7 +337,6 @@ def save_project_config():
     global _RE_PROJECT_APP_CONFIG
     project_cfg = {}
     project_cfg['version'] = _RE_PROJECT_VERSION
-    project_cfg['ext_lib'] = _RE_PROJECT_EXT_TEX_LIB
     project_cfg['apps'] = _RE_PROJECT_APP_CONFIG._asdict()
     project_cfg['fps'] = _RE_PROJECT_DEFAULT_FPS
     project_cfg['rez'] = _RE_PROJECT_DEFAULT_REZ
@@ -367,19 +373,6 @@ def update_all_shot_folders():
 
     return True
 
-#TODO: remove this
-def change_external_texture_lib( lib_path ):
-    global _RE_PROJECT_EXT_TEX_LIB
-    if not os.path.exists(lib_path):
-        print("Error: Can't set external tex lib path to non-existing folder:" + lib_path)
-        return
-    
-    _RE_PROJECT_EXT_TEX_LIB = lib_path
-
-    #remove old PROJECT_ROOT/assets/tex/library symlink and create new symlink
-    if _create_project_folders(_RE_PROJECT_ROOT, _get_project_folder_struct(), False, True):
-        save_project_config()
-
 def update_project_app_config(app_config, generate_folders=False):
     if not _RE_PROJECT_INITIALIZED:
         raise ValueError("Project not initialized")
@@ -391,20 +384,24 @@ def update_project_app_config(app_config, generate_folders=False):
     if generate_folders:
         create_project_folders()
 
-def add_external_lib_folder( name, base_path, target ):
+def add_external_lib_folder( name, base_path, target_path ):
     base_folder_path = _RE_PROJECT_ROOT / base_path    
-    target_path = Path(target)
+    target_folder_path = Path(target_path)
 
-    i = is_external_lib(name, base_path, target)
+    i = is_external_lib(name, base_path, target_path)
     if i is not None:
-        if _RE_PROJECT_EXTERNAL_LIBS[i][2] != target_path.as_posix():
-            print("REPLACING EXTERNAL LIB: " + _RE_PROJECT_EXTERNAL_LIBS[i][2] + " with: " + target_path.as_posix())
-            _RE_PROJECT_EXTERNAL_LIBS[i][2] = target_path.as_posix()
+        if _RE_PROJECT_EXTERNAL_LIBS[i][2] != target_folder_path.as_posix():
+            print("REPLACING EXTERNAL LIB: " + _RE_PROJECT_EXTERNAL_LIBS[i][2] + " with: " + target_folder_path.as_posix())
+            _RE_PROJECT_EXTERNAL_LIBS[i][2] = target_folder_path.as_posix()
     else:
         print("Adding new external lib!")
         _RE_PROJECT_EXTERNAL_LIBS.append([name,base_path,target_path])
     
-    _create_project_folders(base_folder_path.as_posix(), [[name, [], target_path.as_posix(), True, True]]) 
+    if _create_project_folders(base_folder_path.as_posix(), [[name, [], target_folder_path.as_posix(), True, True]]):
+        save_project_config()
+        return True
+    
+    return False
             
 def is_external_lib( name, base_path, target):    
     for lib in _RE_PROJECT_EXTERNAL_LIBS:
