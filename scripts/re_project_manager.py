@@ -59,6 +59,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.runHoudiniButton.clicked.connect(self.onRunHoudini)
 
         self.loadAssetButton.clicked.connect(self.onClickLoadAsset)
+        self.loadShotButton.clicked.connect(self.onClickLoadShot)
 
         #self.buttonExtTextures.clicked.connect(self.onClickExtTextLink)
         self.addNewExtLibButton.clicked.connect(self.onClickAddExtLib)
@@ -221,8 +222,8 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
                 self.houdiniPathEdit.setText(Path(houdini_path[0]).as_posix())
 
     def onRunHoudini(self):
-        houdini_path = self.houdiniPathEdit.text()
-        re_root = os.getenv("RE_ROOT")
+        houdini_path = Path(self.houdiniPathEdit.text()) #houdini executable path
+        re_root = Path(os.getenv("RE_ROOT")) #pipeline root dir
         re_houdini_launcher.run_houdini(houdini_path, re_root , re_project._RE_PROJECT_ROOT)                
 
     def onClickSetBlender(self):
@@ -344,6 +345,9 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             self.loadShotButton.setEnabled(True)
 
     def onClickLoadAsset(self):
+        print("NOT SUPPOSED TO BE CALLED")
+
+    def onClickLoadShot(self):
         print("NOT SUPPOSED TO BE CALLED")
 
     def onClickExtTextLink(self):

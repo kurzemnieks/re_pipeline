@@ -268,16 +268,21 @@ def _create_project_folders( base_path_str="", template=[], create_missing_links
 
                 if not absolute_link_paths:
                     symlink_target = _RE_PROJECT_ROOT / folder_link_target                    
-                        
+                                    
                     #calculate relative path
-                    try:
-                        symlink_rel_target = symlink_target.relative_to( new_folder_path )
-                        if symlink_rel_target.startswith("..\\"):
-                            symlink_rel_target = Path(symlink_rel_target[3:])
-                    except ValueError:
-                        symlink_rel_target = symlink_target
+                    try:                        
+                        #symlink_rel_target = new_folder_path.relative_to( symlink_target ) #this does not work.. use old method                        
+                        symlink_rel_target = Path(os.path.relpath( symlink_target.as_posix(), new_folder_path.as_posix() ))
+                        print(symlink_rel_target.as_posix())
 
-                    #print("Link: " + folder_path + " ==> " + symlink_target + " ==> " + symlink_rel_target)
+                        if symlink_rel_target.as_posix().startswith("../"):
+                            symlink_rel_target = Path(symlink_rel_target.as_posix()[3:])
+
+                    except ValueError as err:
+                        symlink_rel_target = symlink_target
+                        print(err)
+
+                    #print("Link: " + new_folder_path.as_posix() + " ==> " + symlink_target.as_posix() + " ==> " + symlink_rel_target.as_posix())
                 
                 if update_symlinks and new_folder_path.exists() and new_folder_path.is_symlink():
                     old_symlink_target = Path(os.readlink(str(new_folder_path)))
@@ -415,9 +420,12 @@ def create_external_lib_folders( ext_libs ):
 
 def asset_exists( assetName ):
     assert(_RE_PROJECT_INITIALIZED)
+    return get_asset_path(assetName).exists()
+
+def get_asset_path( assetName ):
     asset_root = _RE_PROJECT_ROOT / 'build'     
-    asset_folder = asset_root / assetName    
-    return asset_folder.exists()
+    asset_folder = asset_root / assetName
+    return asset_folder
 
 def create_asset_folders( assetName ):
     assert(_RE_PROJECT_INITIALIZED)
@@ -540,6 +548,7 @@ def _get_app_folders( category, name ):
         ['sim',[],'temp/{}/{}/sim'.format(category, name)],
         ['abc',[],'assets/3d/abc'],
         ['tex',[],'assets/tex'],
+        ['tmp',[],'temp/{}/{}'.format(category, name)],
 
         ['render',[],'render/{}/{}'.format(category, name)],
         ['flip',[],'temp/{}/{}/flip'.format(category, name)],
@@ -584,6 +593,7 @@ def _get_app_folders( category, name ):
         ['movies',[],'render/{}/{}/playblast'.format(category, name)],
         ['data',[],'temp/{}/{}'.format(category, name)],
         ['lib',[],'assets/lib'],
+        ['tmp',[],'temp/{}/{}'.format(category, name)],
         ['scripts',[]],
     ]
 

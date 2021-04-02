@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>461</width>
-    <height>881</height>
+    <width>418</width>
+    <height>813</height>
    </rect>
   </property>
   <property name="font">
@@ -220,6 +220,12 @@ color: rgb(220, 220, 220);</string>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QGroupBox" name="groupBox_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="title">
            <string>Defaults</string>
           </property>
@@ -232,142 +238,124 @@ color: rgb(220, 220, 220);</string>
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLineEdit" name="editHRes">
-             <property name="maximumSize">
-              <size>
-               <width>45</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="inputMask">
-              <string/>
-             </property>
-             <property name="text">
-              <string>1920</string>
-             </property>
-             <property name="maxLength">
-              <number>5</number>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="editVRes">
-             <property name="maximumSize">
-              <size>
-               <width>45</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="inputMask">
-              <string/>
-             </property>
-             <property name="text">
-              <string>1080</string>
-             </property>
-             <property name="maxLength">
-              <number>5</number>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="labelFps">
-             <property name="text">
-              <string>FPS</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="editFPS">
-             <property name="maximumSize">
-              <size>
-               <width>45</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="inputMask">
-              <string/>
-             </property>
-             <property name="text">
-              <string>30</string>
-             </property>
-             <property name="maxLength">
-              <number>6</number>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="0">
-            <widget class="QPushButton" name="addNewExtLibButton">
-             <property name="text">
-              <string>Add New Library</string>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
-              <widget class="QLineEdit" name="extLibFolderName">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+              <widget class="QLineEdit" name="editHRes">
                <property name="maximumSize">
                 <size>
-                 <width>120</width>
+                 <width>45</width>
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="inputMask">
+                <string/>
+               </property>
                <property name="text">
-                <string>library</string>
+                <string>1920</string>
+               </property>
+               <property name="maxLength">
+                <number>5</number>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="extLibBaseDropdown">
-               <item>
-                <property name="text">
-                 <string>assets/textures</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>assets/3d/fbx</string>
-                </property>
-               </item>
+              <widget class="QLineEdit" name="editVRes">
+               <property name="maximumSize">
+                <size>
+                 <width>45</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="inputMask">
+                <string/>
+               </property>
+               <property name="text">
+                <string>1080</string>
+               </property>
+               <property name="maxLength">
+                <number>5</number>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelFps">
+               <property name="text">
+                <string>FPS</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="editFPS">
+               <property name="maximumSize">
+                <size>
+                 <width>45</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="inputMask">
+                <string/>
+               </property>
+               <property name="text">
+                <string>30</string>
+               </property>
+               <property name="maxLength">
+                <number>6</number>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
               </widget>
              </item>
             </layout>
            </item>
-           <item row="9" column="1">
-            <layout class="QHBoxLayout" name="hlayout_20">
-             <item>
-              <widget class="QLineEdit" name="extLibTargetPath">
-               <property name="text">
-                <string>F:/Drive/Assets/Textures</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="browseExtLibTargetButton">
-               <property name="text">
-                <string>Browse</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="7" column="0" colspan="2">
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="extLibsGroupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>External Asset Libraries</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
             <widget class="QTreeWidget" name="extLibsList">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="itemsExpandable">
               <bool>false</bool>
              </property>
@@ -391,18 +379,77 @@ color: rgb(220, 220, 220);</string>
              </column>
             </widget>
            </item>
-           <item row="3" column="1">
-            <spacer name="verticalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <widget class="QLineEdit" name="extLibFolderName">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>library</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="extLibBaseDropdown">
+                 <item>
+                  <property name="text">
+                   <string>assets/textures</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>assets/3d/fbx</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="hlayout_20">
+               <item>
+                <widget class="QLineEdit" name="extLibTargetPath">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>F:/Drive/Assets/Textures</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="browseExtLibTargetButton">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Browse</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="addNewExtLibButton">
+             <property name="text">
+              <string>Add New Library</string>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -421,18 +468,8 @@ color: rgb(220, 220, 220);</string>
           <property name="checkable">
            <bool>false</bool>
           </property>
-          <layout class="QFormLayout" name="formLayout_3">
+          <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBlender">
-             <property name="text">
-              <string>Blender</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
             <widget class="QCheckBox" name="checkHoudini">
              <property name="maximumSize">
               <size>
@@ -448,14 +485,17 @@ color: rgb(220, 220, 220);</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkC4D">
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="checkBlender">
              <property name="text">
-              <string>Cinema 4D</string>
+              <string>Blender</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="0" column="2">
             <widget class="QCheckBox" name="checkMaya">
              <property name="maximumSize">
               <size>
@@ -468,7 +508,14 @@ color: rgb(220, 220, 220);</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="checkC4D">
+             <property name="text">
+              <string>Cinema 4D</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
             <widget class="QCheckBox" name="checkUSD">
              <property name="maximumSize">
               <size>
@@ -481,7 +528,7 @@ color: rgb(220, 220, 220);</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="1" column="2">
             <widget class="QCheckBox" name="checkOther">
              <property name="maximumSize">
               <size>
@@ -520,59 +567,67 @@ color: rgb(220, 220, 220);</string>
          <widget class="QWidget" name="widget" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <widget class="QPushButton" name="newProjectButton">
-             <property name="toolTip">
-              <string>Create new project and make it active</string>
-             </property>
-             <property name="text">
-              <string>Create New Project</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QPushButton" name="dropProjectButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Sets current project to None</string>
+               </property>
+               <property name="text">
+                <string>Drop Project</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="newProjectButton">
+               <property name="toolTip">
+                <string>Create new project and make it active</string>
+               </property>
+               <property name="text">
+                <string>Create New Project</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
-            <widget class="QPushButton" name="dropProjectButton">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>Sets current project to None</string>
-             </property>
-             <property name="text">
-              <string>Drop Project</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="archiveProjectButton">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Remove temporary files and empty folders. Prepares for archiving</string>
-             </property>
-             <property name="text">
-              <string>Clean and Archive</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="updateProjectButton">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>Update project configuration and create new folders if necessary</string>
-             </property>
-             <property name="text">
-              <string>Update Current Project</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QPushButton" name="archiveProjectButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Remove temporary files and empty folders. Prepares for archiving</string>
+               </property>
+               <property name="text">
+                <string>Clean and Archive</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="updateProjectButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Update project configuration and create new folders if necessary</string>
+               </property>
+               <property name="text">
+                <string>Update Current Project</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
@@ -687,12 +742,7 @@ color: rgb(220, 220, 220);</string>
   <tabstop>loadAssetButton</tabstop>
   <tabstop>newShotButton</tabstop>
   <tabstop>loadShotButton</tabstop>
-  <tabstop>editHRes</tabstop>
-  <tabstop>editVRes</tabstop>
-  <tabstop>editFPS</tabstop>
   <tabstop>checkLivePlate</tabstop>
-  <tabstop>archiveProjectButton</tabstop>
-  <tabstop>updateProjectButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>
