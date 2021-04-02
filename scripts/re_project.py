@@ -271,7 +271,7 @@ def _create_project_folders( base_path_str="", template=[], create_missing_links
                                     
                     #calculate relative path
                     try:                        
-                        #symlink_rel_target = new_folder_path.relative_to( symlink_target ) #this does not work.. use old method                        
+                        #symlink_rel_target = new_folder_path.relative_to( symlink_target ) #this does not work.. use old                        
                         symlink_rel_target = Path(os.path.relpath( symlink_target.as_posix(), new_folder_path.as_posix() ))
                         print(symlink_rel_target.as_posix())
 
@@ -285,8 +285,10 @@ def _create_project_folders( base_path_str="", template=[], create_missing_links
                     #print("Link: " + new_folder_path.as_posix() + " ==> " + symlink_target.as_posix() + " ==> " + symlink_rel_target.as_posix())
                 
                 if update_symlinks and new_folder_path.exists() and new_folder_path.is_symlink():
-                    old_symlink_target = Path(os.readlink(str(new_folder_path)))
-                    if old_symlink_target != symlink_rel_target:
+                    #old_symlink_target = Path(os.readlink(str(new_folder_path)))
+                    #old_symlink_target = Path(os.readlink(new_folder_path.as_posix()))
+                    old_symlink_target = Path(os.path.realpath(new_folder_path))
+                    if old_symlink_target != symlink_rel_target:                        
                         print("Re-creating symlink: " + new_folder_path.as_posix() + ": " + old_symlink_target.as_posix() + " ==> " + symlink_rel_target.as_posix())
                         new_folder_path.rmdir()
 

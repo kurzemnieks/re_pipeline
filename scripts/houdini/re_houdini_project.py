@@ -22,7 +22,18 @@ class HoudiniProjectManagerUI( re_project_manager.ProjectManagerUI):
         hou.putenv("TEMP", temp_path.as_posix())
 
     def onClickLoadShot(self):
-        pass
+        hou.hipFile.clear()
+        item = self.shotsList.selectedItems()[0]        
+        shot_path = re_project.get_shot_path(re_project.get_shot_data_from_name(item.text()))
+        shot_path = shot_path / "houdini"
+        hou.putenv("JOB", shot_path.as_posix())
+        hou.putenv("HIP", shot_path.as_posix())
+
+        hip_path = shot_path / "untitled.hip"
+        hou.putenv("HIPFILE", hip_path.as_posix())
+
+        temp_path = shot_path / "tmp"
+        hou.putenv("TEMP", temp_path.as_posix())
 
 
 def _getProjectManagerWidget():

@@ -3,6 +3,7 @@ import os
 import winreg
 import re_project
 import re_houdini_launcher
+import re_blender_launcher
 from pathlib import Path
 from configparser import ConfigParser 
 
@@ -36,7 +37,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         if len(self.houdiniPathEdit.text()) == 0:
             houdini_path = self.tryGetDefaultHoudiniPath()
             if houdini_path is not None:
-                self.houdiniPathEdit.setText(houdini_path)
+                self.houdiniPathEdit.setText(houdini_path.as_posix())
 
         self.getAppConfigFromUI()
 
@@ -57,6 +58,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.setBlenderButton.clicked.connect(self.onClickSetBlender)
 
         self.runHoudiniButton.clicked.connect(self.onRunHoudini)
+        self.runBlenderButton.clicked.connect(self.onRunBlender)
 
         self.loadAssetButton.clicked.connect(self.onClickLoadAsset)
         self.loadShotButton.clicked.connect(self.onClickLoadShot)
@@ -224,7 +226,12 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def onRunHoudini(self):
         houdini_path = Path(self.houdiniPathEdit.text()) #houdini executable path
         re_root = Path(os.getenv("RE_ROOT")) #pipeline root dir
-        re_houdini_launcher.run_houdini(houdini_path, re_root , re_project._RE_PROJECT_ROOT)                
+        re_houdini_launcher.run_blender(houdini_path, re_root , re_project.get_project_root())                
+
+    def onRunBlender(self):
+        blender_path = Path(self.blenderPathEdit.text())
+        re_root = Path(os.getenv("RE_ROOT")) #pipeline root dir
+        re_blender_launcher.run_blender(blender_path, re_root, re_project.get_project_root())
 
     def onClickSetBlender(self):
         dlg = QtWidgets.QFileDialog()
