@@ -18,4 +18,12 @@ def run_blender(blender_executable, re_root, project_path=None):
         
     os.environ['RE_ROOT'] = str(re_root); #location of RE_Pipeline root
 
-    subprocess.Popen(blender_executable.as_posix())
+    cmd = blender_executable.as_posix()
+    cmd = cmd + " -P " + re_root.as_posix() + "/tools/blender/scripts/blender_start.py"
+
+    subprocess.Popen(cmd)
+
+
+# Blender workflow:
+#   on new asset/shot - if no .blend files exist in folder, crete new empty scene and call save as dialog in the folder. 
+#       if .blend files exist in folder, call open dialog in the folder

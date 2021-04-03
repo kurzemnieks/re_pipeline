@@ -78,7 +78,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.checkOther.clicked.connect(self.onModifyProjectConfig)
         self.checkUSD.clicked.connect(self.onModifyProjectConfig)
         
-        if re_project.is_in_houdini():
+        if re_project.is_in_dcc_app():
             self.mainTabs.removeTab(self.mainTabs.indexOf(self.tab_Apps))
         else:
             self.loadShotButton.hide()
@@ -105,7 +105,6 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.extLibsList.clear()
 
         self.statusBar.showMessage("No project selected!")
-
               
     def closeEvent(self, event):
         self.savePMConfig()
@@ -226,12 +225,14 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def onRunHoudini(self):
         houdini_path = Path(self.houdiniPathEdit.text()) #houdini executable path
         re_root = Path(os.getenv("RE_ROOT")) #pipeline root dir
-        re_houdini_launcher.run_blender(houdini_path, re_root , re_project.get_project_root())                
+        re_houdini_launcher.run_blender(houdini_path, re_root , re_project.get_project_root())    
+        self.close()            
 
     def onRunBlender(self):
         blender_path = Path(self.blenderPathEdit.text())
         re_root = Path(os.getenv("RE_ROOT")) #pipeline root dir
         re_blender_launcher.run_blender(blender_path, re_root, re_project.get_project_root())
+        self.close()
 
     def onClickSetBlender(self):
         dlg = QtWidgets.QFileDialog()

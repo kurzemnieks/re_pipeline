@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 import re
+import sys
 from collections import namedtuple
 from pathlib import Path
 
@@ -75,6 +76,14 @@ def is_in_houdini():
     if os.getenv("HOUDINI_PATH") is not None:
         return True
     return False
+
+def is_in_blender():
+    if 'blender.exe' in sys.argv[0].lower():
+        return True
+    return False
+
+def is_in_dcc_app():
+    return is_in_houdini() or is_in_blender()    
 
 #unitiailize current project
 def drop_project():
@@ -286,8 +295,12 @@ def _create_project_folders( base_path_str="", template=[], create_missing_links
                 
                 if update_symlinks and new_folder_path.exists() and new_folder_path.is_symlink():
                     #old_symlink_target = Path(os.readlink(str(new_folder_path)))
-                    #old_symlink_target = Path(os.readlink(new_folder_path.as_posix()))
-                    old_symlink_target = Path(os.path.realpath(new_folder_path))
+
+                    #Python 3.8 changed how some path functions regarding symlinks work.. it's confusing
+                    old_symlink_target = Path(os.readlink(new_folder_path.as_posix()))
+                    if sys.version_info[1] > 7:
+                        old_symlink_target = Path(os.path.realpath(new_folder_path))
+
                     if old_symlink_target != symlink_rel_target:                        
                         print("Re-creating symlink: " + new_folder_path.as_posix() + ": " + old_symlink_target.as_posix() + " ==> " + symlink_rel_target.as_posix())
                         new_folder_path.rmdir()

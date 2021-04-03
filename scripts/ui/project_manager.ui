@@ -111,7 +111,7 @@ color: rgb(220, 220, 220);</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab_Assets">
        <attribute name="title">
