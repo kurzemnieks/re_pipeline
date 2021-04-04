@@ -36,8 +36,9 @@ class QtWindowEventLoop(bpy.types.Operator):
             return {'FINISHED'}
         else:
             #logger.debug('process the events for Qt window')
-            self.event_loop.processEvents()
-            self.app.sendPostedEvents(None, 0)
+            #self.event_loop.processEvents(flags=QtCore.QEventLoop.AllEvents, maximumTime=30)
+            #self.app.sendPostedEvents(None, 0)
+            pass
 
         return {'PASS_THROUGH'}
 

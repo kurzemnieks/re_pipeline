@@ -6,6 +6,8 @@ import re_houdini_launcher
 import re_blender_launcher
 from pathlib import Path
 from configparser import ConfigParser 
+import math
+import datetime
 
 from PySide2 import QtWidgets, QtCore, QtGui
 from ui import projman, assetdialog, shotdialog, projectdialog
@@ -19,6 +21,8 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.configParser = ConfigParser()
         
         self.defaultNewProjectRoot = "C:\\Projects\\"
+
+        self.sceneDCCExtensions = ["*.blend"] #override this for DCC app PM implementations to return specific scene file types
 
         self._resetPMUI()
 
@@ -77,12 +81,29 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.checkMaya.clicked.connect(self.onModifyProjectConfig)
         self.checkOther.clicked.connect(self.onModifyProjectConfig)
         self.checkUSD.clicked.connect(self.onModifyProjectConfig)
-        
+                
         if re_project.is_in_dcc_app():
             self.mainTabs.removeTab(self.mainTabs.indexOf(self.tab_Apps))
+
+            self.openAssetFileButton.clicked.connect(self.onOpenAssetFileClick)
+            self.newAssetFileButton.clicked.connect(self.onNewAssetFileClick)
         else:
             self.loadShotButton.hide()
             self.loadAssetButton.hide()
+
+            self.assetLayout.removeWidget(self.assetFileList)
+            self.assetFileList.deleteLater()
+            self.assetFileList = None
+            
+            self.assetFileActionGroup.removeWidget(self.openAssetFileButton)
+            self.assetFileActionGroup.removeWidget(self.newAssetFileButton)
+            self.openAssetFileButton.deleteLater()
+            self.newAssetFileButton.deleteLater()
+            self.openAssetFileButton = None
+            self.newAssetFileButton = None
+            self.assetLayout.removeItem(self.assetFileActionGroup)
+            self.assetFileActionGroup.deleteLater()
+            self.assetFileActionGroup = None
 
     def _resetPMUI(self):
         self.assetList.clear()
@@ -344,11 +365,13 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         for shot_name in all_shots:
             shot_item = QtWidgets.QListWidgetItem(shot_name, self.shotsList)
 
-    def onAssetItemClick(self, item):
+    def onAssetItemClick(self, item : QtWidgets.QListWidgetItem):
         if item is not None:
             self.loadAssetButton.setEnabled(True)
+            if re_project._RE_DCC_APP != '':
+                self.UpdateAssetFileList(item.text())
 
-    def onShotItemClick(self, item):
+    def onShotItemClick(self, item : QtWidgets.QListWidgetItem):
         if item is not None:
             self.loadShotButton.setEnabled(True)
 
@@ -385,7 +408,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         if re_project.add_external_lib_folder(folder_name, base_folder, target_path):
             self.extLibsList.addTopLevelItem(QtWidgets.QTreeWidgetItem([folder_name, base_folder, target_path]))
 
-    def onClickBrowseExtLibTarget(self):
+    def onClickBrowseExtLibTarget(self):        
         dlg = QtWidgets.QFileDialog()
         dlg.setFileMode( QtWidgets.QFileDialog.Directory )
 
@@ -397,6 +420,42 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
                 libTargetFolder = folders[0]
         
         self.extLibTargetPath.setText( Path(libTargetFolder).as_posix())
+
+    def onOpenAssetFileClick(self):
+        pass
+
+    def onNewAssetFileClick(self):
+        pass
+
+    def convert_file_size(size_bytes):
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return "%s %s" % (s, size_name[i])
+
+    def UpdateAssetFileList(self, assetItem  : str):
+        asset_path : Path = re_project.get_asset_path(assetItem)
+        asset_path = asset_path / re_project._RE_DCC_APP
+
+        self.assetFileList.clear()
+
+        for pattern in self.sceneDCCExtensions:
+            filelist_gen = asset_path.glob(pattern)
+            file_list = list(filelist_gen)
+            for file_path in file_list:
+                rel_path : Path = file_path.relative_to( asset_path )
+                #print(rel_path.as_posix())
+                file_stats : os.stat_result = file_path.stat()
+                mtime = file_stats.st_mtime
+                timestamp_str = datetime.datetime.fromtimestamp(mtime).strftime('%Y-%m-%d-%H:%M')
+                self.assetFileList.addTopLevelItem(QtWidgets.QTreeWidgetItem( [rel_path.as_posix(), timestamp_str, ProjectManagerUI.convert_file_size(file_stats.st_size)] ))
+
+        self.assetFileList.resizeColumnToContents(0)
+        self.assetFileList.resizeColumnToContents(2)
+        
 class AssetDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
     def __init__(self, parent=None):
         super(AssetDialogUI, self).__init__(parent=parent)

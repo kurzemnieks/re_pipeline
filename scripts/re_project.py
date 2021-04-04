@@ -5,36 +5,66 @@ import re
 import sys
 from collections import namedtuple
 from pathlib import Path
+from typing import List, Set, Dict, Tuple, Optional
 
 
 #########################################################################################################
 
-_RE_PROJECT_ROOT = None
-_RE_PROJECT_INITIALIZED = False
-_RE_PROJECT_CFG_NAME = '.projcfg'
+_RE_PROJECT_ROOT : Path = None
+_RE_PROJECT_INITIALIZED : bool = False
+_RE_PROJECT_CFG_NAME : str = '.projcfg'
 
-_RE_PROJECT_VERSION = 1.0
-_RE_PROJECT_EXT_TEX_LIB = 'F:/Drive/Assets/Textures'
-_RE_PROJECT_DEFAULT_FPS = 30.0
-_RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
+_RE_PROJECT_VERSION : float = 1.0
+_RE_PROJECT_DEFAULT_FPS : float = 30.0
+_RE_PROJECT_DEFAULT_REZ : Dict[str,int] = {'x':1920, 'y':1080}
 
-_RE_PROJECT_EXTERNAL_LIBS = []
+ExtLibEntry = Tuple[str, str, str]
+_RE_PROJECT_EXTERNAL_LIBS : List[ExtLibEntry] = []
+
+class DccApp(object):
+    BLENDER = "blender"
+    HOUDINI = "houdini"
+    MAYA = "maya"
+    C4D = "c4d"
+
+_RE_DCC_APP : str = ''
 
 #########################################################################################################
 
 AppConfig = namedtuple('AppConfig',['blender','houdini','c4d','maya','usd','other'])
-_RE_PROJECT_APP_CONFIG = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
+_RE_PROJECT_APP_CONFIG : AppConfig = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
 
-_RE_PROJECT_HAS_FOOTAGE = False #Project has footage, uses roto, tracking for comp
+_RE_PROJECT_HAS_FOOTAGE : bool = False #Project has footage, uses roto, tracking for comp
 
 #########################################################################################################
-def set_current_root_dir( path ):
+def is_in_houdini() -> bool:
+    if os.getenv("HOUDINI_PATH") is not None:
+        return True
+    return False
+
+def is_in_blender() -> bool:
+    if 'blender.exe' in sys.argv[0].lower():
+        return True
+    return False
+
+def is_in_dcc_app() -> bool:
+    return is_in_houdini() or is_in_blender() 
+#########################################################################################################
+def set_current_root_dir( path : str ) -> bool:
     # Initialize project root folder. 
     # If project exists in this path, it will be loaded and initialized
     
     global _RE_PROJECT_ROOT
+    global _RE_DCC_APP
 
     _RE_PROJECT_ROOT = Path(path)
+
+    if is_in_houdini():
+        _RE_DCC_APP = DccApp.HOUDINI
+    if is_in_blender():
+        _RE_DCC_APP = DccApp.BLENDER
+
+    #_RE_DCC_APP = DccApp.BLENDER
 
     if not _try_load_project(_RE_PROJECT_ROOT):
         print('Info: Project not found at location: ' + _RE_PROJECT_ROOT.as_posix())
@@ -44,7 +74,7 @@ def set_current_root_dir( path ):
         save_project_config()
         return True
 
-def is_project_initialized():
+def is_project_initialized() -> bool:
     if not _RE_PROJECT_ROOT:
         return False
 
@@ -53,38 +83,26 @@ def is_project_initialized():
 
     return _RE_PROJECT_INITIALIZED
 
-def get_project_root():
+def get_project_root() -> Path:
     assert(_RE_PROJECT_INITIALIZED)
     return _RE_PROJECT_ROOT
 
-def get_project_app_config():
+def get_project_app_config() -> AppConfig:
     assert(_RE_PROJECT_INITIALIZED)
     return _RE_PROJECT_APP_CONFIG
 
-def get_project_default_rez():
+def get_project_default_rez() -> Dict[str,int]:
     assert(_RE_PROJECT_INITIALIZED)
     return _RE_PROJECT_DEFAULT_REZ
 
-def get_project_default_fps():
+def get_project_default_fps() -> float:
     assert(_RE_PROJECT_INITIALIZED)
     return _RE_PROJECT_DEFAULT_FPS
 
-def get_project_external_libs():
+def get_project_external_libs() -> List[Tuple[str, str, str]]:
     return _RE_PROJECT_EXTERNAL_LIBS
 
-def is_in_houdini():
-    if os.getenv("HOUDINI_PATH") is not None:
-        return True
-    return False
-
-def is_in_blender():
-    if 'blender.exe' in sys.argv[0].lower():
-        return True
-    return False
-
-def is_in_dcc_app():
-    return is_in_houdini() or is_in_blender()    
-
+   
 #unitiailize current project
 def drop_project():
     global _RE_PROJECT_EXTERNAL_LIBS
@@ -110,7 +128,7 @@ def drop_project():
 # internals
 #########################################################################################################
 
-def _try_load_project( path ):
+def _try_load_project( path : Path ) -> bool:
     
     global _RE_PROJECT_EXTERNAL_LIBS
     global _RE_PROJECT_APP_CONFIG
@@ -151,80 +169,82 @@ def _try_load_project( path ):
 
     else:
         return False
-    
-def _get_project_folder_struct():
+
+TemplateEntry = Tuple[str,List['TemplateEntry'], Optional[str], Optional[bool], Optional[bool]]
+
+def _get_project_folder_struct() -> Tuple[TemplateEntry]:
 
     """ Return master project folder structure.
     [ folder_name, [list_child_templates], symlink_path, bool_create_this, use_absolute_symlink_path]
     """ 
 
     #shared assets between shots
-    ASSETS = [
-        ['2d',[
-            ['artworks', []],
-            ['footage',[],None, _RE_PROJECT_HAS_FOOTAGE],
-            ['roto',[],None, _RE_PROJECT_HAS_FOOTAGE],
-            ['tracking',[],None, _RE_PROJECT_HAS_FOOTAGE],
-            ]            
-        ],
-        ['3d',[
-            ['fbx',[]],
-            ['abc',[]],
-            ['obj',[]],
-            ['blend',[],None, _RE_PROJECT_APP_CONFIG.blender],
-            ['hda',[],None, _RE_PROJECT_APP_CONFIG.houdini],
-            ['c4d',[],None, _RE_PROJECT_APP_CONFIG.c4d],
-            ['usd',[],None, _RE_PROJECT_APP_CONFIG.usd],
-            ]
-        ],
-        ['tex',[]],
-        ['lib',[]]        
-    ]
+    ASSETS = (
+        ('2d',(
+            ('artworks', ()),
+            ('footage',(),None, _RE_PROJECT_HAS_FOOTAGE),
+            ('roto',(),None, _RE_PROJECT_HAS_FOOTAGE),
+            ('tracking',(),None, _RE_PROJECT_HAS_FOOTAGE),
+            )            
+        ),
+        ('3d',(
+            ('fbx',()),
+            ('abc',()),
+            ('obj',()),
+            ('blend',(),None, _RE_PROJECT_APP_CONFIG.blender),
+            ('hda',(),None, _RE_PROJECT_APP_CONFIG.houdini),
+            ('c4d',(),None, _RE_PROJECT_APP_CONFIG.c4d),
+            ('usd',(),None, _RE_PROJECT_APP_CONFIG.usd),
+            )
+        ),
+        ('tex',()),
+        ('lib',())        
+    )
 
     #folder where assets are being built
-    BUILD = [
-    ]
+    BUILD = (
+    )
 
     #shot assembly folder
-    SHOTS = [
+    SHOTS = (
 
-    ]
+    )
 
     #render outputs (sequences)
-    RENDER = [
-        ['previs',[]
-        ],
-        ['shots', []
-        ]
-    ]
+    RENDER = (
+        ('previs',()
+        ),
+        ('shots', ()
+        )
+    )
 
     #movies, screenshots, images (valuable and final outputs)
-    OUT = [
-        ['previs',[]],
-        ['review',[]],
-        ['images',[]],
-        ['deliver',[]]
-    ]
+    OUT = (
+        ('previs',()),
+        ('review',()),
+        ('images',()),
+        ('deliver',())
+    )
 
     #caches, temp sequences - stuff that can be deleted during cleanup/archiving
-    TEMP = [
-        ['assets',[]],
-        ['shots',[]]
-    ]
+    TEMP = (
+        ('assets',()),
+        ('shots',())
+    )
 
     #Combine in one structure
-    FOLDERS = [
-        ['assets',ASSETS],
-        ['build',BUILD],
-        ['shots',SHOTS],
-        ['render',RENDER],
-        ['out',OUT],
-        ['temp',TEMP]
-    ]
+    FOLDERS = (
+        ('assets',ASSETS),
+        ('build',BUILD),
+        ('shots',SHOTS),
+        ('render',RENDER),
+        ('out',OUT),
+        ('temp',TEMP)
+    )
 
     return FOLDERS
 
-def _list_folder_template_items( template, list, parent=None ):
+def _list_folder_template_items( template : TemplateEntry, list : List[str], parent:str=None ):
     if list is None:
         return
 
@@ -244,7 +264,7 @@ def _list_folder_template_items( template, list, parent=None ):
             _list_folder_template_items( e, list, folder_name )
         
 
-def _create_project_folders( base_path_str="", template=[], create_missing_links=False, update_symlinks=True ):    
+def _create_project_folders( base_path_str:str="", template:List[TemplateEntry]=[], create_missing_links:bool=False, update_symlinks:bool=True ) -> bool:    
     if not template:
         return False
 
@@ -334,7 +354,7 @@ def _create_project_folders( base_path_str="", template=[], create_missing_links
     return True
 
 ################################################################################
-def create_project(app_config):
+def create_project(app_config : AppConfig) -> bool:
     # Try creating new project at current root location
     # app_config: AppConfig configure which applications will be used in project
     #             Appropriate subfolders will be created. 
@@ -369,12 +389,12 @@ def save_project_config():
     except IOError:
         print("RE Pipeline error: Can't write project config file to: " + cfg_file_path.as_posix())
 
-def create_project_folders():
+def create_project_folders() -> bool:
     # Create project folder structure based on configuration
     # Use this also to generate new folders if the configuration changes
     return _create_project_folders(_RE_PROJECT_ROOT.as_posix(), _get_project_folder_struct())    
 
-def update_all_asset_folders():
+def update_all_asset_folders() -> bool:
     all_assets = scan_project_assets()
 
     for asset_name in all_assets:
@@ -383,7 +403,7 @@ def update_all_asset_folders():
 
     return True    
 
-def update_all_shot_folders():
+def update_all_shot_folders() -> bool:
     all_shots = scan_project_shots()
 
     for shot_name in all_shots:
@@ -393,7 +413,7 @@ def update_all_shot_folders():
 
     return True
 
-def update_project_app_config(app_config, generate_folders=False):
+def update_project_app_config(app_config : AppConfig, generate_folders : bool = False):
     if not _RE_PROJECT_INITIALIZED:
         raise ValueError("Project not initialized")
         return
@@ -404,7 +424,7 @@ def update_project_app_config(app_config, generate_folders=False):
     if generate_folders:
         create_project_folders()
 
-def add_external_lib_folder( name, base_path, target_path ):
+def add_external_lib_folder( name : str, base_path : str, target_path : str ) -> bool:
     base_folder_path = _RE_PROJECT_ROOT / base_path    
     target_folder_path = Path(target_path)
 
@@ -423,26 +443,26 @@ def add_external_lib_folder( name, base_path, target_path ):
     
     return False
             
-def is_external_lib( name, base_path, target):    
+def is_external_lib( name : str, base_path : str, target : str) -> int:    
     for lib in _RE_PROJECT_EXTERNAL_LIBS:
         if lib[0] == name.lower() and lib[1] == base_path.lower():
             return _RE_PROJECT_EXTERNAL_LIBS.index(lib)
     return None
 
-def create_external_lib_folders( ext_libs ):
+def create_external_lib_folders( ext_libs : List[ExtLibEntry] ):
     for lib in ext_libs:
         add_external_lib_folder(lib[0], lib[1], lib[2])
 
-def asset_exists( assetName ):
+def asset_exists( assetName : str ) -> bool:
     assert(_RE_PROJECT_INITIALIZED)
     return get_asset_path(assetName).exists()
 
-def get_asset_path( assetName ):
+def get_asset_path( assetName : str ) -> Path:
     asset_root = _RE_PROJECT_ROOT / 'build'     
     asset_folder = asset_root / assetName
     return asset_folder
 
-def create_asset_folders( assetName ):
+def create_asset_folders( assetName : str ) -> bool:
     assert(_RE_PROJECT_INITIALIZED)
     if not _RE_PROJECT_INITIALIZED:
         raise ValueError("Project not initialized")
@@ -481,29 +501,29 @@ def create_asset_folders( assetName ):
     
     return _create_project_folders(asset_folder.as_posix(), ASSET_FOLDERS, True)
 
-def get_shot_name( sequence, shot_number ):
+def get_shot_name( sequence : int, shot_number : int ) -> str:
     assert(_RE_PROJECT_INITIALIZED)
     shot_name = "shot_{}{}".format(str(sequence), str(shot_number).zfill(2))
     shot_name = shot_name.lower()
     return shot_name
 
-def get_shot_path(sequence, shot_number):
+def get_shot_path(sequence : int, shot_number : int) -> Path:
     assert(_RE_PROJECT_INITIALIZED)
     shot_path = _RE_PROJECT_ROOT / "shots" 
     shot_path = shot_path / get_shot_name(sequence, shot_number) 
     return shot_path
 
-def get_shot_data_from_name( shot_name ):
+def get_shot_data_from_name( shot_name : str ) -> Tuple[int,int]:
     last_part = shot_name[shot_name.rfind('_')+1:]
     shot_num_str = last_part[-2:]
     seq_num_str = last_part[:-2] 
     return (int(seq_num_str),int(shot_num_str))
 
-def shot_exists( sequence, shot_number ):
+def shot_exists( sequence : int, shot_number : int ) -> bool:
     assert(_RE_PROJECT_INITIALIZED)
     return get_shot_path(sequence, shot_number).exists()
 
-def create_shot( sequence, shot_number):  
+def create_shot( sequence : int, shot_number : int) -> bool:  
     assert(_RE_PROJECT_INITIALIZED)  
     shot_name = get_shot_name( sequence, shot_number)
     shot_path = get_shot_path(sequence, shot_number)
@@ -530,14 +550,14 @@ def create_shot( sequence, shot_number):
     return _create_project_folders(shot_path.as_posix(), SHOT_FOLDERS, True)
 ############################################################
 
-def scan_project_assets():
+def scan_project_assets() -> List[str]:
     assert(_RE_PROJECT_INITIALIZED)
     build_root = _RE_PROJECT_ROOT / "build" 
 
     all_dirs = build_root.iterdir()
     return [x.name for x in all_dirs]    
 
-def scan_project_shots():
+def scan_project_shots() -> List[str]:
     assert(_RE_PROJECT_INITIALIZED)
     shots_root = _RE_PROJECT_ROOT / "shots"     
 
@@ -548,76 +568,76 @@ def scan_project_shots():
     
 ############################################################
 
-def _get_app_folders( category, name ):
+def _get_app_folders( category : str, name : str ) -> Tuple[TemplateEntry]:
     """ Return folder structures for DCC applications based
         on project app config.
         Used in asset and shot structures. 
     """
 
-    HOUDINI = [
-        ['geo',[],'temp/{}/{}/geo'.format(category, name)],
-        ['hda',[],'assets/3d/hda', _RE_PROJECT_APP_CONFIG.houdini],
-        ['fbx',[],'assets/3d/fbx'],
-        ['obj',[],'assets/3d/obj'],
-        ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
-        ['sim',[],'temp/{}/{}/sim'.format(category, name)],
-        ['abc',[],'assets/3d/abc'],
-        ['tex',[],'assets/tex'],
-        ['tmp',[],'temp/{}/{}'.format(category, name)],
+    HOUDINI = (
+        ('geo',(),'temp/{}/{}/geo'.format(category, name)),
+        ('hda',(),'assets/3d/hda', _RE_PROJECT_APP_CONFIG.houdini),
+        ('fbx',(),'assets/3d/fbx'),
+        ('obj',(),'assets/3d/obj'),
+        ('usd',(),'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('sim',(),'temp/{}/{}/sim'.format(category, name)),
+        ('abc',(),'assets/3d/abc'),
+        ('tex',(),'assets/tex'),
+        ('tmp',(),'temp/{}/{}'.format(category, name)),
 
-        ['render',[],'render/{}/{}'.format(category, name)],
-        ['flip',[],'temp/{}/{}/flip'.format(category, name)],
+        ('render',(),'render/{}/{}'.format(category, name)),
+        ('flip',(),'temp/{}/{}/flip'.format(category, name)),
 
-        ['scripts',[]],
-        ['lib',[],'assets/lib']
-    ]
+        ('scripts',()),
+        ('lib',(),'assets/lib')
+    )
 
-    BLENDER = [
-        ['tex',[],'assets/tex'],
-        ['fbx',[],'assets/3d/fbx'],
-        ['obj',[],'assets/3d/obj'],
-        ['blend',[],'assets/3d/blend', _RE_PROJECT_APP_CONFIG.blender],
-        ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
-        ['abc',[],'assets/3d/abc'],
-        ['render',[],'render/{}/{}'.format(category, name)],
-        ['tmp',[],'temp/{}/{}'.format(category, name)],
-        ['lib',[],'assets/lib']
-    ]
+    BLENDER = (
+        ('tex',(),'assets/tex'),
+        ('fbx',(),'assets/3d/fbx'),
+        ('obj',(),'assets/3d/obj'),
+        ('blend',(),'assets/3d/blend', _RE_PROJECT_APP_CONFIG.blender),
+        ('usd',(),'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('abc',(),'assets/3d/abc'),
+        ('render',(),'render/{}/{}'.format(category, name)),
+        ('tmp',(),'temp/{}/{}'.format(category, name)),
+        ('lib',(),'assets/lib')
+    )
 
-    C4D = [
-        ['tex',[],'assets/tex'],
-        ['fbx',[],'assets/3d/fbx'],
-        ['obj',[],'assets/3d/obj'],
-        ['c4d',[],'assets/3d/c4d', _RE_PROJECT_APP_CONFIG.c4d],
-        ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
-        ['abc',[],'assets/3d/abc'],
-        ['render',[],'render/{}/{}'.format(category, name)],
-        ['tmp',[],'temp/{}/{}'.format(category, name)],
-        ['lib',[],'assets/lib']
-    ]
+    C4D = (
+        ('tex',(),'assets/tex'),
+        ('fbx',(),'assets/3d/fbx'),
+        ('obj',(),'assets/3d/obj'),
+        ('c4d',(),'assets/3d/c4d', _RE_PROJECT_APP_CONFIG.c4d),
+        ('usd',(),'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('abc',(),'assets/3d/abc'),
+        ('render',(),'render/{}/{}'.format(category, name)),
+        ('tmp',(),'temp/{}/{}'.format(category, name)),
+        ('lib',(),'assets/lib')
+    )
 
-    MAYA = [
-        ['scenes',[]],
-        ['clips',[]],
-        ['sourceimages',[],'assets/tex'],
-        ['fbx',[],'assets/3d/fbx'],
-        ['obj',[],'assets/3d/obj'],
-        ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
-        ['abc',[],'assets/3d/abc'],
-        ['image',[],'render/{}/{}'.format(category, name)],
-        ['movies',[],'render/{}/{}/playblast'.format(category, name)],
-        ['data',[],'temp/{}/{}'.format(category, name)],
-        ['lib',[],'assets/lib'],
-        ['tmp',[],'temp/{}/{}'.format(category, name)],
-        ['scripts',[]],
-    ]
+    MAYA = (
+        ('scenes',()),
+        ('clips',()),
+        ('sourceimages',(),'assets/tex'),
+        ('fbx',(),'assets/3d/fbx'),
+        ('obj',(),'assets/3d/obj'),
+        ('usd',(),'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('abc',(),'assets/3d/abc'),
+        ('image',(),'render/{}/{}'.format(category, name)),
+        ('movies',(),'render/{}/{}/playblast'.format(category, name)),
+        ('data',(),'temp/{}/{}'.format(category, name)),
+        ('lib',(),'assets/lib'),
+        ('tmp',(),'temp/{}/{}'.format(category, name)),
+        ('scripts',()),
+    )
 
-    FOLDERS = [
-        ['houdini', HOUDINI, None, _RE_PROJECT_APP_CONFIG.houdini],
-        ['blender', BLENDER, None, _RE_PROJECT_APP_CONFIG.blender],
-        ['c4d', C4D, None, _RE_PROJECT_APP_CONFIG.c4d],
-        ['maya', MAYA, None, _RE_PROJECT_APP_CONFIG.maya]
-    ]
+    FOLDERS = (
+        ('houdini', HOUDINI, None, _RE_PROJECT_APP_CONFIG.houdini),
+        ('blender', BLENDER, None, _RE_PROJECT_APP_CONFIG.blender),
+        ('c4d', C4D, None, _RE_PROJECT_APP_CONFIG.c4d),
+        ('maya', MAYA, None, _RE_PROJECT_APP_CONFIG.maya)
+    )
 
     return FOLDERS
 

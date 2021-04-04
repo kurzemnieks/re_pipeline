@@ -79,11 +79,13 @@ class Ui_MainWindow(object):
         self.tab_Assets.setObjectName(u"tab_Assets")
         self.verticalLayout = QVBoxLayout(self.tab_Assets)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.assetLayout = QVBoxLayout()
+        self.assetLayout.setObjectName(u"assetLayout")
         self.assetList = QListWidget(self.tab_Assets)
         self.assetList.setObjectName(u"assetList")
         self.assetList.setStyleSheet(u"background-color: rgb(80, 80, 80);")
 
-        self.verticalLayout.addWidget(self.assetList)
+        self.assetLayout.addWidget(self.assetList)
 
         self.assetActions = QWidget(self.tab_Assets)
         self.assetActions.setObjectName(u"assetActions")
@@ -105,7 +107,30 @@ class Ui_MainWindow(object):
         self.assetActionLayout.addItem(self.horizontalSpacer)
 
 
-        self.verticalLayout.addWidget(self.assetActions)
+        self.assetLayout.addWidget(self.assetActions)
+
+        self.assetFileList = QTreeWidget(self.tab_Assets)
+        self.assetFileList.setObjectName(u"assetFileList")
+
+        self.assetLayout.addWidget(self.assetFileList)
+
+        self.assetFileActionGroup = QHBoxLayout()
+        self.assetFileActionGroup.setObjectName(u"assetFileActionGroup")
+        self.openAssetFileButton = QPushButton(self.tab_Assets)
+        self.openAssetFileButton.setObjectName(u"openAssetFileButton")
+
+        self.assetFileActionGroup.addWidget(self.openAssetFileButton)
+
+        self.newAssetFileButton = QPushButton(self.tab_Assets)
+        self.newAssetFileButton.setObjectName(u"newAssetFileButton")
+
+        self.assetFileActionGroup.addWidget(self.newAssetFileButton)
+
+
+        self.assetLayout.addLayout(self.assetFileActionGroup)
+
+
+        self.verticalLayout.addLayout(self.assetLayout)
 
         self.mainTabs.addTab(self.tab_Assets, "")
         self.tab_Shots = QWidget()
@@ -449,7 +474,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.mainTabs.setCurrentIndex(2)
+        self.mainTabs.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -461,6 +486,12 @@ class Ui_MainWindow(object):
         self.projectRootLabel.setText(QCoreApplication.translate("MainWindow", u"C:/Projects/ProjectRoot", None))
         self.newAssetButton.setText(QCoreApplication.translate("MainWindow", u"Create New Asset", None))
         self.loadAssetButton.setText(QCoreApplication.translate("MainWindow", u"Set Active", None))
+        ___qtreewidgetitem = self.assetFileList.headerItem()
+        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Size", None));
+        ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Last Modified", None));
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Name", None));
+        self.openAssetFileButton.setText(QCoreApplication.translate("MainWindow", u"Open", None))
+        self.newAssetFileButton.setText(QCoreApplication.translate("MainWindow", u"New", None))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Assets), QCoreApplication.translate("MainWindow", u"Assets", None))
         self.newShotButton.setText(QCoreApplication.translate("MainWindow", u"Create New Shot", None))
         self.loadShotButton.setText(QCoreApplication.translate("MainWindow", u"Set Active", None))
@@ -475,10 +506,10 @@ class Ui_MainWindow(object):
         self.editFPS.setInputMask("")
         self.editFPS.setText(QCoreApplication.translate("MainWindow", u"30", None))
         self.extLibsGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"External Asset Libraries", None))
-        ___qtreewidgetitem = self.extLibsList.headerItem()
-        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Target", None));
-        ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Base Folder", None));
-        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Folder Name", None));
+        ___qtreewidgetitem1 = self.extLibsList.headerItem()
+        ___qtreewidgetitem1.setText(2, QCoreApplication.translate("MainWindow", u"Target", None));
+        ___qtreewidgetitem1.setText(1, QCoreApplication.translate("MainWindow", u"Base Folder", None));
+        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("MainWindow", u"Folder Name", None));
         self.extLibFolderName.setText(QCoreApplication.translate("MainWindow", u"library", None))
         self.extLibBaseDropdown.setItemText(0, QCoreApplication.translate("MainWindow", u"assets/textures", None))
         self.extLibBaseDropdown.setItemText(1, QCoreApplication.translate("MainWindow", u"assets/3d/fbx", None))
