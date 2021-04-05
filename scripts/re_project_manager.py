@@ -55,9 +55,10 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.newShotButton.clicked.connect(self.newShotDialog.exec_)
 
         self.assetList.itemClicked.connect(self.onAssetItemClick)              
+        self.assetFileList.itemClicked.connect(self.onAssetFileSelect)
 
         self.shotsList.itemClicked.connect(self.onShotItemClick)
-        self.assetFileList.itemClicked.connect(self.onAssetFileSelect)
+        self.shotFileList.itemClicked.connect(self.onShotFileSelect)
 
         self.setHoudiniButton.clicked.connect(self.onClickSetHoudini)
         self.setBlenderButton.clicked.connect(self.onClickSetBlender)
@@ -83,12 +84,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.checkOther.clicked.connect(self.onModifyProjectConfig)
         self.checkUSD.clicked.connect(self.onModifyProjectConfig)
 
-        if re_project.is_in_dcc_app():
-            self.mainTabs.removeTab(self.mainTabs.indexOf(self.tab_Apps))
-
-            self.openAssetFileButton.clicked.connect(self.onOpenAssetFileClick)
-            self.newAssetFileButton.clicked.connect(self.onNewAssetFileClick)
-        else:
+        if not re_project.is_in_dcc_app():
             self.loadShotButton.hide()
             self.loadAssetButton.hide()
 
@@ -105,6 +101,29 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             self.assetLayout.removeItem(self.assetFileActionGroup)
             self.assetFileActionGroup.deleteLater()
             self.assetFileActionGroup = None
+
+            self.shotLayout.removeWidget(self.shotFileList)
+            self.shotFileList.deleteLater()
+            self.shotFileList = None
+            
+            self.shotFileActionGroup.removeWidget(self.openShotFileButton)
+            self.shotFileActionGroup.removeWidget(self.newShotFileButton)
+            self.openShotFileButton.deleteLater()
+            self.newShotFileButton.deleteLater()
+            self.openShotFileButton = None
+            self.newShotFileButton = None
+
+            self.shotLayout.removeItem(self.shotFileActionGroup)            
+            self.shotFileActionGroup.deleteLater()
+            self.shotFileActionGroup = None
+
+        else:
+            self.mainTabs.removeTab(self.mainTabs.indexOf(self.tab_Apps))
+            self.openAssetFileButton.clicked.connect(self.onOpenAssetFileClick)
+            self.newAssetFileButton.clicked.connect(self.onNewAssetFileClick)
+            self.openShotFileButton.clicked.connect(self.onOpenShotFileClick)
+            self.newShotFileButton.clicked.connect(self.onNewShotFileClick)
+
 
     def _resetPMUI(self):
         self.assetList.clear()
@@ -126,7 +145,12 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         if self.assetFileActionGroup is not None:
             self.openAssetFileButton.setEnabled(False)
             self.newAssetFileButton.setEnabled(True)
-            self.assetFileList.clear()            
+            self.assetFileList.clear()   
+
+        if self.shotFileActionGroup is not None:
+            self.openShotFileButton.setEnabled(False)
+            self.newShotFileButton.setEnabled(True)
+            self.shotFileList.clear()                       
 
         self.projectRootLabel.setText("")
         self.extLibsList.clear()
@@ -375,11 +399,18 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         if item is not None:
             self.loadAssetButton.setEnabled(True)
             if re_project._RE_DCC_APP != '':
-                self.UpdateAssetFileList(item.text())
+                asset_path : Path = re_project.get_asset_path(item.text())
+                self.openAssetFileButton.setEnabled(False)
+                self.UpdateFileList(asset_path, self.assetFileList)
 
     def onShotItemClick(self, item : QtWidgets.QListWidgetItem):
         if item is not None:
             self.loadShotButton.setEnabled(True)
+            if re_project._RE_DCC_APP != '':
+                shot_data = re_project.get_shot_data_from_name(item.text())
+                shot_path : Path = re_project.get_shot_path(shot_data[0], shot_data[1])
+                self.openShotFileButton.setEnabled(False)
+                self.UpdateFileList(shot_path, self.shotFileList)
 
     def onClickLoadAsset(self):
         print("NOT SUPPOSED TO BE CALLED")
@@ -436,13 +467,13 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         s = round(size_bytes / p, 2)
         return "%s %s" % (s, size_name[i])
 
-    def UpdateAssetFileList(self, assetItem  : str):
-        asset_path : Path = re_project.get_asset_path(assetItem)
-        asset_path = asset_path / re_project._RE_DCC_APP
-
-        self.assetFileList.clear()
-        self.openAssetFileButton.setEnabled(False)
-
+    def UpdateFileList(self, baseFolder  : Path, fileList : QtWidgets.QTreeWidget):        
+        assert(fileList)
+        assert(baseFolder)
+        asset_path = baseFolder / re_project._RE_DCC_APP
+            
+        fileList.clear()
+        
         for pattern in self.sceneDCCExtensions:
             filelist_gen = asset_path.glob(pattern)
             file_list = list(filelist_gen)
@@ -452,25 +483,35 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
                 file_stats : os.stat_result = file_path.stat()
                 mtime = file_stats.st_mtime
                 timestamp_str = datetime.datetime.fromtimestamp(mtime).strftime('%Y-%m-%d-%H:%M')
-                self.assetFileList.addTopLevelItem(QtWidgets.QTreeWidgetItem( [rel_path.as_posix(), timestamp_str, ProjectManagerUI.convert_file_size(file_stats.st_size)] ))
+                fileList.addTopLevelItem(QtWidgets.QTreeWidgetItem( [rel_path.as_posix(), timestamp_str, ProjectManagerUI.convert_file_size(file_stats.st_size)] ))
 
-        self.assetFileList.resizeColumnToContents(0)
-        self.assetFileList.resizeColumnToContents(2)
+        fileList.resizeColumnToContents(0)
+        fileList.resizeColumnToContents(2)
 
     def onAssetFileSelect(self, item):
         self.openAssetFileButton.setEnabled(True)
 
-    def onOpenAssetFileClick(self):
-        pass
+    def onShotFileSelect(self, item):
+        self.openShotFileButton.setEnabled(True)        
 
     def onNewAssetClick(self):
         self.newFileDialog.setTitle("New Asset")
         self.newFileDialog.setQuestion("Asset name:")
         self.newFileDialog.setCreateCallback(self.onCreateNewAsset)
+        self.newFileDialog.setBasePath(None)
         self.newFileDialog.exec_()
         
     def onNewAssetFileClick(self):
         pass        
+    def onOpenAssetFileClick(self):
+        pass
+
+    def onNewShotFileClick(self):
+        pass        
+    def onOpenShotFileClick(self):
+        pass
+    
+
 class NewFileDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
     def __init__(self, parent=None):
         super(NewFileDialogUI, self).__init__(parent=parent)
@@ -480,6 +521,8 @@ class NewFileDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
         self.buttonBox.accepted.connect(self.create_new_asset)
         self.buttonBox.rejected.connect(self.close)
         self.editAssetName.setText("")
+
+        self.base_path:Path = None
         self.create_callback = None
 
     def setCreateCallback( self, callback_func ):
@@ -491,10 +534,19 @@ class NewFileDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
     def setTitle(self, title:str):
         self.windowTitle = title
 
+    def setBasePath( self, path:str):
+        if path is None:
+            self.base_path = None
+        else:
+            self.base_path = Path(path)
+
     def create_new_asset(self):        
         if self.create_callback is not None:
-            self.create_callback(self.editAssetName.text())
-        #self.parent.onCreateNewAsset(self.editAssetName.text())     
+            if self.base_path is not None:
+                full_path= self.base_path / self.editAssetName.text()
+            else:
+                full_path = self.editAssetName.text()
+            self.create_callback(full_path.as_posix())
         self.close()
 
 class ShotDialogUI( QtWidgets.QDialog, shotdialog.Ui_ShotDialog):

@@ -151,11 +151,13 @@ class Ui_MainWindow(object):
         self.tab_Shots.setObjectName(u"tab_Shots")
         self.verticalLayout_3 = QVBoxLayout(self.tab_Shots)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.shotLayout = QVBoxLayout()
+        self.shotLayout.setObjectName(u"shotLayout")
         self.shotsList = QListWidget(self.tab_Shots)
         self.shotsList.setObjectName(u"shotsList")
         self.shotsList.setStyleSheet(u"background-color: rgb(80, 80, 80);")
 
-        self.verticalLayout_3.addWidget(self.shotsList)
+        self.shotLayout.addWidget(self.shotsList)
 
         self.shotActions = QWidget(self.tab_Shots)
         self.shotActions.setObjectName(u"shotActions")
@@ -180,30 +182,33 @@ class Ui_MainWindow(object):
         self.shotActionLayout.addItem(self.horizontalSpacer_2)
 
 
-        self.verticalLayout_3.addWidget(self.shotActions)
+        self.shotLayout.addWidget(self.shotActions)
 
         self.shotFileList = QTreeWidget(self.tab_Shots)
         self.shotFileList.setObjectName(u"shotFileList")
         self.shotFileList.setStyleSheet(u"background-color: rgb(80, 80, 80);")
 
-        self.verticalLayout_3.addWidget(self.shotFileList)
+        self.shotLayout.addWidget(self.shotFileList)
 
-        self.horizontalLayout_7 = QHBoxLayout()
-        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.shotFileActionGroup = QHBoxLayout()
+        self.shotFileActionGroup.setObjectName(u"shotFileActionGroup")
         self.openShotFileButton = QPushButton(self.tab_Shots)
         self.openShotFileButton.setObjectName(u"openShotFileButton")
         self.openShotFileButton.setIcon(icon1)
 
-        self.horizontalLayout_7.addWidget(self.openShotFileButton)
+        self.shotFileActionGroup.addWidget(self.openShotFileButton)
 
         self.newShotFileButton = QPushButton(self.tab_Shots)
         self.newShotFileButton.setObjectName(u"newShotFileButton")
         self.newShotFileButton.setIcon(icon3)
 
-        self.horizontalLayout_7.addWidget(self.newShotFileButton)
+        self.shotFileActionGroup.addWidget(self.newShotFileButton)
 
 
-        self.verticalLayout_3.addLayout(self.horizontalLayout_7)
+        self.shotLayout.addLayout(self.shotFileActionGroup)
+
+
+        self.verticalLayout_3.addLayout(self.shotLayout)
 
         self.mainTabs.addTab(self.tab_Shots, icon4, "")
         self.tab_Project = QWidget()
@@ -534,7 +539,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.mainTabs.setCurrentIndex(3)
+        self.mainTabs.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
