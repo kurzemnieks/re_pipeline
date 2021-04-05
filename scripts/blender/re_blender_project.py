@@ -10,7 +10,7 @@ import re_project
 import re_project_manager
 from pathlib import Path
 
-from PySide2 import QtWidgets, QtGui
+from PySide2 import QtWidgets
 
 import bpy
 
@@ -33,8 +33,9 @@ class BlenderProjectManagerUI( re_project_manager.ProjectManagerUI):
         print("NOT IMPLEMENTED")
 
     def onClickLoadShot(self):    
-        item = self.shotsList.selectedItems()[0]        
-        shot_path = re_project.get_shot_path(re_project.get_shot_data_from_name(item.text()))
+        item = self.shotsList.selectedItems()[0]   
+        shot_data = re_project.get_shot_data_from_name(item.text())
+        shot_path = re_project.get_shot_path(shot_data[0], shot_data[1])
         shot_path = shot_path / "blender"
         print("NOT IMPLEMENTED")
 
@@ -88,6 +89,7 @@ class BlenderProjectManagerUI( re_project_manager.ProjectManagerUI):
 
         self.newFileDialog.exec_()
         self.UpdateFileList(shot_path, self.shotFileList)
+
 #############################################################################################################################################################################################
     def _onNewBlenderFile(self, name:str):
         if not name.lower().endswith(".blend"):
