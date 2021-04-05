@@ -172,75 +172,75 @@ def _try_load_project( path : Path ) -> bool:
 
 TemplateEntry = Tuple[str,List['TemplateEntry'], Optional[str], Optional[bool], Optional[bool]]
 
-def _get_project_folder_struct() -> Tuple[TemplateEntry]:
+def _get_project_folder_struct() -> List[TemplateEntry]:
 
     """ Return master project folder structure.
     [ folder_name, [list_child_templates], symlink_path, bool_create_this, use_absolute_symlink_path]
     """ 
 
     #shared assets between shots
-    ASSETS = (
-        ('2d',(
-            ('artworks', ()),
-            ('footage',(),None, _RE_PROJECT_HAS_FOOTAGE),
-            ('roto',(),None, _RE_PROJECT_HAS_FOOTAGE),
-            ('tracking',(),None, _RE_PROJECT_HAS_FOOTAGE),
-            )            
+    ASSETS = [
+        ('2d',[
+            ('artworks', []),
+            ('footage',[],None, _RE_PROJECT_HAS_FOOTAGE),
+            ('roto',[],None, _RE_PROJECT_HAS_FOOTAGE),
+            ('tracking',[],None, _RE_PROJECT_HAS_FOOTAGE),
+            ]            
         ),
-        ('3d',(
-            ('fbx',()),
-            ('abc',()),
-            ('obj',()),
-            ('blend',(),None, _RE_PROJECT_APP_CONFIG.blender),
-            ('hda',(),None, _RE_PROJECT_APP_CONFIG.houdini),
-            ('c4d',(),None, _RE_PROJECT_APP_CONFIG.c4d),
-            ('usd',(),None, _RE_PROJECT_APP_CONFIG.usd),
-            )
+        ('3d',[
+            ('fbx',[]),
+            ('abc',[]),
+            ('obj',[]),
+            ('blend',[],None, _RE_PROJECT_APP_CONFIG.blender),
+            ('hda',[],None, _RE_PROJECT_APP_CONFIG.houdini),
+            ('c4d',[],None, _RE_PROJECT_APP_CONFIG.c4d),
+            ('usd',[],None, _RE_PROJECT_APP_CONFIG.usd),
+            ]
         ),
-        ('tex',()),
-        ('lib',())        
-    )
+        ('tex',[]),
+        ('lib',[])        
+    ]
 
     #folder where assets are being built
-    BUILD = (
-    )
+    BUILD = [
+    ]
 
     #shot assembly folder
-    SHOTS = (
+    SHOTS = [
 
-    )
+    ]
 
     #render outputs (sequences)
-    RENDER = (
-        ('previs',()
+    RENDER = [
+        ('previs',[]
         ),
-        ('shots', ()
+        ('shots', []
         )
-    )
+    ]
 
     #movies, screenshots, images (valuable and final outputs)
-    OUT = (
-        ('previs',()),
-        ('review',()),
-        ('images',()),
-        ('deliver',())
-    )
+    OUT = [
+        ('previs',[]),
+        ('review',[]),
+        ('images',[]),
+        ('deliver',[])
+    ]
 
     #caches, temp sequences - stuff that can be deleted during cleanup/archiving
-    TEMP = (
-        ('assets',()),
-        ('shots',())
-    )
+    TEMP = [
+        ('assets',[]),
+        ('shots',[])
+    ]
 
     #Combine in one structure
-    FOLDERS = (
+    FOLDERS = [
         ('assets',ASSETS),
         ('build',BUILD),
         ('shots',SHOTS),
         ('render',RENDER),
         ('out',OUT),
         ('temp',TEMP)
-    )
+    ]
 
     return FOLDERS
 
@@ -348,7 +348,7 @@ def _create_project_folders( base_path_str:str="", template:List[TemplateEntry]=
                 #create regular folder
                 if not new_folder_path.exists():
                     new_folder_path.mkdir(parents=True)
-                                
+
             _create_project_folders(new_folder_path.as_posix(), template_item[1], create_missing_links)
 
     return True
@@ -437,7 +437,7 @@ def add_external_lib_folder( name : str, base_path : str, target_path : str ) ->
         print("Adding new external lib!")
         _RE_PROJECT_EXTERNAL_LIBS.append([name,base_path,target_path])
     
-    if _create_project_folders(base_folder_path.as_posix(), [[name, [], target_folder_path.as_posix(), True, True]]):
+    if _create_project_folders(base_folder_path.as_posix(), [(name, [], target_folder_path.as_posix(), True, True)]):
         save_project_config()
         return True
     
@@ -482,23 +482,24 @@ def create_asset_folders( assetName : str ) -> bool:
 
     # Any other 3d app work files goes there.  
     OTHER = [
-        ['tex',[],'assets/tex'],
-        ['fbx',[],'assets/3d/fbx'],
-        ['usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd],
-        ['abc',[],'assets/3d/abc'],
-        ['render',[],'render/assets/' + assetName],
-        ['tmp',[],'temp/assets/{}'.format(assetName)],
-        ['lib',[],'assets/lib']
+        ('tex',[],'assets/tex'),
+        ('fbx',[],'assets/3d/fbx'),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('abc',[],'assets/3d/abc'),
+        ('render',[],'render/assets/' + assetName),
+        ('tmp',[],'temp/assets/{}'.format(assetName)),
+        ('lib',[],'assets/lib')
     ]
 
     TEXTURES = [
-        ['tex',[],'assets/tex']
+        ('tex',[],'assets/tex')
     ]
 
     if _RE_PROJECT_APP_CONFIG.other:
-        ASSET_FOLDERS.append(['other', OTHER])
-    ASSET_FOLDERS.append(['textures',TEXTURES])
-    
+        ASSET_FOLDERS.append(('other', OTHER))
+
+    ASSET_FOLDERS.append(('textures',TEXTURES))
+        
     return _create_project_folders(asset_folder.as_posix(), ASSET_FOLDERS, True)
 
 def get_shot_name( sequence : int, shot_number : int ) -> str:
@@ -536,16 +537,16 @@ def create_shot( sequence : int, shot_number : int) -> bool:
     SHOT_FOLDERS = _get_app_folders( "shots", shot_name )
 
     COMP = [
-        ['previs',[],'render/previs/{}'.format(shot_name)],
-        ['render',[],'render/shots/{}'.format(shot_name)],        
-        ['out',[],'out'],
-        ['artworks',[],'assets/2d/artworks'],
-        ['footage',[],'assets/2d/footage/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE],
-        ['roto',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE],
-        ['tracking',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE],
+        ('previs',[],'render/previs/{}'.format(shot_name)),
+        ('render',[],'render/shots/{}'.format(shot_name)),        
+        ('out',[],'out'),
+        ('artworks',[],'assets/2d/artworks'),
+        ('footage',[],'assets/2d/footage/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE),
+        ('roto',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE),
+        ('tracking',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE)
     ]
 
-    SHOT_FOLDERS.append(['comp', COMP])    
+    SHOT_FOLDERS.append(('comp', COMP))    
     
     return _create_project_folders(shot_path.as_posix(), SHOT_FOLDERS, True)
 ############################################################
@@ -568,76 +569,76 @@ def scan_project_shots() -> List[str]:
     
 ############################################################
 
-def _get_app_folders( category : str, name : str ) -> Tuple[TemplateEntry]:
+def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
     """ Return folder structures for DCC applications based
         on project app config.
         Used in asset and shot structures. 
     """
 
-    HOUDINI = (
-        ('geo',(),'temp/{}/{}/geo'.format(category, name)),
-        ('hda',(),'assets/3d/hda', _RE_PROJECT_APP_CONFIG.houdini),
-        ('fbx',(),'assets/3d/fbx'),
-        ('obj',(),'assets/3d/obj'),
-        ('usd',(),'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
-        ('sim',(),'temp/{}/{}/sim'.format(category, name)),
-        ('abc',(),'assets/3d/abc'),
-        ('tex',(),'assets/tex'),
-        ('tmp',(),'temp/{}/{}'.format(category, name)),
+    HOUDINI = [
+        ('geo',[],'temp/{}/{}/geo'.format(category, name)),
+        ('hda',[],'assets/3d/hda', _RE_PROJECT_APP_CONFIG.houdini),
+        ('fbx',[],'assets/3d/fbx'),
+        ('obj',[],'assets/3d/obj'),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('sim',[],'temp/{}/{}/sim'.format(category, name)),
+        ('abc',[],'assets/3d/abc'),
+        ('tex',[],'assets/tex'),
+        ('tmp',[],'temp/{}/{}'.format(category, name)),
 
-        ('render',(),'render/{}/{}'.format(category, name)),
-        ('flip',(),'temp/{}/{}/flip'.format(category, name)),
+        ('render',[],'render/{}/{}'.format(category, name)),
+        ('flip',[],'temp/{}/{}/flip'.format(category, name)),
 
-        ('scripts',()),
-        ('lib',(),'assets/lib')
-    )
+        ('scripts',[]),
+        ('lib',[],'assets/lib')
+    ]
 
-    BLENDER = (
-        ('tex',(),'assets/tex'),
-        ('fbx',(),'assets/3d/fbx'),
-        ('obj',(),'assets/3d/obj'),
-        ('blend',(),'assets/3d/blend', _RE_PROJECT_APP_CONFIG.blender),
-        ('usd',(),'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
-        ('abc',(),'assets/3d/abc'),
-        ('render',(),'render/{}/{}'.format(category, name)),
-        ('tmp',(),'temp/{}/{}'.format(category, name)),
-        ('lib',(),'assets/lib')
-    )
+    BLENDER = [
+        ('tex',[],'assets/tex'),
+        ('fbx',[],'assets/3d/fbx'),
+        ('obj',[],'assets/3d/obj'),
+        ('blend',[],'assets/3d/blend', _RE_PROJECT_APP_CONFIG.blender),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('abc',[],'assets/3d/abc'),
+        ('render',[],'render/{}/{}'.format(category, name)),
+        ('tmp',[],'temp/{}/{}'.format(category, name)),
+        ('lib',[],'assets/lib')
+    ]
 
-    C4D = (
-        ('tex',(),'assets/tex'),
-        ('fbx',(),'assets/3d/fbx'),
-        ('obj',(),'assets/3d/obj'),
-        ('c4d',(),'assets/3d/c4d', _RE_PROJECT_APP_CONFIG.c4d),
-        ('usd',(),'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
-        ('abc',(),'assets/3d/abc'),
-        ('render',(),'render/{}/{}'.format(category, name)),
-        ('tmp',(),'temp/{}/{}'.format(category, name)),
-        ('lib',(),'assets/lib')
-    )
+    C4D = [
+        ('tex',[],'assets/tex'),
+        ('fbx',[],'assets/3d/fbx'),
+        ('obj',[],'assets/3d/obj'),
+        ('c4d',[],'assets/3d/c4d', _RE_PROJECT_APP_CONFIG.c4d),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('abc',[],'assets/3d/abc'),
+        ('render',[],'render/{}/{}'.format(category, name)),
+        ('tmp',[],'temp/{}/{}'.format(category, name)),
+        ('lib',[],'assets/lib')
+    ]
 
-    MAYA = (
-        ('scenes',()),
-        ('clips',()),
-        ('sourceimages',(),'assets/tex'),
-        ('fbx',(),'assets/3d/fbx'),
-        ('obj',(),'assets/3d/obj'),
-        ('usd',(),'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
-        ('abc',(),'assets/3d/abc'),
-        ('image',(),'render/{}/{}'.format(category, name)),
-        ('movies',(),'render/{}/{}/playblast'.format(category, name)),
-        ('data',(),'temp/{}/{}'.format(category, name)),
-        ('lib',(),'assets/lib'),
-        ('tmp',(),'temp/{}/{}'.format(category, name)),
-        ('scripts',()),
-    )
+    MAYA = [
+        ('scenes',[]),
+        ('clips',[]),
+        ('sourceimages',[],'assets/tex'),
+        ('fbx',[],'assets/3d/fbx'),
+        ('obj',[],'assets/3d/obj'),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('abc',[],'assets/3d/abc'),
+        ('image',[],'render/{}/{}'.format(category, name)),
+        ('movies',[],'render/{}/{}/playblast'.format(category, name)),
+        ('data',[],'temp/{}/{}'.format(category, name)),
+        ('lib',[],'assets/lib'),
+        ('tmp',[],'temp/{}/{}'.format(category, name)),
+        ('scripts',[]),
+    ]
 
-    FOLDERS = (
+    FOLDERS = [
         ('houdini', HOUDINI, None, _RE_PROJECT_APP_CONFIG.houdini),
         ('blender', BLENDER, None, _RE_PROJECT_APP_CONFIG.blender),
         ('c4d', C4D, None, _RE_PROJECT_APP_CONFIG.c4d),
         ('maya', MAYA, None, _RE_PROJECT_APP_CONFIG.maya)
-    )
+    ]
 
     return FOLDERS
 

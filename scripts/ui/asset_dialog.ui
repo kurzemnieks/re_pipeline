@@ -39,7 +39,7 @@ color: rgb(220, 220, 220);</string>
     <widget class="QWidget" name="widget" native="true">
      <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="nameLabel">
         <property name="text">
          <string>Asset name:</string>
         </property>

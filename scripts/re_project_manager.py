@@ -22,11 +22,11 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         
         self.defaultNewProjectRoot = "C:\\Projects\\"
 
-        self.sceneDCCExtensions = ["*.blend"] #override this for DCC app PM implementations to return specific scene file types
+        self.sceneDCCExtensions = ["*.*"] #override this for DCC app PM implementations to return specific scene file types
 
         self._resetPMUI()
 
-        self.newAssetDialog = AssetDialogUI(self)
+        self.newFileDialog = NewFileDialogUI(self)
         self.newShotDialog = ShotDialogUI(self)
         self.newProjectDialog = ProjectDialogUI(self)
 
@@ -51,12 +51,13 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.editFPS.setValidator( QtGui.QDoubleValidator(1.0, 500.0, 3))
 
         self.setRootButton.clicked.connect(self.setProjectRootOrCreate)
-        self.newAssetButton.clicked.connect(self.newAssetDialog.exec_)
+        self.newAssetButton.clicked.connect(self.onNewAssetClick)
         self.newShotButton.clicked.connect(self.newShotDialog.exec_)
 
         self.assetList.itemClicked.connect(self.onAssetItemClick)              
 
         self.shotsList.itemClicked.connect(self.onShotItemClick)
+        self.assetFileList.itemClicked.connect(self.onAssetFileSelect)
 
         self.setHoudiniButton.clicked.connect(self.onClickSetHoudini)
         self.setBlenderButton.clicked.connect(self.onClickSetBlender)
@@ -81,7 +82,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.checkMaya.clicked.connect(self.onModifyProjectConfig)
         self.checkOther.clicked.connect(self.onModifyProjectConfig)
         self.checkUSD.clicked.connect(self.onModifyProjectConfig)
-                
+
         if re_project.is_in_dcc_app():
             self.mainTabs.removeTab(self.mainTabs.indexOf(self.tab_Apps))
 
@@ -121,6 +122,11 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
         self.extLibBaseDropdown.setEnabled(False)
         self.extLibBaseDropdown.clear()
+
+        if self.assetFileActionGroup is not None:
+            self.openAssetFileButton.setEnabled(False)
+            self.newAssetFileButton.setEnabled(True)
+            self.assetFileList.clear()            
 
         self.projectRootLabel.setText("")
         self.extLibsList.clear()
@@ -246,7 +252,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def onRunHoudini(self):
         houdini_path = Path(self.houdiniPathEdit.text()) #houdini executable path
         re_root = Path(os.getenv("RE_ROOT")) #pipeline root dir
-        re_houdini_launcher.run_blender(houdini_path, re_root , re_project.get_project_root())    
+        re_houdini_launcher.run_houdini(houdini_path, re_root , re_project.get_project_root())    
         self.close()            
 
     def onRunBlender(self):
@@ -421,12 +427,6 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         
         self.extLibTargetPath.setText( Path(libTargetFolder).as_posix())
 
-    def onOpenAssetFileClick(self):
-        pass
-
-    def onNewAssetFileClick(self):
-        pass
-
     def convert_file_size(size_bytes):
         if size_bytes == 0:
             return "0B"
@@ -441,6 +441,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         asset_path = asset_path / re_project._RE_DCC_APP
 
         self.assetFileList.clear()
+        self.openAssetFileButton.setEnabled(False)
 
         for pattern in self.sceneDCCExtensions:
             filelist_gen = asset_path.glob(pattern)
@@ -455,19 +456,45 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
         self.assetFileList.resizeColumnToContents(0)
         self.assetFileList.resizeColumnToContents(2)
+
+    def onAssetFileSelect(self, item):
+        self.openAssetFileButton.setEnabled(True)
+
+    def onOpenAssetFileClick(self):
+        pass
+
+    def onNewAssetClick(self):
+        self.newFileDialog.setTitle("New Asset")
+        self.newFileDialog.setQuestion("Asset name:")
+        self.newFileDialog.setCreateCallback(self.onCreateNewAsset)
+        self.newFileDialog.exec_()
         
-class AssetDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
+    def onNewAssetFileClick(self):
+        pass        
+class NewFileDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
     def __init__(self, parent=None):
-        super(AssetDialogUI, self).__init__(parent=parent)
+        super(NewFileDialogUI, self).__init__(parent=parent)
         self.setupUi(self)    
 
         self.parent = parent
         self.buttonBox.accepted.connect(self.create_new_asset)
         self.buttonBox.rejected.connect(self.close)
+        self.editAssetName.setText("")
+        self.create_callback = None
 
-    def create_new_asset(self):
-        #print(self.editAssetName.text())   
-        self.parent.onCreateNewAsset(self.editAssetName.text())     
+    def setCreateCallback( self, callback_func ):
+        self.create_callback = callback_func
+
+    def setQuestion(self, question:str):
+        self.nameLabel = question
+    
+    def setTitle(self, title:str):
+        self.windowTitle = title
+
+    def create_new_asset(self):        
+        if self.create_callback is not None:
+            self.create_callback(self.editAssetName.text())
+        #self.parent.onCreateNewAsset(self.editAssetName.text())     
         self.close()
 
 class ShotDialogUI( QtWidgets.QDialog, shotdialog.Ui_ShotDialog):

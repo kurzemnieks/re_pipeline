@@ -6,6 +6,7 @@ import re_project_manager
 class HoudiniProjectManagerUI( re_project_manager.ProjectManagerUI):
     def __init__(self):
         super().__init__()
+        self.sceneDCCExtensions = ["*.hip", "*.hiplc", "*.hipnc"]
 
     def onClickLoadAsset(self):        
         hou.hipFile.clear()

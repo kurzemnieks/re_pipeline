@@ -31,10 +31,10 @@ class Ui_AssetDialog(object):
         self.widget.setObjectName(u"widget")
         self.formLayout = QFormLayout(self.widget)
         self.formLayout.setObjectName(u"formLayout")
-        self.label_2 = QLabel(self.widget)
-        self.label_2.setObjectName(u"label_2")
+        self.nameLabel = QLabel(self.widget)
+        self.nameLabel.setObjectName(u"nameLabel")
 
-        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_2)
+        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.nameLabel)
 
         self.editAssetName = QLineEdit(self.widget)
         self.editAssetName.setObjectName(u"editAssetName")
@@ -61,6 +61,6 @@ class Ui_AssetDialog(object):
 
     def retranslateUi(self, AssetDialog):
         AssetDialog.setWindowTitle(QCoreApplication.translate("AssetDialog", u"New Asset", None))
-        self.label_2.setText(QCoreApplication.translate("AssetDialog", u"Asset name:", None))
+        self.nameLabel.setText(QCoreApplication.translate("AssetDialog", u"Asset name:", None))
     # retranslateUi
 
