@@ -545,7 +545,7 @@ class NewFileDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
             if self.base_path is not None:
                 full_path= self.base_path / self.editAssetName.text()
             else:
-                full_path = self.editAssetName.text()
+                full_path = Path(self.editAssetName.text())
             self.create_callback(full_path.as_posix())
         self.close()
 
