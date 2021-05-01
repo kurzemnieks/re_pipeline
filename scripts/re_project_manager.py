@@ -83,6 +83,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.checkMaya.clicked.connect(self.onModifyProjectConfig)
         self.checkOther.clicked.connect(self.onModifyProjectConfig)
         self.checkUSD.clicked.connect(self.onModifyProjectConfig)
+        self.checkUnreal.clicked.connect(self.onModifyProjectConfig)
 
         if not re_project.is_in_dcc_app():
             self.loadShotButton.hide()
@@ -116,6 +117,8 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             self.shotLayout.removeItem(self.shotFileActionGroup)            
             self.shotFileActionGroup.deleteLater()
             self.shotFileActionGroup = None
+
+            self.setUnrealButton.clicked.connect(self.onChooseUnrealProject)
 
         else:
             self.mainTabs.removeTab(self.mainTabs.indexOf(self.tab_Apps))
@@ -257,6 +260,18 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def onCleanCurrentProject(self):
         print("Not implemented")
 
+    def onChooseUnrealProject(self):
+        dlg = QtWidgets.QFileDialog()
+        dlg.setFileMode( QtWidgets.QFileDialog.Directory )
+
+        unrealProjectFolder = Path("")
+
+        if dlg.exec_():
+            folder = dlg.selectedFiles()
+            if len(folder) > 0:
+                unrealProjectFolder = Path(folder[0])
+                self.unrealProjectPathEdit.setText(unrealProjectFolder.as_posix())
+
     def onClickSetHoudini(self):
         dlg = QtWidgets.QFileDialog()
         dlg.setFileMode( QtWidgets.QFileDialog.ExistingFile )
@@ -302,12 +317,22 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
                 self.blenderPathEdit.setText(Path(blender_path[0]).as_posix())
 
     def getAppConfigFromUI(self):
-        newAppConfig = re_project.AppConfig( self.checkBlender.isChecked(),
-                                            self.checkHoudini.isChecked(),
-                                            self.checkC4D.isChecked(),
-                                            self.checkMaya.isChecked(),
-                                            self.checkUSD.isChecked(),
-                                            self.checkOther.isChecked())
+        newAppConfig : re_project.AppConfig = re_project.get_empty_app_config()
+        newAppConfig["blender"] = self.checkBlender.isChecked()
+        newAppConfig["houdini"] = self.checkHoudini.isChecked()
+        newAppConfig["c4d"] = self.checkC4D.isChecked()
+        newAppConfig["maya"] = self.checkMaya.isChecked()
+        newAppConfig["usd"] = self.checkUSD.isChecked()
+        newAppConfig["other"] = self.checkOther.isChecked()
+        newAppConfig["unreal"] = self.checkUnreal.isChecked()
+
+        #newAppConfig = re_project.AppConfig( self.checkBlender.isChecked(),
+        #                                    self.checkHoudini.isChecked(),
+        #                                    self.checkC4D.isChecked(),
+        #                                    self.checkMaya.isChecked(),
+        #                                    self.checkUSD.isChecked(),
+        #                                    self.checkOther.isChecked())
+
         return newAppConfig
 
     def onProjectLoaded(self):
@@ -339,13 +364,16 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     
     def updateProjectSettingsUI(self):
         if re_project.is_project_initialized():
+            
             proj_app_cfg = re_project.get_project_app_config()
-            self.checkBlender.setChecked( proj_app_cfg.blender )
-            self.checkHoudini.setChecked( proj_app_cfg.houdini )
-            self.checkMaya.setChecked( proj_app_cfg.maya )
-            self.checkC4D.setChecked( proj_app_cfg.c4d )
-            self.checkUSD.setChecked( proj_app_cfg.usd )
-            self.checkOther.setChecked( proj_app_cfg.other )
+
+            self.checkBlender.setChecked( proj_app_cfg["blender"] )
+            self.checkHoudini.setChecked( proj_app_cfg["houdini"] )
+            self.checkMaya.setChecked( proj_app_cfg["maya"] )
+            self.checkC4D.setChecked( proj_app_cfg["c4d"] )
+            self.checkUSD.setChecked( proj_app_cfg["usd"] )
+            self.checkOther.setChecked( proj_app_cfg["other"] )
+            self.checkUnreal.setChecked( proj_app_cfg["unreal"] )
 
             self.editHRes.setText(str(re_project.get_project_default_rez()['x']))
             self.editVRes.setText(str(re_project.get_project_default_rez()['y']))

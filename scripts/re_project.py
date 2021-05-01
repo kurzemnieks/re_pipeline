@@ -31,8 +31,10 @@ _RE_DCC_APP : str = ''
 
 #########################################################################################################
 
-AppConfig = namedtuple('AppConfig',['blender','houdini','c4d','maya','usd','other'])
-_RE_PROJECT_APP_CONFIG : AppConfig = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
+#AppConfig = namedtuple('AppConfig',['blender','houdini','c4d','maya','usd','other'])
+AppConfig = Dict[str, bool]
+#_RE_PROJECT_APP_CONFIG : AppConfig = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
+_RE_PROJECT_APP_CONFIG : AppConfig = { "blender":False, "houdini":False, "c4d":False, "maya":False, "usd":False, "other":False, "unreal":False }
 
 _RE_PROJECT_HAS_FOOTAGE : bool = False #Project has footage, uses roto, tracking for comp
 
@@ -102,7 +104,14 @@ def get_project_default_fps() -> float:
 def get_project_external_libs() -> List[Tuple[str, str, str]]:
     return _RE_PROJECT_EXTERNAL_LIBS
 
-   
+def get_empty_app_config() -> AppConfig:
+    app_config : AppConfig = { "blender":False, "houdini":False, "c4d":False, "maya":False, "usd":False, "other":False, "unreal":False }
+    return app_config
+
+def reset_app_config():
+    global _RE_PROJECT_APP_CONFIG
+    _RE_PROJECT_APP_CONFIG = get_empty_app_config()
+
 #unitiailize current project
 def drop_project():
     global _RE_PROJECT_EXTERNAL_LIBS
@@ -121,7 +130,12 @@ def drop_project():
     _RE_PROJECT_EXTERNAL_LIBS = []
     _RE_PROJECT_DEFAULT_FPS = 30.0
     _RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
-    _RE_PROJECT_APP_CONFIG = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
+    #_RE_PROJECT_APP_CONFIG = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
+    
+    #for appname in _RE_PROJECT_APP_CONFIG:
+    #    _RE_PROJECT_APP_CONFIG[appname] = False
+    reset_app_config()
+
     _RE_PROJECT_HAS_FOOTAGE = False #Project has footage, uses roto, tracking for comp
     
 #########################################################################################################
@@ -155,10 +169,13 @@ def _try_load_project( path : Path ) -> bool:
             
             _RE_PROJECT_DEFAULT_FPS = project_cfg['fps']
             _RE_PROJECT_DEFAULT_REZ = project_cfg['rez']
-
+            
+            reset_app_config()
             if 'apps' in project_cfg:
                 apps_cfg = project_cfg['apps']
-                _RE_PROJECT_APP_CONFIG = AppConfig( **apps_cfg )
+                for key in apps_cfg:                    
+                    _RE_PROJECT_APP_CONFIG[key] = apps_cfg[key]
+                    #_RE_PROJECT_APP_CONFIG = AppConfig( **apps_cfg )
 
             if 'ext_libs' in project_cfg:
                 _RE_PROJECT_EXTERNAL_LIBS = project_cfg['ext_libs']
@@ -191,10 +208,10 @@ def _get_project_folder_struct() -> List[TemplateEntry]:
             ('fbx',[]),
             ('abc',[]),
             ('obj',[]),
-            ('blend',[],None, _RE_PROJECT_APP_CONFIG.blender),
-            ('hda',[],None, _RE_PROJECT_APP_CONFIG.houdini),
-            ('c4d',[],None, _RE_PROJECT_APP_CONFIG.c4d),
-            ('usd',[],None, _RE_PROJECT_APP_CONFIG.usd),
+            ('blend',[],None, _RE_PROJECT_APP_CONFIG["blender"]),
+            ('hda',[],None, _RE_PROJECT_APP_CONFIG["houdini"]),
+            ('c4d',[],None, _RE_PROJECT_APP_CONFIG["c4d"]),
+            ('usd',[],None, _RE_PROJECT_APP_CONFIG["usd"]),
             ]
         ),
         ('tex',[]),
@@ -377,7 +394,7 @@ def save_project_config():
     global _RE_PROJECT_APP_CONFIG
     project_cfg = {}
     project_cfg['version'] = _RE_PROJECT_VERSION
-    project_cfg['apps'] = _RE_PROJECT_APP_CONFIG._asdict()
+    project_cfg['apps'] = _RE_PROJECT_APP_CONFIG #._asdict()
     project_cfg['fps'] = _RE_PROJECT_DEFAULT_FPS
     project_cfg['rez'] = _RE_PROJECT_DEFAULT_REZ
     project_cfg['ext_libs'] = _RE_PROJECT_EXTERNAL_LIBS
@@ -484,7 +501,7 @@ def create_asset_folders( assetName : str ) -> bool:
     OTHER = [
         ('tex',[],'assets/tex'),
         ('fbx',[],'assets/3d/fbx'),
-        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG["usd"]),
         ('abc',[],'assets/3d/abc'),
         ('render',[],'render/assets/' + assetName),
         ('tmp',[],'temp/assets/{}'.format(assetName)),
@@ -495,7 +512,7 @@ def create_asset_folders( assetName : str ) -> bool:
         ('tex',[],'assets/tex')
     ]
 
-    if _RE_PROJECT_APP_CONFIG.other:
+    if _RE_PROJECT_APP_CONFIG["other"]:
         ASSET_FOLDERS.append(('other', OTHER))
 
     ASSET_FOLDERS.append(('textures',TEXTURES))
@@ -577,10 +594,10 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
 
     HOUDINI = [
         ('geo',[],'temp/{}/{}/geo'.format(category, name)),
-        ('hda',[],'assets/3d/hda', _RE_PROJECT_APP_CONFIG.houdini),
+        ('hda',[],'assets/3d/hda', _RE_PROJECT_APP_CONFIG["houdini"]),
         ('fbx',[],'assets/3d/fbx'),
         ('obj',[],'assets/3d/obj'),
-        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG["usd"]),
         ('sim',[],'temp/{}/{}/sim'.format(category, name)),
         ('abc',[],'assets/3d/abc'),
         ('tex',[],'assets/tex'),
@@ -597,8 +614,8 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
         ('tex',[],'assets/tex'),
         ('fbx',[],'assets/3d/fbx'),
         ('obj',[],'assets/3d/obj'),
-        ('blend',[],'assets/3d/blend', _RE_PROJECT_APP_CONFIG.blender),
-        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('blend',[],'assets/3d/blend', _RE_PROJECT_APP_CONFIG["blender"]),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG["usd"]),
         ('abc',[],'assets/3d/abc'),
         ('render',[],'render/{}/{}'.format(category, name)),
         ('tmp',[],'temp/{}/{}'.format(category, name)),
@@ -609,8 +626,8 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
         ('tex',[],'assets/tex'),
         ('fbx',[],'assets/3d/fbx'),
         ('obj',[],'assets/3d/obj'),
-        ('c4d',[],'assets/3d/c4d', _RE_PROJECT_APP_CONFIG.c4d),
-        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('c4d',[],'assets/3d/c4d', _RE_PROJECT_APP_CONFIG["c4d"]),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG["usd"]),
         ('abc',[],'assets/3d/abc'),
         ('render',[],'render/{}/{}'.format(category, name)),
         ('tmp',[],'temp/{}/{}'.format(category, name)),
@@ -623,7 +640,7 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
         ('sourceimages',[],'assets/tex'),
         ('fbx',[],'assets/3d/fbx'),
         ('obj',[],'assets/3d/obj'),
-        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG.usd),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG["usd"]),
         ('abc',[],'assets/3d/abc'),
         ('image',[],'render/{}/{}'.format(category, name)),
         ('movies',[],'render/{}/{}/playblast'.format(category, name)),
@@ -634,10 +651,10 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
     ]
 
     FOLDERS = [
-        ('houdini', HOUDINI, None, _RE_PROJECT_APP_CONFIG.houdini),
-        ('blender', BLENDER, None, _RE_PROJECT_APP_CONFIG.blender),
-        ('c4d', C4D, None, _RE_PROJECT_APP_CONFIG.c4d),
-        ('maya', MAYA, None, _RE_PROJECT_APP_CONFIG.maya)
+        ('houdini', HOUDINI, None, _RE_PROJECT_APP_CONFIG["houdini"]),
+        ('blender', BLENDER, None, _RE_PROJECT_APP_CONFIG["blender"]),
+        ('c4d', C4D, None, _RE_PROJECT_APP_CONFIG["c4d"]),
+        ('maya', MAYA, None, _RE_PROJECT_APP_CONFIG["maya"])
     ]
 
     return FOLDERS

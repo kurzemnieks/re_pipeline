@@ -356,6 +356,17 @@ class Ui_MainWindow(object):
         self.groupBox.setCheckable(False)
         self.gridLayout = QGridLayout(self.groupBox)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.checkC4D = QCheckBox(self.groupBox)
+        self.checkC4D.setObjectName(u"checkC4D")
+
+        self.gridLayout.addWidget(self.checkC4D, 1, 0, 1, 1)
+
+        self.checkMaya = QCheckBox(self.groupBox)
+        self.checkMaya.setObjectName(u"checkMaya")
+        self.checkMaya.setMaximumSize(QSize(70, 16777215))
+
+        self.gridLayout.addWidget(self.checkMaya, 0, 2, 1, 1)
+
         self.checkHoudini = QCheckBox(self.groupBox)
         self.checkHoudini.setObjectName(u"checkHoudini")
         self.checkHoudini.setMaximumSize(QSize(70, 16777215))
@@ -369,17 +380,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.checkBlender, 0, 1, 1, 1)
 
-        self.checkMaya = QCheckBox(self.groupBox)
-        self.checkMaya.setObjectName(u"checkMaya")
-        self.checkMaya.setMaximumSize(QSize(70, 16777215))
-
-        self.gridLayout.addWidget(self.checkMaya, 0, 2, 1, 1)
-
-        self.checkC4D = QCheckBox(self.groupBox)
-        self.checkC4D.setObjectName(u"checkC4D")
-
-        self.gridLayout.addWidget(self.checkC4D, 1, 0, 1, 1)
-
         self.checkUSD = QCheckBox(self.groupBox)
         self.checkUSD.setObjectName(u"checkUSD")
         self.checkUSD.setMaximumSize(QSize(70, 16777215))
@@ -392,8 +392,39 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.checkOther, 1, 2, 1, 1)
 
+        self.checkUnreal = QCheckBox(self.groupBox)
+        self.checkUnreal.setObjectName(u"checkUnreal")
+        self.checkUnreal.setMaximumSize(QSize(70, 16777215))
+
+        self.gridLayout.addWidget(self.checkUnreal, 0, 3, 1, 1)
+
 
         self.verticalLayout_4.addWidget(self.groupBox)
+
+        self.groupBox_4 = QGroupBox(self.tab_Project)
+        self.groupBox_4.setObjectName(u"groupBox_4")
+        self.verticalLayout_8 = QVBoxLayout(self.groupBox_4)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.horizontalLayout_7 = QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.horizontalLayout_7.setContentsMargins(-1, -1, -1, 10)
+        self.setUnrealButton = QPushButton(self.groupBox_4)
+        self.setUnrealButton.setObjectName(u"setUnrealButton")
+        self.setUnrealButton.setEnabled(False)
+
+        self.horizontalLayout_7.addWidget(self.setUnrealButton)
+
+        self.unrealProjectPathEdit = QLineEdit(self.groupBox_4)
+        self.unrealProjectPathEdit.setObjectName(u"unrealProjectPathEdit")
+        self.unrealProjectPathEdit.setEnabled(False)
+
+        self.horizontalLayout_7.addWidget(self.unrealProjectPathEdit)
+
+
+        self.verticalLayout_8.addLayout(self.horizontalLayout_7)
+
+
+        self.verticalLayout_4.addWidget(self.groupBox_4)
 
         self.groupBox_3 = QGroupBox(self.tab_Project)
         self.groupBox_3.setObjectName(u"groupBox_3")
@@ -518,6 +549,55 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_20.addLayout(self.horizontalLayout_21)
 
+        self.horizontalLayout_22 = QHBoxLayout()
+        self.horizontalLayout_22.setObjectName(u"horizontalLayout_22")
+        self.setBlenderButton_2 = QPushButton(self.tab_Apps)
+        self.setBlenderButton_2.setObjectName(u"setBlenderButton_2")
+        self.setBlenderButton_2.setEnabled(False)
+
+        self.horizontalLayout_22.addWidget(self.setBlenderButton_2)
+
+        self.blenderPathEdit_2 = QLineEdit(self.tab_Apps)
+        self.blenderPathEdit_2.setObjectName(u"blenderPathEdit_2")
+        self.blenderPathEdit_2.setReadOnly(True)
+
+        self.horizontalLayout_22.addWidget(self.blenderPathEdit_2)
+
+        self.runMayaButton = QPushButton(self.tab_Apps)
+        self.runMayaButton.setObjectName(u"runMayaButton")
+        self.runMayaButton.setEnabled(False)
+        self.runMayaButton.setFont(font1)
+        self.runMayaButton.setIcon(icon10)
+
+        self.horizontalLayout_22.addWidget(self.runMayaButton)
+
+
+        self.verticalLayout_20.addLayout(self.horizontalLayout_22)
+
+        self.horizontalLayout_23 = QHBoxLayout()
+        self.horizontalLayout_23.setObjectName(u"horizontalLayout_23")
+        self.setBlenderButton_3 = QPushButton(self.tab_Apps)
+        self.setBlenderButton_3.setObjectName(u"setBlenderButton_3")
+        self.setBlenderButton_3.setEnabled(False)
+
+        self.horizontalLayout_23.addWidget(self.setBlenderButton_3)
+
+        self.blenderPathEdit_3 = QLineEdit(self.tab_Apps)
+        self.blenderPathEdit_3.setObjectName(u"blenderPathEdit_3")
+        self.blenderPathEdit_3.setReadOnly(True)
+
+        self.horizontalLayout_23.addWidget(self.blenderPathEdit_3)
+
+        self.runC4DButton = QPushButton(self.tab_Apps)
+        self.runC4DButton.setObjectName(u"runC4DButton")
+        self.runC4DButton.setFont(font1)
+        self.runC4DButton.setIcon(icon10)
+
+        self.horizontalLayout_23.addWidget(self.runC4DButton)
+
+
+        self.verticalLayout_20.addLayout(self.horizontalLayout_23)
+
         self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_20.addItem(self.verticalSpacer_3)
@@ -538,8 +618,11 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.loadShotButton, self.checkLivePlate)
 
         self.retranslateUi(MainWindow)
+        self.checkUnreal.toggled.connect(self.unrealProjectPathEdit.setEnabled)
+        self.checkUnreal.toggled.connect(self.setUnrealButton.setEnabled)
+        self.dropProjectButton.clicked.connect(self.unrealProjectPathEdit.clear)
 
-        self.mainTabs.setCurrentIndex(1)
+        self.mainTabs.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -591,18 +674,21 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.groupBox.setToolTip(QCoreApplication.translate("MainWindow", u"Create work folders for these apps", None))
 #endif // QT_CONFIG(tooltip)
-        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"App Folders", None))
+        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"DCC Application Integration", None))
+        self.checkC4D.setText(QCoreApplication.translate("MainWindow", u"Cinema 4D", None))
+        self.checkMaya.setText(QCoreApplication.translate("MainWindow", u"Maya", None))
         self.checkHoudini.setText(QCoreApplication.translate("MainWindow", u"Houdini", None))
         self.checkBlender.setText(QCoreApplication.translate("MainWindow", u"Blender", None))
-        self.checkMaya.setText(QCoreApplication.translate("MainWindow", u"Maya", None))
-        self.checkC4D.setText(QCoreApplication.translate("MainWindow", u"Cinema 4D", None))
         self.checkUSD.setText(QCoreApplication.translate("MainWindow", u"USD", None))
         self.checkOther.setText(QCoreApplication.translate("MainWindow", u"Other", None))
+        self.checkUnreal.setText(QCoreApplication.translate("MainWindow", u"Unreal", None))
+        self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"Realtime Engine Integration", None))
+        self.setUnrealButton.setText(QCoreApplication.translate("MainWindow", u"Set Unreal Project", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Additional folders", None))
 #if QT_CONFIG(tooltip)
         self.checkLivePlate.setToolTip(QCoreApplication.translate("MainWindow", u"Generate folders for footage, roto, tracking", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkLivePlate.setText(QCoreApplication.translate("MainWindow", u"Live plate compositing", None))
+        self.checkLivePlate.setText(QCoreApplication.translate("MainWindow", u"Generate Footage Folders", None))
 #if QT_CONFIG(tooltip)
         self.dropProjectButton.setToolTip(QCoreApplication.translate("MainWindow", u"Sets current project to None", None))
 #endif // QT_CONFIG(tooltip)
@@ -624,6 +710,10 @@ class Ui_MainWindow(object):
         self.runHoudiniButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
         self.setBlenderButton.setText(QCoreApplication.translate("MainWindow", u"Set Blender", None))
         self.runBlenderButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
+        self.setBlenderButton_2.setText(QCoreApplication.translate("MainWindow", u"Set Maya", None))
+        self.runMayaButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
+        self.setBlenderButton_3.setText(QCoreApplication.translate("MainWindow", u"Set C4D", None))
+        self.runC4DButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
         self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Apps), QCoreApplication.translate("MainWindow", u"Apps", None))
     # retranslateUi
 
