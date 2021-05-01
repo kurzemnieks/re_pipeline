@@ -43,7 +43,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             if houdini_path is not None:
                 self.houdiniPathEdit.setText(houdini_path.as_posix())
 
-        self.getAppConfigFromUI()
+        self.getProjectFeaturesFromUI()
 
 
         self.editHRes.setValidator( QtGui.QIntValidator(1, 32000))        
@@ -84,6 +84,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.checkOther.clicked.connect(self.onModifyProjectConfig)
         self.checkUSD.clicked.connect(self.onModifyProjectConfig)
         self.checkUnreal.clicked.connect(self.onModifyProjectConfig)
+        self.checkLivePlate.clicked.connect(self.onModifyProjectConfig)
 
         if not re_project.is_in_dcc_app():
             self.loadShotButton.hide()
@@ -221,13 +222,13 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
                     defaultRootDir = folder[0]
 
         if defaultRootDir:
-            result = re_project.set_current_root_dir(defaultRootDir)
+            result = re_project.set_project_root_folder(defaultRootDir)
             if not result:
-                newAppConfig = self.getAppConfigFromUI()
+                newAppConfig = self.getProjectFeaturesFromUI()
                 re_project.create_project(newAppConfig)
                 re_project.create_project_folders()
             
-
+            self._resetPMUI()
             self.onProjectLoaded()
 
             self.projectRootLabel.setText(re_project.get_project_root().as_posix())        
@@ -317,24 +318,18 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             if len(blender_path) > 0:
                 self.blenderPathEdit.setText(Path(blender_path[0]).as_posix())
 
-    def getAppConfigFromUI(self):
-        newAppConfig : re_project.AppConfig = re_project.get_empty_app_config()
-        newAppConfig["blender"] = self.checkBlender.isChecked()
-        newAppConfig["houdini"] = self.checkHoudini.isChecked()
-        newAppConfig["c4d"] = self.checkC4D.isChecked()
-        newAppConfig["maya"] = self.checkMaya.isChecked()
-        newAppConfig["usd"] = self.checkUSD.isChecked()
-        newAppConfig["other"] = self.checkOther.isChecked()
-        newAppConfig["unreal"] = self.checkUnreal.isChecked()
+    def getProjectFeaturesFromUI(self):
+        proj_features_cfg : re_project.ProjectFeatures = re_project.get_empty_project_features()
+        proj_features_cfg["blender"] = self.checkBlender.isChecked()
+        proj_features_cfg["houdini"] = self.checkHoudini.isChecked()
+        proj_features_cfg["c4d"] = self.checkC4D.isChecked()
+        proj_features_cfg["maya"] = self.checkMaya.isChecked()
+        proj_features_cfg["usd"] = self.checkUSD.isChecked()
+        proj_features_cfg["other"] = self.checkOther.isChecked()
+        proj_features_cfg["unreal"] = self.checkUnreal.isChecked()
+        proj_features_cfg["footage"] = self.checkLivePlate.isChecked()
 
-        #newAppConfig = re_project.AppConfig( self.checkBlender.isChecked(),
-        #                                    self.checkHoudini.isChecked(),
-        #                                    self.checkC4D.isChecked(),
-        #                                    self.checkMaya.isChecked(),
-        #                                    self.checkUSD.isChecked(),
-        #                                    self.checkOther.isChecked())
-
-        return newAppConfig
+        return proj_features_cfg
 
     def onProjectLoaded(self):
 
@@ -366,15 +361,16 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def updateProjectSettingsUI(self):
         if re_project.is_project_initialized():
             
-            proj_app_cfg = re_project.get_project_app_config()
+            proj_features_cfg = re_project.get_project_features()
 
-            self.checkBlender.setChecked( proj_app_cfg["blender"] )
-            self.checkHoudini.setChecked( proj_app_cfg["houdini"] )
-            self.checkMaya.setChecked( proj_app_cfg["maya"] )
-            self.checkC4D.setChecked( proj_app_cfg["c4d"] )
-            self.checkUSD.setChecked( proj_app_cfg["usd"] )
-            self.checkOther.setChecked( proj_app_cfg["other"] )
-            self.checkUnreal.setChecked( proj_app_cfg["unreal"] )
+            self.checkBlender.setChecked( proj_features_cfg["blender"] )
+            self.checkHoudini.setChecked( proj_features_cfg["houdini"] )
+            self.checkMaya.setChecked( proj_features_cfg["maya"] )
+            self.checkC4D.setChecked( proj_features_cfg["c4d"] )
+            self.checkUSD.setChecked( proj_features_cfg["usd"] )
+            self.checkOther.setChecked( proj_features_cfg["other"] )
+            self.checkUnreal.setChecked( proj_features_cfg["unreal"] )
+            self.checkLivePlate.setChecked( proj_features_cfg["footage"])
 
             self.editHRes.setText(str(re_project.get_project_default_rez()['x']))
             self.editVRes.setText(str(re_project.get_project_default_rez()['y']))
@@ -387,17 +383,17 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
     def onModifyProjectConfig(self, value=None):
         if re_project.is_project_initialized():
-            newAppConfig = self.getAppConfigFromUI()
-            re_project.update_project_app_config(newAppConfig, False)
+            new_proj_featues_cfg = self.getProjectFeaturesFromUI()
+            re_project.update_project_features_config(new_proj_featues_cfg, False)
 
             fps = float(self.editFPS.text())
-            re_project._RE_PROJECT_DEFAULT_FPS = fps;
+            re_project.set_project_default_fps(fps)
 
             hres = int(self.editHRes.text())
             vres = int(self.editVRes.text())
-            re_project._RE_PROJECT_DEFAULT_REZ['x'] = hres
-            re_project._RE_PROJECT_DEFAULT_REZ['y'] = vres
-            re_project._RE_PROJECT_UNREAL_PROJECT = Path(self.unrealProjectPathEdit.text()).as_posix()
+            re_project.set_project_default_rez(hres, vres)            
+
+            re_project.set_project_unreal_project_path(self.unrealProjectPathEdit.text())       
 
             re_project.save_project_config()
 

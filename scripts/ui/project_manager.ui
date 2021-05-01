@@ -599,7 +599,7 @@ color: rgb(220, 220, 220);</string>
            <string>Create work folders for these apps</string>
           </property>
           <property name="title">
-           <string>DCC Application Integration</string>
+           <string>Project Features</string>
           </property>
           <property name="flat">
            <bool>false</bool>
@@ -610,6 +610,9 @@ color: rgb(220, 220, 220);</string>
           <layout class="QGridLayout" name="gridLayout">
            <item row="1" column="0">
             <widget class="QCheckBox" name="checkC4D">
+             <property name="toolTip">
+              <string>C4D project folders</string>
+             </property>
              <property name="text">
               <string>Cinema 4D</string>
              </property>
@@ -622,6 +625,9 @@ color: rgb(220, 220, 220);</string>
                <width>70</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Maya project structure</string>
              </property>
              <property name="text">
               <string>Maya</string>
@@ -636,6 +642,9 @@ color: rgb(220, 220, 220);</string>
                <height>16777215</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>Houdini project folders</string>
+             </property>
              <property name="text">
               <string>Houdini</string>
              </property>
@@ -646,6 +655,9 @@ color: rgb(220, 220, 220);</string>
            </item>
            <item row="0" column="1">
             <widget class="QCheckBox" name="checkBlender">
+             <property name="toolTip">
+              <string>Blender project folders</string>
+             </property>
              <property name="text">
               <string>Blender</string>
              </property>
@@ -662,6 +674,9 @@ color: rgb(220, 220, 220);</string>
                <height>16777215</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>USD folders</string>
+             </property>
              <property name="text">
               <string>USD</string>
              </property>
@@ -674,6 +689,9 @@ color: rgb(220, 220, 220);</string>
                <width>70</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Create &quot;Other&quot; folders in assets/shots </string>
              </property>
              <property name="text">
               <string>Other</string>
@@ -688,8 +706,21 @@ color: rgb(220, 220, 220);</string>
                <height>16777215</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>Link assets to Unreal Project Content_Source</string>
+             </property>
              <property name="text">
               <string>Unreal</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QCheckBox" name="checkLivePlate">
+             <property name="toolTip">
+              <string>Generate folders for footage, roto, 3d tracking</string>
+             </property>
+             <property name="text">
+              <string>Footage</string>
              </property>
             </widget>
            </item>
@@ -725,25 +756,6 @@ color: rgb(220, 220, 220);</string>
               </widget>
              </item>
             </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_3">
-          <property name="title">
-           <string>Additional folders</string>
-          </property>
-          <layout class="QFormLayout" name="formLayout_2">
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkLivePlate">
-             <property name="toolTip">
-              <string>Generate folders for footage, roto, tracking</string>
-             </property>
-             <property name="text">
-              <string>Generate Footage Folders</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>
@@ -1034,7 +1046,6 @@ color: rgb(220, 220, 220);</string>
   <tabstop>loadAssetButton</tabstop>
   <tabstop>newShotButton</tabstop>
   <tabstop>loadShotButton</tabstop>
-  <tabstop>checkLivePlate</tabstop>
  </tabstops>
  <resources/>
  <connections>

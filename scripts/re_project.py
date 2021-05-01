@@ -33,12 +33,8 @@ _RE_DCC_APP : str = ''
 
 #########################################################################################################
 
-#AppConfig = namedtuple('AppConfig',['blender','houdini','c4d','maya','usd','other'])
-AppConfig = Dict[str, bool]
-#_RE_PROJECT_APP_CONFIG : AppConfig = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
-_RE_PROJECT_APP_CONFIG : AppConfig = { "blender":False, "houdini":False, "c4d":False, "maya":False, "usd":False, "other":False, "unreal":False }
-
-_RE_PROJECT_HAS_FOOTAGE : bool = False #Project has footage, uses roto, tracking for comp
+ProjectFeatures = Dict[str, bool]
+_RE_PROJECT_FEATURES : ProjectFeatures = {}
 
 #########################################################################################################
 def is_in_houdini() -> bool:
@@ -54,7 +50,20 @@ def is_in_blender() -> bool:
 def is_in_dcc_app() -> bool:
     return is_in_houdini() or is_in_blender() 
 #########################################################################################################
-def set_current_root_dir( path : str ) -> bool:
+
+def is_project_initialized() -> bool:
+    if not _RE_PROJECT_ROOT:
+        return False
+
+    if not _RE_PROJECT_ROOT.exists():
+        return False
+
+    return _RE_PROJECT_INITIALIZED
+
+#########################################################################################################
+# Get project settings
+#########################################################################################################
+def set_project_root_folder( path : str ) -> bool:
     # Initialize project root folder. 
     # If project exists in this path, it will be loaded and initialized
     
@@ -78,22 +87,13 @@ def set_current_root_dir( path : str ) -> bool:
         save_project_config()
         return True
 
-def is_project_initialized() -> bool:
-    if not _RE_PROJECT_ROOT:
-        return False
-
-    if not _RE_PROJECT_ROOT.exists():
-        return False
-
-    return _RE_PROJECT_INITIALIZED
-
 def get_project_root() -> Path:
     assert(_RE_PROJECT_INITIALIZED)
     return _RE_PROJECT_ROOT
 
-def get_project_app_config() -> AppConfig:
+def get_project_features() -> ProjectFeatures:
     assert(_RE_PROJECT_INITIALIZED)
-    return _RE_PROJECT_APP_CONFIG
+    return _RE_PROJECT_FEATURES
 
 def get_project_default_rez() -> Dict[str,int]:
     assert(_RE_PROJECT_INITIALIZED)
@@ -104,45 +104,57 @@ def get_project_default_fps() -> float:
     return _RE_PROJECT_DEFAULT_FPS
 
 def get_project_unreal_project() -> str:
-    return Path(_RE_PROJECT_UNREAL_PROJECT).as_posix()
+    if len(_RE_PROJECT_UNREAL_PROJECT) > 1:
+        return Path(_RE_PROJECT_UNREAL_PROJECT).as_posix()
+    else:
+        return ""
 
 def get_project_external_libs() -> List[Tuple[str, str, str]]:
     return _RE_PROJECT_EXTERNAL_LIBS
 
-def get_empty_app_config() -> AppConfig:
-    app_config : AppConfig = { "blender":False, "houdini":False, "c4d":False, "maya":False, "usd":False, "other":False, "unreal":False }
+def get_empty_project_features() -> ProjectFeatures:
+    app_config : ProjectFeatures = { "blender":False, "houdini":False, "c4d":False, "maya":False, "usd":False, "other":False, "unreal":False, "footage":False }
     return app_config
 
-def reset_app_config():
-    global _RE_PROJECT_APP_CONFIG
-    _RE_PROJECT_APP_CONFIG = get_empty_app_config()
+#########################################################################################################
+# Set project settings
+#########################################################################################################
 
-#unitiailize current project
-def drop_project():
-    global _RE_PROJECT_EXTERNAL_LIBS
-    global _RE_PROJECT_APP_CONFIG
+def update_project_features_config(project_features : ProjectFeatures, generate_folders : bool = False):
+    if not _RE_PROJECT_INITIALIZED:
+        raise ValueError("Project not initialized")
+        return
+
+    global _RE_PROJECT_FEATURES
+    _RE_PROJECT_FEATURES = project_features    
+
+    if generate_folders:
+        create_project_folders()
+
+def reset_project_features():
+    global _RE_PROJECT_FEATURES
+    _RE_PROJECT_FEATURES = get_empty_project_features()
+
+def set_project_default_fps( fps : float):
+    assert(_RE_PROJECT_INITIALIZED)
     global _RE_PROJECT_DEFAULT_FPS
-    global _RE_PROJECT_DEFAULT_REZ
-    global _RE_PROJECT_INITIALIZED
-    global _RE_PROJECT_VERSION
-    global _RE_PROJECT_ROOT
-    global _RE_PROJECT_HAS_FOOTAGE
-    
-    #set defaults
-    _RE_PROJECT_ROOT = None
-    _RE_PROJECT_INITIALIZED = False
-    _RE_PROJECT_VERSION = 1.0
-    _RE_PROJECT_EXTERNAL_LIBS = []
-    _RE_PROJECT_DEFAULT_FPS = 30.0
-    _RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
-    #_RE_PROJECT_APP_CONFIG = AppConfig(blender=False,houdini=False,c4d=False,maya=False,usd=False,other=False)
-    
-    #for appname in _RE_PROJECT_APP_CONFIG:
-    #    _RE_PROJECT_APP_CONFIG[appname] = False
-    reset_app_config()
+    _RE_PROJECT_DEFAULT_FPS = fps
 
-    _RE_PROJECT_HAS_FOOTAGE = False #Project has footage, uses roto, tracking for comp
-    
+def set_project_default_rez( x:int, y:int):
+    assert(_RE_PROJECT_INITIALIZED)
+    global _RE_PROJECT_DEFAULT_REZ
+    _RE_PROJECT_DEFAULT_REZ = {"x":x, "y":y}
+
+def set_project_unreal_project_path( path : str):
+    assert(_RE_PROJECT_INITIALIZED)
+    global _RE_PROJECT_UNREAL_PROJECT
+    unreal_project_path = Path(path)
+    if not unreal_project_path.exists():
+        print("Trying to set nonexisting Unreal Project path: " + path)
+        _RE_PROJECT_UNREAL_PROJECT = ""
+        return
+
+    _RE_PROJECT_UNREAL_PROJECT = Path(path).as_posix()
 #########################################################################################################
 # internals
 #########################################################################################################
@@ -150,7 +162,7 @@ def drop_project():
 def _try_load_project( path : Path ) -> bool:
     
     global _RE_PROJECT_EXTERNAL_LIBS
-    global _RE_PROJECT_APP_CONFIG
+    global _RE_PROJECT_FEATURES
     global _RE_PROJECT_DEFAULT_FPS
     global _RE_PROJECT_DEFAULT_REZ
     global _RE_PROJECT_INITIALIZED
@@ -178,12 +190,11 @@ def _try_load_project( path : Path ) -> bool:
             _RE_PROJECT_DEFAULT_FPS = project_cfg['fps']
             _RE_PROJECT_DEFAULT_REZ = project_cfg['rez']
             
-            reset_app_config()
+            reset_project_features()
             if 'apps' in project_cfg:
                 apps_cfg = project_cfg['apps']
                 for key in apps_cfg:                    
-                    _RE_PROJECT_APP_CONFIG[key] = apps_cfg[key]
-                    #_RE_PROJECT_APP_CONFIG = AppConfig( **apps_cfg )
+                    _RE_PROJECT_FEATURES[key] = apps_cfg[key]
 
             if 'ext_libs' in project_cfg:
                 _RE_PROJECT_EXTERNAL_LIBS = project_cfg['ext_libs']
@@ -210,19 +221,20 @@ def _get_project_folder_struct() -> List[TemplateEntry]:
     ASSETS = [
         ('2d',[
             ('artworks', []),
-            ('footage',[],None, _RE_PROJECT_HAS_FOOTAGE),
-            ('roto',[],None, _RE_PROJECT_HAS_FOOTAGE),
-            ('tracking',[],None, _RE_PROJECT_HAS_FOOTAGE),
+            ('references', []),
+            ('footage',[],None, _RE_PROJECT_FEATURES["footage"]),
+            ('roto',[],None, _RE_PROJECT_FEATURES["footage"]),            
             ]            
         ),
         ('3d',[
             ('fbx',[]),
             ('abc',[]),
             ('obj',[]),
-            ('blend',[],None, _RE_PROJECT_APP_CONFIG["blender"]),
-            ('hda',[],None, _RE_PROJECT_APP_CONFIG["houdini"]),
-            ('c4d',[],None, _RE_PROJECT_APP_CONFIG["c4d"]),
-            ('usd',[],None, _RE_PROJECT_APP_CONFIG["usd"]),
+            ('tracking',[],None, _RE_PROJECT_FEATURES["footage"]),
+            ('blend',[],None, _RE_PROJECT_FEATURES["blender"]),
+            ('hda',[],None, _RE_PROJECT_FEATURES["houdini"]),
+            ('c4d',[],None, _RE_PROJECT_FEATURES["c4d"]),
+            ('usd',[],None, _RE_PROJECT_FEATURES["usd"]),
             ]
         ),
         ('tex',[]),
@@ -272,6 +284,22 @@ def _get_project_folder_struct() -> List[TemplateEntry]:
 
     return FOLDERS
 
+def _get_unreal_project_folder_struct() -> List[TemplateEntry]:
+    FOLDERS = [
+        ('Content_Source',[
+            ('3d',[
+                ('fbx',[],'assets/3d/fbx'),
+                ('abc',[],'assets/3d/abc'),
+                ]
+            ),
+            ('tex',[],'assets/tex')
+            ]
+        ),        
+        ('Render',[],'render/unreal')
+    ]
+
+    return FOLDERS
+
 def _list_folder_template_items( template : TemplateEntry, list : List[str], parent:str=None ):
     if list is None:
         return
@@ -291,7 +319,6 @@ def _list_folder_template_items( template : TemplateEntry, list : List[str], par
         for e in template[1]:
             _list_folder_template_items( e, list, folder_name )
         
-
 def _create_project_folders( base_path_str:str="", template:List[TemplateEntry]=[], create_missing_links:bool=False, update_symlinks:bool=True ) -> bool:    
     if not template:
         return False
@@ -382,14 +409,14 @@ def _create_project_folders( base_path_str:str="", template:List[TemplateEntry]=
     return True
 
 ################################################################################
-def create_project(app_config : AppConfig) -> bool:
+def create_project(app_config : ProjectFeatures) -> bool:
     # Try creating new project at current root location
     # app_config: AppConfig configure which applications will be used in project
     #             Appropriate subfolders will be created. 
 
-    global _RE_PROJECT_APP_CONFIG
+    global _RE_PROJECT_FEATURES
     global _RE_PROJECT_INITIALIZED
-    _RE_PROJECT_APP_CONFIG = app_config
+    _RE_PROJECT_FEATURES = app_config
     
     if not _RE_PROJECT_ROOT.exists():
         _RE_PROJECT_ROOT.mkdir(parents=True)
@@ -401,11 +428,30 @@ def create_project(app_config : AppConfig) -> bool:
     else:
         return False
 
+#unitiailize current project
+def drop_project():
+    global _RE_PROJECT_EXTERNAL_LIBS
+    global _RE_PROJECT_FEATURES
+    global _RE_PROJECT_DEFAULT_FPS
+    global _RE_PROJECT_DEFAULT_REZ
+    global _RE_PROJECT_INITIALIZED
+    global _RE_PROJECT_VERSION
+    global _RE_PROJECT_ROOT
+    
+    #set defaults
+    _RE_PROJECT_ROOT = None
+    _RE_PROJECT_INITIALIZED = False
+    _RE_PROJECT_VERSION = 1.0
+    _RE_PROJECT_EXTERNAL_LIBS = []
+    _RE_PROJECT_DEFAULT_FPS = 30.0
+    _RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
+    reset_project_features()
+
 def save_project_config():
-    global _RE_PROJECT_APP_CONFIG
+    global _RE_PROJECT_FEATURES
     project_cfg = {}
     project_cfg['version'] = _RE_PROJECT_VERSION
-    project_cfg['apps'] = _RE_PROJECT_APP_CONFIG #._asdict()
+    project_cfg['apps'] = _RE_PROJECT_FEATURES #._asdict()
     project_cfg['fps'] = _RE_PROJECT_DEFAULT_FPS
     project_cfg['rez'] = _RE_PROJECT_DEFAULT_REZ
     project_cfg['ext_libs'] = _RE_PROJECT_EXTERNAL_LIBS
@@ -421,7 +467,19 @@ def save_project_config():
 def create_project_folders() -> bool:
     # Create project folder structure based on configuration
     # Use this also to generate new folders if the configuration changes
-    return _create_project_folders(_RE_PROJECT_ROOT.as_posix(), _get_project_folder_struct())    
+    return _create_project_folders(_RE_PROJECT_ROOT.as_posix(), _get_project_folder_struct()) and create_unreal_project_folders()
+
+def create_unreal_project_folders() -> bool:
+    if _RE_PROJECT_FEATURES["unreal"] is False:
+        return True
+
+    unrealProjectPath = Path(_RE_PROJECT_UNREAL_PROJECT)
+    if not unrealProjectPath.exists():
+        print("Unreal Project folder does not exist: " + _RE_PROJECT_UNREAL_PROJECT)
+        return False
+
+    print("Creating unreal project folders!")
+    return _create_project_folders( unrealProjectPath.as_posix(), _get_unreal_project_folder_struct(), create_missing_links=True )
 
 def update_all_asset_folders() -> bool:
     all_assets = scan_project_assets()
@@ -441,17 +499,6 @@ def update_all_shot_folders() -> bool:
             return False
 
     return True
-
-def update_project_app_config(app_config : AppConfig, generate_folders : bool = False):
-    if not _RE_PROJECT_INITIALIZED:
-        raise ValueError("Project not initialized")
-        return
-
-    global _RE_PROJECT_APP_CONFIG
-    _RE_PROJECT_APP_CONFIG = app_config    
-
-    if generate_folders:
-        create_project_folders()
 
 def add_external_lib_folder( name : str, base_path : str, target_path : str ) -> bool:
     base_folder_path = _RE_PROJECT_ROOT / base_path    
@@ -481,7 +528,7 @@ def is_external_lib( name : str, base_path : str, target : str) -> int:
 def create_external_lib_folders( ext_libs : List[ExtLibEntry] ):
     for lib in ext_libs:
         add_external_lib_folder(lib[0], lib[1], lib[2])
-
+    
 def asset_exists( assetName : str ) -> bool:
     assert(_RE_PROJECT_INITIALIZED)
     return get_asset_path(assetName).exists()
@@ -513,7 +560,7 @@ def create_asset_folders( assetName : str ) -> bool:
     OTHER = [
         ('tex',[],'assets/tex'),
         ('fbx',[],'assets/3d/fbx'),
-        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG["usd"]),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_FEATURES["usd"]),
         ('abc',[],'assets/3d/abc'),
         ('render',[],'render/assets/' + assetName),
         ('tmp',[],'temp/assets/{}'.format(assetName)),
@@ -524,7 +571,7 @@ def create_asset_folders( assetName : str ) -> bool:
         ('tex',[],'assets/tex')
     ]
 
-    if _RE_PROJECT_APP_CONFIG["other"]:
+    if _RE_PROJECT_FEATURES["other"]:
         ASSET_FOLDERS.append(('other', OTHER))
 
     ASSET_FOLDERS.append(('textures',TEXTURES))
@@ -570,9 +617,9 @@ def create_shot( sequence : int, shot_number : int) -> bool:
         ('render',[],'render/shots/{}'.format(shot_name)),        
         ('out',[],'out'),
         ('artworks',[],'assets/2d/artworks'),
-        ('footage',[],'assets/2d/footage/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE),
-        ('roto',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE),
-        ('tracking',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_HAS_FOOTAGE)
+        ('footage',[],'assets/2d/footage/{}'.format(shot_name), _RE_PROJECT_FEATURES["footage"]),
+        ('roto',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_FEATURES["footage"]),
+        ('tracking',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_FEATURES["footage"])
     ]
 
     SHOT_FOLDERS.append(('comp', COMP))    
@@ -606,10 +653,10 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
 
     HOUDINI = [
         ('geo',[],'temp/{}/{}/geo'.format(category, name)),
-        ('hda',[],'assets/3d/hda', _RE_PROJECT_APP_CONFIG["houdini"]),
+        ('hda',[],'assets/3d/hda', _RE_PROJECT_FEATURES["houdini"]),
         ('fbx',[],'assets/3d/fbx'),
         ('obj',[],'assets/3d/obj'),
-        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG["usd"]),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_FEATURES["usd"]),
         ('sim',[],'temp/{}/{}/sim'.format(category, name)),
         ('abc',[],'assets/3d/abc'),
         ('tex',[],'assets/tex'),
@@ -626,8 +673,8 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
         ('tex',[],'assets/tex'),
         ('fbx',[],'assets/3d/fbx'),
         ('obj',[],'assets/3d/obj'),
-        ('blend',[],'assets/3d/blend', _RE_PROJECT_APP_CONFIG["blender"]),
-        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG["usd"]),
+        ('blend',[],'assets/3d/blend', _RE_PROJECT_FEATURES["blender"]),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_FEATURES["usd"]),
         ('abc',[],'assets/3d/abc'),
         ('render',[],'render/{}/{}'.format(category, name)),
         ('tmp',[],'temp/{}/{}'.format(category, name)),
@@ -638,8 +685,8 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
         ('tex',[],'assets/tex'),
         ('fbx',[],'assets/3d/fbx'),
         ('obj',[],'assets/3d/obj'),
-        ('c4d',[],'assets/3d/c4d', _RE_PROJECT_APP_CONFIG["c4d"]),
-        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG["usd"]),
+        ('c4d',[],'assets/3d/c4d', _RE_PROJECT_FEATURES["c4d"]),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_FEATURES["usd"]),
         ('abc',[],'assets/3d/abc'),
         ('render',[],'render/{}/{}'.format(category, name)),
         ('tmp',[],'temp/{}/{}'.format(category, name)),
@@ -652,7 +699,7 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
         ('sourceimages',[],'assets/tex'),
         ('fbx',[],'assets/3d/fbx'),
         ('obj',[],'assets/3d/obj'),
-        ('usd',[],'assets/3d/usd', _RE_PROJECT_APP_CONFIG["usd"]),
+        ('usd',[],'assets/3d/usd', _RE_PROJECT_FEATURES["usd"]),
         ('abc',[],'assets/3d/abc'),
         ('image',[],'render/{}/{}'.format(category, name)),
         ('movies',[],'render/{}/{}/playblast'.format(category, name)),
@@ -663,10 +710,10 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
     ]
 
     FOLDERS = [
-        ('houdini', HOUDINI, None, _RE_PROJECT_APP_CONFIG["houdini"]),
-        ('blender', BLENDER, None, _RE_PROJECT_APP_CONFIG["blender"]),
-        ('c4d', C4D, None, _RE_PROJECT_APP_CONFIG["c4d"]),
-        ('maya', MAYA, None, _RE_PROJECT_APP_CONFIG["maya"])
+        ('houdini', HOUDINI, None, _RE_PROJECT_FEATURES["houdini"]),
+        ('blender', BLENDER, None, _RE_PROJECT_FEATURES["blender"]),
+        ('c4d', C4D, None, _RE_PROJECT_FEATURES["c4d"]),
+        ('maya', MAYA, None, _RE_PROJECT_FEATURES["maya"])
     ]
 
     return FOLDERS
