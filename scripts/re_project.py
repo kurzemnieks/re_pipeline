@@ -21,6 +21,8 @@ _RE_PROJECT_DEFAULT_REZ : Dict[str,int] = {'x':1920, 'y':1080}
 ExtLibEntry = Tuple[str, str, str]
 _RE_PROJECT_EXTERNAL_LIBS : List[ExtLibEntry] = []
 
+_RE_PROJECT_UNREAL_PROJECT : str = ""
+
 class DccApp(object):
     BLENDER = "blender"
     HOUDINI = "houdini"
@@ -101,6 +103,9 @@ def get_project_default_fps() -> float:
     assert(_RE_PROJECT_INITIALIZED)
     return _RE_PROJECT_DEFAULT_FPS
 
+def get_project_unreal_project() -> str:
+    return Path(_RE_PROJECT_UNREAL_PROJECT).as_posix()
+
 def get_project_external_libs() -> List[Tuple[str, str, str]]:
     return _RE_PROJECT_EXTERNAL_LIBS
 
@@ -149,6 +154,7 @@ def _try_load_project( path : Path ) -> bool:
     global _RE_PROJECT_DEFAULT_FPS
     global _RE_PROJECT_DEFAULT_REZ
     global _RE_PROJECT_INITIALIZED
+    global _RE_PROJECT_UNREAL_PROJECT
 
     if path is None:
         return False
@@ -157,6 +163,8 @@ def _try_load_project( path : Path ) -> bool:
         return False
     
     cfg_file_path = path / _RE_PROJECT_CFG_NAME
+
+    _RE_PROJECT_UNREAL_PROJECT = ""
     
     if cfg_file_path.is_file():
         
@@ -179,7 +187,10 @@ def _try_load_project( path : Path ) -> bool:
 
             if 'ext_libs' in project_cfg:
                 _RE_PROJECT_EXTERNAL_LIBS = project_cfg['ext_libs']
-                create_external_lib_folders(_RE_PROJECT_EXTERNAL_LIBS)            
+                create_external_lib_folders(_RE_PROJECT_EXTERNAL_LIBS)        
+
+            if 'unreal_project' in project_cfg:
+                _RE_PROJECT_UNREAL_PROJECT = project_cfg['unreal_project']    
 
             _RE_PROJECT_INITIALIZED = True
         return True
@@ -398,6 +409,7 @@ def save_project_config():
     project_cfg['fps'] = _RE_PROJECT_DEFAULT_FPS
     project_cfg['rez'] = _RE_PROJECT_DEFAULT_REZ
     project_cfg['ext_libs'] = _RE_PROJECT_EXTERNAL_LIBS
+    project_cfg['unreal_project'] = _RE_PROJECT_UNREAL_PROJECT
 
     try:
         cfg_file_path = _RE_PROJECT_ROOT / _RE_PROJECT_CFG_NAME

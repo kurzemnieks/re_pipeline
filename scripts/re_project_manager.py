@@ -271,6 +271,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             if len(folder) > 0:
                 unrealProjectFolder = Path(folder[0])
                 self.unrealProjectPathEdit.setText(unrealProjectFolder.as_posix())
+                self.onModifyProjectConfig()
 
     def onClickSetHoudini(self):
         dlg = QtWidgets.QFileDialog()
@@ -379,6 +380,8 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             self.editVRes.setText(str(re_project.get_project_default_rez()['y']))
             self.editFPS.setText(str(re_project.get_project_default_fps()))
 
+            self.unrealProjectPathEdit.setText(re_project.get_project_unreal_project())
+
             #self.labelExtTexPath.setText(re_project.get_project_ext_asset_lib())
             #TODO: external textures lib
 
@@ -394,6 +397,7 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             vres = int(self.editVRes.text())
             re_project._RE_PROJECT_DEFAULT_REZ['x'] = hres
             re_project._RE_PROJECT_DEFAULT_REZ['y'] = vres
+            re_project._RE_PROJECT_UNREAL_PROJECT = Path(self.unrealProjectPathEdit.text()).as_posix()
 
             re_project.save_project_config()
 
