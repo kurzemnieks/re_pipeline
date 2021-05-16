@@ -41,9 +41,9 @@ class Ui_ShotDialog(object):
         self.spinSequence = QSpinBox(self.widget)
         self.spinSequence.setObjectName(u"spinSequence")
         self.spinSequence.setMaximumSize(QSize(50, 16777215))
-        self.spinSequence.setMinimum(1)
+        self.spinSequence.setMinimum(0)
         self.spinSequence.setMaximum(500)
-        self.spinSequence.setValue(1)
+        self.spinSequence.setValue(0)
 
         self.formLayout.setWidget(0, QFormLayout.FieldRole, self.spinSequence)
 

@@ -398,6 +398,11 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.checkUnreal, 0, 3, 1, 1)
 
+        self.checkLivePlate = QCheckBox(self.groupBox)
+        self.checkLivePlate.setObjectName(u"checkLivePlate")
+
+        self.gridLayout.addWidget(self.checkLivePlate, 1, 3, 1, 1)
+
 
         self.verticalLayout_4.addWidget(self.groupBox)
 
@@ -425,18 +430,6 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_4.addWidget(self.groupBox_4)
-
-        self.groupBox_3 = QGroupBox(self.tab_Project)
-        self.groupBox_3.setObjectName(u"groupBox_3")
-        self.formLayout_2 = QFormLayout(self.groupBox_3)
-        self.formLayout_2.setObjectName(u"formLayout_2")
-        self.checkLivePlate = QCheckBox(self.groupBox_3)
-        self.checkLivePlate.setObjectName(u"checkLivePlate")
-
-        self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.checkLivePlate)
-
-
-        self.verticalLayout_4.addWidget(self.groupBox_3)
 
         self.widget = QWidget(self.tab_Project)
         self.widget.setObjectName(u"widget")
@@ -615,7 +608,6 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.newAssetButton, self.loadAssetButton)
         QWidget.setTabOrder(self.loadAssetButton, self.newShotButton)
         QWidget.setTabOrder(self.newShotButton, self.loadShotButton)
-        QWidget.setTabOrder(self.loadShotButton, self.checkLivePlate)
 
         self.retranslateUi(MainWindow)
         self.checkUnreal.toggled.connect(self.unrealProjectPathEdit.setEnabled)
@@ -674,21 +666,41 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.groupBox.setToolTip(QCoreApplication.translate("MainWindow", u"Create work folders for these apps", None))
 #endif // QT_CONFIG(tooltip)
-        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"DCC Application Integration", None))
+        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Project Features", None))
+#if QT_CONFIG(tooltip)
+        self.checkC4D.setToolTip(QCoreApplication.translate("MainWindow", u"C4D project folders", None))
+#endif // QT_CONFIG(tooltip)
         self.checkC4D.setText(QCoreApplication.translate("MainWindow", u"Cinema 4D", None))
+#if QT_CONFIG(tooltip)
+        self.checkMaya.setToolTip(QCoreApplication.translate("MainWindow", u"Maya project structure", None))
+#endif // QT_CONFIG(tooltip)
         self.checkMaya.setText(QCoreApplication.translate("MainWindow", u"Maya", None))
+#if QT_CONFIG(tooltip)
+        self.checkHoudini.setToolTip(QCoreApplication.translate("MainWindow", u"Houdini project folders", None))
+#endif // QT_CONFIG(tooltip)
         self.checkHoudini.setText(QCoreApplication.translate("MainWindow", u"Houdini", None))
+#if QT_CONFIG(tooltip)
+        self.checkBlender.setToolTip(QCoreApplication.translate("MainWindow", u"Blender project folders", None))
+#endif // QT_CONFIG(tooltip)
         self.checkBlender.setText(QCoreApplication.translate("MainWindow", u"Blender", None))
+#if QT_CONFIG(tooltip)
+        self.checkUSD.setToolTip(QCoreApplication.translate("MainWindow", u"USD folders", None))
+#endif // QT_CONFIG(tooltip)
         self.checkUSD.setText(QCoreApplication.translate("MainWindow", u"USD", None))
+#if QT_CONFIG(tooltip)
+        self.checkOther.setToolTip(QCoreApplication.translate("MainWindow", u"Create \"Other\" folders in assets/shots ", None))
+#endif // QT_CONFIG(tooltip)
         self.checkOther.setText(QCoreApplication.translate("MainWindow", u"Other", None))
+#if QT_CONFIG(tooltip)
+        self.checkUnreal.setToolTip(QCoreApplication.translate("MainWindow", u"Link assets to Unreal Project Content_Source", None))
+#endif // QT_CONFIG(tooltip)
         self.checkUnreal.setText(QCoreApplication.translate("MainWindow", u"Unreal", None))
+#if QT_CONFIG(tooltip)
+        self.checkLivePlate.setToolTip(QCoreApplication.translate("MainWindow", u"Generate folders for footage, roto, 3d tracking", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkLivePlate.setText(QCoreApplication.translate("MainWindow", u"Footage", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"Realtime Engine Integration", None))
         self.setUnrealButton.setText(QCoreApplication.translate("MainWindow", u"Set Unreal Project", None))
-        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Additional folders", None))
-#if QT_CONFIG(tooltip)
-        self.checkLivePlate.setToolTip(QCoreApplication.translate("MainWindow", u"Generate folders for footage, roto, tracking", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkLivePlate.setText(QCoreApplication.translate("MainWindow", u"Generate Footage Folders", None))
 #if QT_CONFIG(tooltip)
         self.dropProjectButton.setToolTip(QCoreApplication.translate("MainWindow", u"Sets current project to None", None))
 #endif // QT_CONFIG(tooltip)

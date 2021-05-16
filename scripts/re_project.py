@@ -554,7 +554,7 @@ def create_asset_folders( assetName : str ) -> bool:
     else:
         asset_folder.mkdir(parents=True)
 
-    ASSET_FOLDERS = _get_app_folders( "assets", assetName )
+    ASSET_FOLDERS = _get_app_folders( "assets", assetName, is_shot=False )
 
     # Any other 3d app work files goes there.  
     OTHER = [
@@ -610,7 +610,7 @@ def create_shot( sequence : int, shot_number : int) -> bool:
     else:
         shot_path.mkdir(parents=True)
 
-    SHOT_FOLDERS = _get_app_folders( "shots", shot_name )
+    SHOT_FOLDERS = _get_app_folders( "shots", shot_name, is_shot=True )
 
     COMP = [
         ('previs',[],'render/previs/{}'.format(shot_name)),
@@ -645,7 +645,7 @@ def scan_project_shots() -> List[str]:
     
 ############################################################
 
-def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
+def _get_app_folders( category : str, name : str, is_shot : bool ) -> List[TemplateEntry]:
     """ Return folder structures for DCC applications based
         on project app config.
         Used in asset and shot structures. 
@@ -666,7 +666,11 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
         ('flip',[],'temp/{}/{}/flip'.format(category, name)),
 
         ('scripts',[]),
-        ('lib',[],'assets/lib')
+        ('lib',[],'assets/lib'),
+
+        ('footage',[],'assets/2d/footage/{}'.format(name), _RE_PROJECT_FEATURES["footage"] and is_shot),
+        ('tracking',[],'assets/3d/tracking/{}'.format(name), _RE_PROJECT_FEATURES["footage"] and is_shot)
+
     ]
 
     BLENDER = [
@@ -678,7 +682,9 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
         ('abc',[],'assets/3d/abc'),
         ('render',[],'render/{}/{}'.format(category, name)),
         ('tmp',[],'temp/{}/{}'.format(category, name)),
-        ('lib',[],'assets/lib')
+        ('lib',[],'assets/lib'),
+        ('footage',[],'assets/2d/footage/{}'.format(name), _RE_PROJECT_FEATURES["footage"] and is_shot),
+        ('tracking',[],'assets/3d/tracking/{}'.format(name), _RE_PROJECT_FEATURES["footage"] and is_shot)
     ]
 
     C4D = [
@@ -690,7 +696,10 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
         ('abc',[],'assets/3d/abc'),
         ('render',[],'render/{}/{}'.format(category, name)),
         ('tmp',[],'temp/{}/{}'.format(category, name)),
-        ('lib',[],'assets/lib')
+        ('lib',[],'assets/lib'),
+        ('footage',[],'assets/2d/footage/{}'.format(name), _RE_PROJECT_FEATURES["footage"] and is_shot),
+        ('tracking',[],'assets/3d/tracking/{}'.format(name), _RE_PROJECT_FEATURES["footage"] and is_shot)
+
     ]
 
     MAYA = [
@@ -707,6 +716,9 @@ def _get_app_folders( category : str, name : str ) -> List[TemplateEntry]:
         ('lib',[],'assets/lib'),
         ('tmp',[],'temp/{}/{}'.format(category, name)),
         ('scripts',[]),
+        ('footage',[],'assets/2d/footage/{}'.format(name), _RE_PROJECT_FEATURES["footage"] and is_shot),
+        ('tracking',[],'assets/3d/tracking/{}'.format(name), _RE_PROJECT_FEATURES["footage"] and is_shot)
+
     ]
 
     FOLDERS = [
