@@ -290,6 +290,8 @@ def _get_unreal_project_folder_struct() -> List[TemplateEntry]:
             ('3d',[
                 ('fbx',[],'assets/3d/fbx'),
                 ('abc',[],'assets/3d/abc'),
+                ('hda',[],'assets/3d/hda', _RE_PROJECT_FEATURES["houdini"]),
+                ('usd',[],'assets/3d/usd', _RE_PROJECT_FEATURES["usd"])
                 ]
             ),
             ('tex',[],'assets/tex')
@@ -619,7 +621,7 @@ def create_shot( sequence : int, shot_number : int) -> bool:
         ('artworks',[],'assets/2d/artworks'),
         ('footage',[],'assets/2d/footage/{}'.format(shot_name), _RE_PROJECT_FEATURES["footage"]),
         ('roto',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_FEATURES["footage"]),
-        ('tracking',[],'assets/2d/roto/{}'.format(shot_name), _RE_PROJECT_FEATURES["footage"])
+        ('tracking',[],'assets/3d/tracking/{}'.format(shot_name), _RE_PROJECT_FEATURES["footage"])
     ]
 
     SHOT_FOLDERS.append(('comp', COMP))    
