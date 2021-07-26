@@ -17,9 +17,9 @@ class Ui_ShotDialog(object):
     def setupUi(self, ShotDialog):
         if not ShotDialog.objectName():
             ShotDialog.setObjectName(u"ShotDialog")
-        ShotDialog.resize(220, 120)
-        ShotDialog.setMinimumSize(QSize(220, 120))
-        ShotDialog.setMaximumSize(QSize(220, 120))
+        ShotDialog.resize(220, 150)
+        ShotDialog.setMinimumSize(QSize(220, 150))
+        ShotDialog.setMaximumSize(QSize(220, 150))
         font = QFont()
         font.setFamily(u"Segoe UI")
         ShotDialog.setFont(font)
@@ -61,6 +61,20 @@ class Ui_ShotDialog(object):
 
         self.formLayout.setWidget(1, QFormLayout.FieldRole, self.spinShot)
 
+        self.label_3 = QLabel(self.widget)
+        self.label_3.setObjectName(u"label_3")
+
+        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.label_3)
+
+        self.spinFrames = QSpinBox(self.widget)
+        self.spinFrames.setObjectName(u"spinFrames")
+        self.spinFrames.setMaximumSize(QSize(50, 16777215))
+        self.spinFrames.setMinimum(1)
+        self.spinFrames.setMaximum(1000)
+        self.spinFrames.setValue(100)
+
+        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.spinFrames)
+
 
         self.verticalLayout.addWidget(self.widget)
 
@@ -83,5 +97,6 @@ class Ui_ShotDialog(object):
         ShotDialog.setWindowTitle(QCoreApplication.translate("ShotDialog", u"New Shot", None))
         self.label.setText(QCoreApplication.translate("ShotDialog", u"Sequence number:", None))
         self.label_2.setText(QCoreApplication.translate("ShotDialog", u"Shot number:", None))
+        self.label_3.setText(QCoreApplication.translate("ShotDialog", u"Length (Frames):", None))
     # retranslateUi
 

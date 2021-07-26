@@ -18,6 +18,8 @@ _RE_PROJECT_VERSION : float = 1.0
 _RE_PROJECT_DEFAULT_FPS : float = 30.0
 _RE_PROJECT_DEFAULT_REZ : Dict[str,int] = {'x':1920, 'y':1080}
 
+_RE_PROJECT_NAME_PREFIX : str = ""
+
 ExtLibEntry = Tuple[str, str, str]
 _RE_PROJECT_EXTERNAL_LIBS : List[ExtLibEntry] = []
 
@@ -69,8 +71,11 @@ def set_project_root_folder( path : str ) -> bool:
     
     global _RE_PROJECT_ROOT
     global _RE_DCC_APP
+    global _RE_PROJECT_NAME_PREFIX
 
     _RE_PROJECT_ROOT = Path(path)
+
+    _RE_PROJECT_NAME_PREFIX = _RE_PROJECT_ROOT.name
 
     if is_in_houdini():
         _RE_DCC_APP = DccApp.HOUDINI
@@ -102,6 +107,10 @@ def get_project_default_rez() -> Dict[str,int]:
 def get_project_default_fps() -> float:
     assert(_RE_PROJECT_INITIALIZED)
     return _RE_PROJECT_DEFAULT_FPS
+
+def get_project_name_prefix() -> str:
+    assert(_RE_PROJECT_INITIALIZED)
+    return _RE_PROJECT_NAME_PREFIX
 
 def get_project_unreal_project() -> str:
     if len(_RE_PROJECT_UNREAL_PROJECT) > 1:
@@ -140,6 +149,11 @@ def set_project_default_fps( fps : float):
     global _RE_PROJECT_DEFAULT_FPS
     _RE_PROJECT_DEFAULT_FPS = fps
 
+def set_project_name_prefix( name_prefix : str):
+    assert(_RE_PROJECT_INITIALIZED)
+    global _RE_PROJECT_NAME_PREFIX
+    _RE_PROJECT_NAME_PREFIX = name_prefix
+
 def set_project_default_rez( x:int, y:int):
     assert(_RE_PROJECT_INITIALIZED)
     global _RE_PROJECT_DEFAULT_REZ
@@ -167,6 +181,7 @@ def _try_load_project( path : Path ) -> bool:
     global _RE_PROJECT_DEFAULT_REZ
     global _RE_PROJECT_INITIALIZED
     global _RE_PROJECT_UNREAL_PROJECT
+    global _RE_PROJECT_NAME_PREFIX
 
     if path is None:
         return False
@@ -189,8 +204,12 @@ def _try_load_project( path : Path ) -> bool:
             
             _RE_PROJECT_DEFAULT_FPS = project_cfg['fps']
             _RE_PROJECT_DEFAULT_REZ = project_cfg['rez']
+
+            if 'name_prefix' in project_cfg:
+                _RE_PROJECT_NAME_PREFIX = project_cfg['name_prefix']
             
             reset_project_features()
+
             if 'apps' in project_cfg:
                 apps_cfg = project_cfg['apps']
                 for key in apps_cfg:                    
@@ -458,6 +477,7 @@ def save_project_config():
     project_cfg['rez'] = _RE_PROJECT_DEFAULT_REZ
     project_cfg['ext_libs'] = _RE_PROJECT_EXTERNAL_LIBS
     project_cfg['unreal_project'] = _RE_PROJECT_UNREAL_PROJECT
+    project_cfg['name_prefix'] = _RE_PROJECT_NAME_PREFIX
 
     try:
         cfg_file_path = _RE_PROJECT_ROOT / _RE_PROJECT_CFG_NAME
@@ -734,3 +754,43 @@ def _get_app_folders( category : str, name : str, is_shot : bool ) -> List[Templ
 
 if __name__ != "__main__":
     drop_project()
+
+
+# Currently active file (asset or shot)
+# inside DCC app. Only valid when running from inside DCC app 
+# Holds information about current file
+class ActiveFile():    
+    def __init__(self, name : str, extension : str, path : Path ) -> None:
+        self.name = name        
+        self.ext = extension
+        self.path = path
+        self.versions : List[int] = []
+
+    def __init__(self, path:Path) -> None:
+        self.path = path
+        self.name = self.path.stem
+        self.ext = self.path.suffix
+        
+        #TODO: regex match to asset name or shot name. Try to extract shot number and shot version
+        # try to extract asset version
+
+        #m = re.match("\w*_v\d{2}", self.name)
+        re_match = re.search("_v\d{2}", self.name)
+        if re_match is not None:
+            version_str : str = re_match.group()
+
+        if self.path.exists():
+            pass
+        else:
+            pass
+
+        pass
+
+    def scan_versions() -> None:
+        pass
+
+    def get_last_version_number() -> int:
+        return 0
+
+    def get_published_name() -> str:
+        return ""

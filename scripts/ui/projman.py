@@ -81,6 +81,98 @@ class Ui_MainWindow(object):
         self.mainTabs = QTabWidget(self.centralwidget)
         self.mainTabs.setObjectName(u"mainTabs")
         self.mainTabs.setStyleSheet(u"")
+        self.tab_Edit = QWidget()
+        self.tab_Edit.setObjectName(u"tab_Edit")
+        self.verticalLayout_9 = QVBoxLayout(self.tab_Edit)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.groupBox_3 = QGroupBox(self.tab_Edit)
+        self.groupBox_3.setObjectName(u"groupBox_3")
+        self.groupBox_3.setMinimumSize(QSize(0, 0))
+        self.formLayout_2 = QFormLayout(self.groupBox_3)
+        self.formLayout_2.setObjectName(u"formLayout_2")
+        self.label_2 = QLabel(self.groupBox_3)
+        self.label_2.setObjectName(u"label_2")
+
+        self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_2)
+
+        self.lebelCurrentType = QLabel(self.groupBox_3)
+        self.lebelCurrentType.setObjectName(u"lebelCurrentType")
+        self.lebelCurrentType.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.lebelCurrentType)
+
+        self.label_3 = QLabel(self.groupBox_3)
+        self.label_3.setObjectName(u"label_3")
+
+        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_3)
+
+        self.labelCurrentName = QLabel(self.groupBox_3)
+        self.labelCurrentName.setObjectName(u"labelCurrentName")
+        self.labelCurrentName.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.labelCurrentName.setTextInteractionFlags(Qt.LinksAccessibleByMouse|Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
+
+        self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.labelCurrentName)
+
+        self.label_4 = QLabel(self.groupBox_3)
+        self.label_4.setObjectName(u"label_4")
+
+        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_4)
+
+        self.labelCurrentPath = QLabel(self.groupBox_3)
+        self.labelCurrentPath.setObjectName(u"labelCurrentPath")
+        self.labelCurrentPath.setScaledContents(False)
+        self.labelCurrentPath.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.labelCurrentPath.setWordWrap(True)
+        self.labelCurrentPath.setTextInteractionFlags(Qt.LinksAccessibleByMouse|Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
+
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.labelCurrentPath)
+
+        self.label_5 = QLabel(self.groupBox_3)
+        self.label_5.setObjectName(u"label_5")
+
+        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.label_5)
+
+        self.label_6 = QLabel(self.groupBox_3)
+        self.label_6.setObjectName(u"label_6")
+
+        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.label_6)
+
+        self.labelTotalVersions = QLabel(self.groupBox_3)
+        self.labelTotalVersions.setObjectName(u"labelTotalVersions")
+        self.labelTotalVersions.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.labelTotalVersions)
+
+        self.labelCurrentLastPubVersion = QLabel(self.groupBox_3)
+        self.labelCurrentLastPubVersion.setObjectName(u"labelCurrentLastPubVersion")
+        self.labelCurrentLastPubVersion.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.labelCurrentLastPubVersion)
+
+
+        self.verticalLayout_9.addWidget(self.groupBox_3)
+
+        self.buttonPublishCurrent = QPushButton(self.tab_Edit)
+        self.buttonPublishCurrent.setObjectName(u"buttonPublishCurrent")
+        icon2 = QIcon()
+        icon2.addFile(u"icons/archive.png", QSize(), QIcon.Normal, QIcon.On)
+        self.buttonPublishCurrent.setIcon(icon2)
+
+        self.verticalLayout_9.addWidget(self.buttonPublishCurrent)
+
+        self.buttonVersionUpCurrent = QPushButton(self.tab_Edit)
+        self.buttonVersionUpCurrent.setObjectName(u"buttonVersionUpCurrent")
+        icon3 = QIcon()
+        icon3.addFile(u"icons/new_file_2.png", QSize(), QIcon.Normal, QIcon.On)
+        self.buttonVersionUpCurrent.setIcon(icon3)
+
+        self.verticalLayout_9.addWidget(self.buttonVersionUpCurrent)
+
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_9.addItem(self.verticalSpacer_4)
+
+        self.mainTabs.addTab(self.tab_Edit, icon2, "")
         self.tab_Assets = QWidget()
         self.tab_Assets.setObjectName(u"tab_Assets")
         self.verticalLayout = QVBoxLayout(self.tab_Assets)
@@ -99,9 +191,9 @@ class Ui_MainWindow(object):
         self.assetActionLayout.setObjectName(u"assetActionLayout")
         self.newAssetButton = QPushButton(self.assetActions)
         self.newAssetButton.setObjectName(u"newAssetButton")
-        icon2 = QIcon()
-        icon2.addFile(u"icons/new_object.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.newAssetButton.setIcon(icon2)
+        icon4 = QIcon()
+        icon4.addFile(u"icons/new_object.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.newAssetButton.setIcon(icon4)
 
         self.assetActionLayout.addWidget(self.newAssetButton)
 
@@ -117,6 +209,12 @@ class Ui_MainWindow(object):
 
 
         self.assetLayout.addWidget(self.assetActions)
+
+        self.widget_2 = QWidget(self.tab_Assets)
+        self.widget_2.setObjectName(u"widget_2")
+        self.widget_2.setMinimumSize(QSize(0, 20))
+
+        self.assetLayout.addWidget(self.widget_2)
 
         self.assetFileList = QTreeWidget(self.tab_Assets)
         self.assetFileList.setObjectName(u"assetFileList")
@@ -134,9 +232,9 @@ class Ui_MainWindow(object):
 
         self.newAssetFileButton = QPushButton(self.tab_Assets)
         self.newAssetFileButton.setObjectName(u"newAssetFileButton")
-        icon3 = QIcon()
-        icon3.addFile(u"icons/new_file_2.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.newAssetFileButton.setIcon(icon3)
+        icon5 = QIcon()
+        icon5.addFile(u"icons/new_file.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.newAssetFileButton.setIcon(icon5)
 
         self.assetFileActionGroup.addWidget(self.newAssetFileButton)
 
@@ -146,7 +244,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addLayout(self.assetLayout)
 
-        self.mainTabs.addTab(self.tab_Assets, icon2, "")
+        self.mainTabs.addTab(self.tab_Assets, icon4, "")
         self.tab_Shots = QWidget()
         self.tab_Shots.setObjectName(u"tab_Shots")
         self.verticalLayout_3 = QVBoxLayout(self.tab_Shots)
@@ -165,9 +263,9 @@ class Ui_MainWindow(object):
         self.shotActionLayout.setObjectName(u"shotActionLayout")
         self.newShotButton = QPushButton(self.shotActions)
         self.newShotButton.setObjectName(u"newShotButton")
-        icon4 = QIcon()
-        icon4.addFile(u"icons/new_scene_shot.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.newShotButton.setIcon(icon4)
+        icon6 = QIcon()
+        icon6.addFile(u"icons/new_scene_shot.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.newShotButton.setIcon(icon6)
 
         self.shotActionLayout.addWidget(self.newShotButton)
 
@@ -200,7 +298,7 @@ class Ui_MainWindow(object):
 
         self.newShotFileButton = QPushButton(self.tab_Shots)
         self.newShotFileButton.setObjectName(u"newShotFileButton")
-        self.newShotFileButton.setIcon(icon3)
+        self.newShotFileButton.setIcon(icon5)
 
         self.shotFileActionGroup.addWidget(self.newShotFileButton)
 
@@ -210,7 +308,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addLayout(self.shotLayout)
 
-        self.mainTabs.addTab(self.tab_Shots, icon4, "")
+        self.mainTabs.addTab(self.tab_Shots, icon6, "")
         self.tab_Project = QWidget()
         self.tab_Project.setObjectName(u"tab_Project")
         self.verticalLayout_4 = QVBoxLayout(self.tab_Project)
@@ -263,6 +361,16 @@ class Ui_MainWindow(object):
 
 
         self.formLayout.setLayout(0, QFormLayout.FieldRole, self.horizontalLayout_3)
+
+        self.label = QLabel(self.groupBox_2)
+        self.label.setObjectName(u"label")
+
+        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label)
+
+        self.editShotNamePrefix = QLineEdit(self.groupBox_2)
+        self.editShotNamePrefix.setObjectName(u"editShotNamePrefix")
+
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.editShotNamePrefix)
 
 
         self.verticalLayout_4.addWidget(self.groupBox_2)
@@ -341,9 +449,9 @@ class Ui_MainWindow(object):
 
         self.addNewExtLibButton = QPushButton(self.extLibsGroupBox)
         self.addNewExtLibButton.setObjectName(u"addNewExtLibButton")
-        icon5 = QIcon()
-        icon5.addFile(u"icons/link.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.addNewExtLibButton.setIcon(icon5)
+        icon7 = QIcon()
+        icon7.addFile(u"icons/link.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.addNewExtLibButton.setIcon(icon7)
 
         self.verticalLayout_5.addWidget(self.addNewExtLibButton)
 
@@ -440,17 +548,15 @@ class Ui_MainWindow(object):
         self.dropProjectButton = QPushButton(self.widget)
         self.dropProjectButton.setObjectName(u"dropProjectButton")
         self.dropProjectButton.setEnabled(False)
-        icon6 = QIcon()
-        icon6.addFile(u"icons/trash.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.dropProjectButton.setIcon(icon6)
+        icon8 = QIcon()
+        icon8.addFile(u"icons/trash.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.dropProjectButton.setIcon(icon8)
 
         self.horizontalLayout_5.addWidget(self.dropProjectButton)
 
         self.newProjectButton = QPushButton(self.widget)
         self.newProjectButton.setObjectName(u"newProjectButton")
-        icon7 = QIcon()
-        icon7.addFile(u"icons/new_file.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.newProjectButton.setIcon(icon7)
+        self.newProjectButton.setIcon(icon5)
 
         self.horizontalLayout_5.addWidget(self.newProjectButton)
 
@@ -464,18 +570,18 @@ class Ui_MainWindow(object):
         self.archiveProjectButton.setEnabled(False)
         sizePolicy6.setHeightForWidth(self.archiveProjectButton.sizePolicy().hasHeightForWidth())
         self.archiveProjectButton.setSizePolicy(sizePolicy6)
-        icon8 = QIcon()
-        icon8.addFile(u"icons/archive.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.archiveProjectButton.setIcon(icon8)
+        icon9 = QIcon()
+        icon9.addFile(u"icons/archive.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.archiveProjectButton.setIcon(icon9)
 
         self.horizontalLayout_6.addWidget(self.archiveProjectButton)
 
         self.updateProjectButton = QPushButton(self.widget)
         self.updateProjectButton.setObjectName(u"updateProjectButton")
         self.updateProjectButton.setEnabled(False)
-        icon9 = QIcon()
-        icon9.addFile(u"icons/settings.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.updateProjectButton.setIcon(icon9)
+        icon10 = QIcon()
+        icon10.addFile(u"icons/settings.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.updateProjectButton.setIcon(icon10)
 
         self.horizontalLayout_6.addWidget(self.updateProjectButton)
 
@@ -489,7 +595,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addItem(self.verticalSpacer_2)
 
-        self.mainTabs.addTab(self.tab_Project, icon9, "")
+        self.mainTabs.addTab(self.tab_Project, icon10, "")
         self.tab_Apps = QWidget()
         self.tab_Apps.setObjectName(u"tab_Apps")
         self.verticalLayout_20 = QVBoxLayout(self.tab_Apps)
@@ -510,9 +616,9 @@ class Ui_MainWindow(object):
         self.runHoudiniButton = QPushButton(self.tab_Apps)
         self.runHoudiniButton.setObjectName(u"runHoudiniButton")
         self.runHoudiniButton.setFont(font1)
-        icon10 = QIcon()
-        icon10.addFile(u"icons/baseline_play_circle_filled_white_18.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.runHoudiniButton.setIcon(icon10)
+        icon11 = QIcon()
+        icon11.addFile(u"icons/baseline_play_circle_filled_white_18.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.runHoudiniButton.setIcon(icon11)
 
         self.horizontalLayout_4.addWidget(self.runHoudiniButton)
 
@@ -535,7 +641,7 @@ class Ui_MainWindow(object):
         self.runBlenderButton = QPushButton(self.tab_Apps)
         self.runBlenderButton.setObjectName(u"runBlenderButton")
         self.runBlenderButton.setFont(font1)
-        self.runBlenderButton.setIcon(icon10)
+        self.runBlenderButton.setIcon(icon11)
 
         self.horizontalLayout_21.addWidget(self.runBlenderButton)
 
@@ -560,7 +666,7 @@ class Ui_MainWindow(object):
         self.runMayaButton.setObjectName(u"runMayaButton")
         self.runMayaButton.setEnabled(False)
         self.runMayaButton.setFont(font1)
-        self.runMayaButton.setIcon(icon10)
+        self.runMayaButton.setIcon(icon11)
 
         self.horizontalLayout_22.addWidget(self.runMayaButton)
 
@@ -584,7 +690,7 @@ class Ui_MainWindow(object):
         self.runC4DButton = QPushButton(self.tab_Apps)
         self.runC4DButton.setObjectName(u"runC4DButton")
         self.runC4DButton.setFont(font1)
-        self.runC4DButton.setIcon(icon10)
+        self.runC4DButton.setIcon(icon11)
 
         self.horizontalLayout_23.addWidget(self.runC4DButton)
 
@@ -595,7 +701,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_20.addItem(self.verticalSpacer_3)
 
-        self.mainTabs.addTab(self.tab_Apps, icon10, "")
+        self.mainTabs.addTab(self.tab_Apps, icon11, "")
 
         self.verticalLayout_2.addWidget(self.mainTabs)
 
@@ -624,6 +730,23 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Project Manager", None))
         self.setRootButton.setText(QCoreApplication.translate("MainWindow", u"Set Project", None))
         self.projectRootLabel.setText(QCoreApplication.translate("MainWindow", u"C:/Projects/ProjectRoot", None))
+        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Info", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Asset Type:", None))
+        self.lebelCurrentType.setText(QCoreApplication.translate("MainWindow", u"Shot", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Name:", None))
+        self.labelCurrentName.setText(QCoreApplication.translate("MainWindow", u"project_name_sh_010", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Path:", None))
+        self.labelCurrentPath.setText(QCoreApplication.translate("MainWindow", u"/shots/shot_010/houdini/project_name_sh_010_v01.hiplc", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Published Version:", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Total Versions:", None))
+        self.labelTotalVersions.setText(QCoreApplication.translate("MainWindow", u"2", None))
+        self.labelCurrentLastPubVersion.setText(QCoreApplication.translate("MainWindow", u"None", None))
+        self.buttonPublishCurrent.setText(QCoreApplication.translate("MainWindow", u"Publish", None))
+        self.buttonVersionUpCurrent.setText(QCoreApplication.translate("MainWindow", u"Version Up", None))
+        self.mainTabs.setTabText(self.mainTabs.indexOf(self.tab_Edit), QCoreApplication.translate("MainWindow", u"File", None))
+#if QT_CONFIG(tooltip)
+        self.mainTabs.setTabToolTip(self.mainTabs.indexOf(self.tab_Edit), QCoreApplication.translate("MainWindow", u"Operations with the active asset or shot!", None))
+#endif // QT_CONFIG(tooltip)
         self.newAssetButton.setText(QCoreApplication.translate("MainWindow", u"Create New Asset", None))
         self.loadAssetButton.setText(QCoreApplication.translate("MainWindow", u"Set Active", None))
         ___qtreewidgetitem = self.assetFileList.headerItem()
@@ -651,6 +774,8 @@ class Ui_MainWindow(object):
         self.labelFps.setText(QCoreApplication.translate("MainWindow", u"FPS", None))
         self.editFPS.setInputMask("")
         self.editFPS.setText(QCoreApplication.translate("MainWindow", u"30", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"Shot Naming Prefix:", None))
+        self.editShotNamePrefix.setText(QCoreApplication.translate("MainWindow", u"project_name", None))
         self.extLibsGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"External Asset Libraries", None))
         ___qtreewidgetitem2 = self.extLibsList.headerItem()
         ___qtreewidgetitem2.setText(2, QCoreApplication.translate("MainWindow", u"Target", None));

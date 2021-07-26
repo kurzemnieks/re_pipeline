@@ -12,7 +12,56 @@ import datetime
 from PySide2 import QtWidgets, QtCore, QtGui
 from ui import projman, assetdialog, shotdialog, projectdialog
 
+class NewFileDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
 
+    ASSET_TYPE_ASSET = 1
+    ASSET_TYPE_SHOT = 2
+
+    def __init__(self, parent=None):
+        super(NewFileDialogUI, self).__init__(parent=parent)
+        self.setupUi(self)    
+
+        self.parent = parent
+        self.buttonBox.accepted.connect(self.create_new_asset)
+        self.buttonBox.rejected.connect(self.close)
+        self.editAssetName.setText("")
+
+        self.base_path:Path = None
+        self.create_callback = None
+
+        self.asset_main_name = ""
+
+        self.asset_type = 0
+
+    def setCreateCallback( self, callback_func ):
+        self.create_callback = callback_func
+
+    def setQuestion(self, question:str):
+        self.nameLabel = question
+
+    def setDefaultName(self, name:str):
+        self.editAssetName.setText(name)
+    
+    def setTitle(self, title:str):
+        self.windowTitle = title
+
+    def setAssetMainName(self, main_name:str):
+        self.asset_main_name = main_name
+
+    def setBasePath( self, path:str):
+        if path is None:
+            self.base_path = None
+        else:
+            self.base_path = Path(path)
+
+    def create_new_asset(self):        
+        if self.create_callback is not None:
+            if self.base_path is not None:
+                full_path= self.base_path / self.editAssetName.text()
+            else:
+                full_path = Path(self.editAssetName.text())
+            self.create_callback(full_path.as_posix(), self)
+        self.close()
 class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
     def __init__(self):
         super(ProjectManagerUI, self).__init__()
@@ -23,6 +72,8 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.defaultNewProjectRoot = "C:\\Projects\\"
 
         self.sceneDCCExtensions = ["*.*"] #override this for DCC app PM implementations to return specific scene file types
+
+        self.active_file : re_project.ActiveFile = None
 
         self._resetPMUI()
 
@@ -86,6 +137,8 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.checkUnreal.clicked.connect(self.onModifyProjectConfig)
         self.checkLivePlate.clicked.connect(self.onModifyProjectConfig)
 
+        self.editShotNamePrefix.editingFinished.connect(self.onModifyProjectConfig)
+
         if not re_project.is_in_dcc_app():
             self.loadShotButton.hide()
             self.loadAssetButton.hide()
@@ -96,10 +149,18 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             
             self.assetFileActionGroup.removeWidget(self.openAssetFileButton)
             self.assetFileActionGroup.removeWidget(self.newAssetFileButton)
+            #self.assetFileActionGroup.removeWidget(self.versionUpAssetButton)
+            #self.assetFileActionGroup.removeWidget(self.publishAssetButton)
             self.openAssetFileButton.deleteLater()
             self.newAssetFileButton.deleteLater()
+            #self.versionUpAssetButton.deleteLater()
+            #self.publishAssetButton.deleteLater()
+
             self.openAssetFileButton = None
             self.newAssetFileButton = None
+            self.publishAssetButton = None
+            self.versionUpAssetButton = None
+
             self.assetLayout.removeItem(self.assetFileActionGroup)
             self.assetFileActionGroup.deleteLater()
             self.assetFileActionGroup = None
@@ -110,10 +171,17 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
             
             self.shotFileActionGroup.removeWidget(self.openShotFileButton)
             self.shotFileActionGroup.removeWidget(self.newShotFileButton)
+            #self.shotFileActionGroup.removeWidget(self.versionUpShotButton)
+            #self.shotFileActionGroup.removeWidget(self.publishShotButton)
             self.openShotFileButton.deleteLater()
             self.newShotFileButton.deleteLater()
+            #self.publishShotButton.deleteLater()
+            #self.versionUpShotButton.deleteLater()
+
             self.openShotFileButton = None
             self.newShotFileButton = None
+            self.versionUpShotButton = None
+            self.publishShotButton = None
 
             self.shotLayout.removeItem(self.shotFileActionGroup)            
             self.shotFileActionGroup.deleteLater()
@@ -121,13 +189,20 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
             self.setUnrealButton.clicked.connect(self.onChooseUnrealProject)
 
+            self.mainTabs.removeTab(self.mainTabs.indexOf(self.tab_Edit))
+            #self.tab_Edit.children
+            #self.mainTabs.findChild()
+
         else:
             self.mainTabs.removeTab(self.mainTabs.indexOf(self.tab_Apps))
             self.openAssetFileButton.clicked.connect(self.onOpenAssetFileClick)
             self.newAssetFileButton.clicked.connect(self.onNewAssetFileClick)
             self.openShotFileButton.clicked.connect(self.onOpenShotFileClick)
             self.newShotFileButton.clicked.connect(self.onNewShotFileClick)
-
+            #self.versionUpAssetButton.clicked.connect(self.onVersionUpAssetClick)
+            #self.versionUpShotButton.clicked.connect(self.onVersionUpShotClick)
+            #self.publishAssetButton.clicked.connect(self.onPublishAssetClick)
+            #self.publishShotButton.clicked.connect(self.onPublishShotClick)
 
     def _resetPMUI(self):
         self.assetList.clear()
@@ -139,6 +214,8 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
         self.updateProjectSettingsUI()
 
+        self.editShotNamePrefix.setText("project_name")
+
         self.archiveProjectButton.setEnabled(False)
         self.updateProjectButton.setEnabled(False)
         self.dropProjectButton.setEnabled(False)
@@ -149,11 +226,15 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         if self.assetFileActionGroup is not None:
             self.openAssetFileButton.setEnabled(False)
             self.newAssetFileButton.setEnabled(True)
+            #self.versionUpAssetButton.setEnabled(False)
+            #self.publishAssetButton.setEnabled(False)
             self.assetFileList.clear()   
 
         if self.shotFileActionGroup is not None:
             self.openShotFileButton.setEnabled(False)
             self.newShotFileButton.setEnabled(True)
+            #self.versionUpShotButton.setEnabled(False)
+            #self.publishShotButton.setEnabled(False)
             self.shotFileList.clear()                       
 
         self.projectRootLabel.setText("")
@@ -233,9 +314,9 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
             self.projectRootLabel.setText(re_project.get_project_root().as_posix())        
 
-    def onCreateNewAsset(self, name):
+    def onCreateNewAsset(self, name, file_dialog : NewFileDialogUI):
         if re_project.create_asset_folders(name):
-            self.updateAssetList()  
+            self.updateAssetList()              
             self.statusBar.showMessage("New asset created!")
 
     def onCreateNewShot(self, sequenceNum, shotNum):
@@ -378,6 +459,8 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
             self.unrealProjectPathEdit.setText(re_project.get_project_unreal_project())
 
+            self.editShotNamePrefix.setText( re_project._RE_PROJECT_NAME_PREFIX )
+
             #self.labelExtTexPath.setText(re_project.get_project_ext_asset_lib())
             #TODO: external textures lib
 
@@ -391,7 +474,10 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
             hres = int(self.editHRes.text())
             vres = int(self.editVRes.text())
-            re_project.set_project_default_rez(hres, vres)            
+            re_project.set_project_default_rez(hres, vres)        
+
+            name_prefix = self.editShotNamePrefix.text()
+            re_project.set_project_name_prefix(name_prefix)    
 
             re_project.set_project_unreal_project_path(self.unrealProjectPathEdit.text())       
 
@@ -526,56 +612,34 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
         self.newFileDialog.setTitle("New Asset")
         self.newFileDialog.setQuestion("Asset name:")
         self.newFileDialog.setCreateCallback(self.onCreateNewAsset)
+        self.newFileDialog.setDefaultName("")
+        self.newFileDialog.setAssetMainName("")
         self.newFileDialog.setBasePath(None)
         self.newFileDialog.exec_()
         
     def onNewAssetFileClick(self):
         pass        
+
     def onOpenAssetFileClick(self):
         pass
 
     def onNewShotFileClick(self):
-        pass        
+        pass   
+
     def onOpenShotFileClick(self):
         pass
     
+    def onVersionUpAssetClick(self):
+        pass
 
-class NewFileDialogUI( QtWidgets.QDialog, assetdialog.Ui_AssetDialog):
-    def __init__(self, parent=None):
-        super(NewFileDialogUI, self).__init__(parent=parent)
-        self.setupUi(self)    
+    def onVersionUpShotClick(self):
+        pass
 
-        self.parent = parent
-        self.buttonBox.accepted.connect(self.create_new_asset)
-        self.buttonBox.rejected.connect(self.close)
-        self.editAssetName.setText("")
+    def onPublishAssetClick(self):
+        pass
 
-        self.base_path:Path = None
-        self.create_callback = None
-
-    def setCreateCallback( self, callback_func ):
-        self.create_callback = callback_func
-
-    def setQuestion(self, question:str):
-        self.nameLabel = question
-    
-    def setTitle(self, title:str):
-        self.windowTitle = title
-
-    def setBasePath( self, path:str):
-        if path is None:
-            self.base_path = None
-        else:
-            self.base_path = Path(path)
-
-    def create_new_asset(self):        
-        if self.create_callback is not None:
-            if self.base_path is not None:
-                full_path= self.base_path / self.editAssetName.text()
-            else:
-                full_path = Path(self.editAssetName.text())
-            self.create_callback(full_path.as_posix())
-        self.close()
+    def onPublishShotClick(self):
+        pass
 
 class ShotDialogUI( QtWidgets.QDialog, shotdialog.Ui_ShotDialog):
     def __init__(self, parent=None):
