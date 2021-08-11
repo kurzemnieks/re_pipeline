@@ -389,7 +389,8 @@ def _create_project_folders( base_path_str:str="", template:List[TemplateEntry]=
 
                     #print("Link: " + new_folder_path.as_posix() + " ==> " + symlink_target.as_posix() + " ==> " + symlink_rel_target.as_posix())
                 
-                if update_symlinks and new_folder_path.exists() and new_folder_path.is_symlink():
+                if update_symlinks and new_folder_path.is_symlink():
+
                     #old_symlink_target = Path(os.readlink(str(new_folder_path)))
 
                     #Python 3.8 changed how some path functions regarding symlinks work.. it's confusing
@@ -414,7 +415,7 @@ def _create_project_folders( base_path_str:str="", template:List[TemplateEntry]=
 
                         os.chdir(base_path_str)                        
                         with open(os.devnull, "w") as FNULL:
-                            subprocess.check_call('mklink /D {} {}'.format(folder_name, symlink_rel_target), shell=True, stdout=FNULL)
+                            subprocess.check_call('mklink /D "{}" "{}"'.format(folder_name, symlink_rel_target), shell=True, stdout=FNULL)
                     else:
                         raise ValueError("Can't create symlink. Dest path does not exist: " + symlink_target)
 
@@ -525,6 +526,10 @@ def update_all_shot_folders() -> bool:
 def add_external_lib_folder( name : str, base_path : str, target_path : str ) -> bool:
     base_folder_path = _RE_PROJECT_ROOT / base_path    
     target_folder_path = Path(target_path)
+
+    if not target_folder_path.exists():
+        raise IOError("Bad project config. External library target path not found: " + target_path)
+        return False
 
     i = is_external_lib(name, base_path, target_path)
     if i is not None:

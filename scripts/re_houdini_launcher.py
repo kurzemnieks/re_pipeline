@@ -18,6 +18,7 @@ def run_houdini(houdini_executable, re_root, project_path=None):
 
     os.environ['RE_ROOT'] = str(re_root); #location of RE_Pipeline root
 
+    print("Running houdini: " + houdini_executable.as_posix())
     subprocess.Popen(houdini_executable.as_posix())
 
 
