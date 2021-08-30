@@ -386,7 +386,14 @@ class ProjectManagerUI( QtWidgets.QMainWindow, projman.Ui_MainWindow ):
 
     def onRunBlender(self):
         blender_path = Path(self.blenderPathEdit.text())
-        re_root = Path(os.getenv("RE_ROOT")) #pipeline root dir
+
+        re_root_str : str = os.getenv("RE_ROOT")
+
+        if re_root_str is None:
+            re_root_str = "G:\My Drive\Tools\Pipeline\re_pipeline"
+
+        re_root = Path(re_root_str) #pipeline root dir
+
         re_blender_launcher.run_blender(blender_path, re_root, re_project.get_project_root())
         self.close()
 

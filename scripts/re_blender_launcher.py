@@ -14,6 +14,6 @@ def run_blender(blender_executable, re_root, project_path=None):
     os.environ['RE_ROOT'] = str(re_root); #location of RE_Pipeline root
 
     cmd = blender_executable.as_posix()
-    cmd = cmd + " -P " + re_root.as_posix() + "/tools/blender/scripts/blender_start.py"
+    cmd = '{} -P "{}{}"'.format(cmd, re_root.as_posix(), "/tools/blender/scripts/blender_start.py")
 
     subprocess.Popen(cmd)

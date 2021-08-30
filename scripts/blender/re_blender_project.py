@@ -91,7 +91,7 @@ class BlenderProjectManagerUI( re_project_manager.ProjectManagerUI):
         self.UpdateFileList(shot_path, self.shotFileList)
 
 #############################################################################################################################################################################################
-    def _onNewBlenderFile(self, name:str):
+    def _onNewBlenderFile(self, name:str, file_dialog:re_project_manager.NewFileDialogUI):
         if not name.lower().endswith(".blend"):
             name = name + ".blend"
         
@@ -103,6 +103,23 @@ class BlenderProjectManagerUI( re_project_manager.ProjectManagerUI):
             bpy.ops.wm.read_homefile(app_template="") 
             bpy.ops.wm.save_as_mainfile(filepath=new_file_name.as_posix())             
             self.statusBar.showMessage("New Blender file {} created".format(new_file_name.name))
+
+            if file_dialog.asset_type == re_project_manager.NewFileDialogUI.ASSET_TYPE_SHOT:
+                scene = bpy.context.scene
+                scene.frame_start = 1001
+                scene.frame_end = 1200
+                scene.frame_current = 1001
+
+                for area in bpy.context.screen.areas:
+                    if area.type == 'DOPESHEET_EDITOR':
+                        for region in area.regions:
+                            if region.type == 'WINDOW':
+                                ctx = bpy.context.copy()
+                                ctx['area'] = area
+                                ctx['region'] = region
+                                bpy.ops.action.view_all(ctx)
+                                break
+                        break
     
     def _openBlenderFile(self, file_name:str):
         if bpy.data.is_saved and bpy.data.is_dirty:

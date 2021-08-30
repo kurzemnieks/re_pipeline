@@ -220,7 +220,9 @@ def _try_load_project( path : Path ) -> bool:
                 create_external_lib_folders(_RE_PROJECT_EXTERNAL_LIBS)        
 
             if 'unreal_project' in project_cfg:
-                _RE_PROJECT_UNREAL_PROJECT = project_cfg['unreal_project']    
+                _RE_PROJECT_UNREAL_PROJECT = project_cfg['unreal_project']
+            else: 
+                _RE_PROJECT_UNREAL_PROJECT = ""    
 
             _RE_PROJECT_INITIALIZED = True
         return True
@@ -459,6 +461,7 @@ def drop_project():
     global _RE_PROJECT_INITIALIZED
     global _RE_PROJECT_VERSION
     global _RE_PROJECT_ROOT
+    global _RE_PROJECT_UNREAL_PROJECT
     
     #set defaults
     _RE_PROJECT_ROOT = None
@@ -467,6 +470,7 @@ def drop_project():
     _RE_PROJECT_EXTERNAL_LIBS = []
     _RE_PROJECT_DEFAULT_FPS = 30.0
     _RE_PROJECT_DEFAULT_REZ = {'x':1920, 'y':1080}
+    _RE_PROJECT_UNREAL_PROJECT = ""
     reset_project_features()
 
 def save_project_config():
@@ -497,8 +501,8 @@ def create_unreal_project_folders() -> bool:
         return True
 
     unrealProjectPath = Path(_RE_PROJECT_UNREAL_PROJECT)
-    if not unrealProjectPath.exists():
-        print("Unreal Project folder does not exist: " + _RE_PROJECT_UNREAL_PROJECT)
+    if not unrealProjectPath.exists() or len(_RE_PROJECT_UNREAL_PROJECT)<2:
+        print("Unreal Project folder does not exist or is not defined: " + _RE_PROJECT_UNREAL_PROJECT)
         return False
 
     print("Creating unreal project folders!")
